@@ -19,15 +19,21 @@
 </script>
 
 <style lang="scss" scoped>
+  @import "../../style/bh_style.scss";
+
   .app-navbar {
     position: fixed;
     width: 100%;
     z-index: 1024;
     box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
-    background-color: #3c3c3c;
+    background-color: $header-bg-color;
 
     .container {
       margin: auto 10px;
     }
+  }
+
+  input[type=file] {
+    height: 100%;
   }
 </style>

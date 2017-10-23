@@ -5,17 +5,26 @@
       <div class="container is-fluid is-marginless app-content">
 
         <div class="layout-area">
-          <div id="layout-1-1" ref="layout1By1" class="layouts" style="background-color: black" :style="layout_1_1.style" v-if="layoutType === 1 || layoutType === 2 || layoutType === 3" @mouseover="mouseOver"></div>
+          <div id="layout-1-1" ref="layout1By1" class="layouts" style="background-color: black" :style="layout_1_1.style"
+               v-if="layoutType === 1 || layoutType === 2 || layoutType === 3" @mouseover="mouseOver"></div>
 
-          <div id="layout-1-2" ref="layout1By2" class="layouts" style="background-color: bisque"  :style="layout_1_2.style" v-if="layoutType === 2 || layoutType === 3" @mouseover="mouseOver"></div>
-          <div id="layout-2-1" ref="layout2By1" class="layouts" style="background-color: aquamarine"  :style="layout_2_1.style" v-if="layoutType === 2 || layoutType === 3" @mouseover="mouseOver"></div>
-          <div id="layout-2-2" ref="layout2By2" class="layouts" style="background-color: aqua"  :style="layout_2_2.style" v-if="layoutType === 2 || layoutType === 3" @mouseover="mouseOver"></div>
+          <div id="layout-1-2" ref="layout1By2" class="layouts" style="background-color: bisque"  :style="layout_1_2.style"
+               v-if="layoutType === 2 || layoutType === 3" @mouseover="mouseOver"></div>
+          <div id="layout-2-1" ref="layout2By1" class="layouts" style="background-color: aquamarine"  :style="layout_2_1.style"
+               v-if="layoutType === 2 || layoutType === 3" @mouseover="mouseOver"></div>
+          <div id="layout-2-2" ref="layout2By2" class="layouts" style="background-color: aqua"  :style="layout_2_2.style"
+               v-if="layoutType === 2 || layoutType === 3" @mouseover="mouseOver"></div>
 
-          <div id="layout-1-3" ref="layout1By3" class="layouts" style="background-color: yellow"  :style="layout_1_3.style" v-if="layoutType === 3" @mouseover="mouseOver"></div>
-          <div id="layout-2-3" ref="layout2By3" class="layouts" style="background-color: rebeccapurple"  :style="layout_2_3.style" v-if="layoutType === 3" @mouseover="mouseOver"></div>
-          <div id="layout-3-1" ref="layout3By1" class="layouts" style="background-color: blue"  :style="layout_3_1.style" v-if="layoutType === 3" @mouseover="mouseOver"></div>
-          <div id="layout-3-2" ref="layout3By2" class="layouts" style="background-color: green"  :style="layout_3_2.style" v-if="layoutType === 3" @mouseover="mouseOver"></div>
-          <div id="layout-3-3" ref="layout3By3" class="layouts" style="background-color: burlywood"  :style="layout_3_3.style" v-if="layoutType === 3" @mouseover="mouseOver"></div>
+          <div id="layout-1-3" ref="layout1By3" class="layouts" style="background-color: yellow"  :style="layout_1_3.style"
+               v-if="layoutType === 3" @mouseover="mouseOver"></div>
+          <div id="layout-2-3" ref="layout2By3" class="layouts" style="background-color: rebeccapurple"  :style="layout_2_3.style"
+               v-if="layoutType === 3" @mouseover="mouseOver"></div>
+          <div id="layout-3-1" ref="layout3By1" class="layouts" style="background-color: blue"  :style="layout_3_1.style"
+               v-if="layoutType === 3" @mouseover="mouseOver"></div>
+          <div id="layout-3-2" ref="layout3By2" class="layouts" style="background-color: green"  :style="layout_3_2.style"
+               v-if="layoutType === 3" @mouseover="mouseOver"></div>
+          <div id="layout-3-3" ref="layout3By3" class="layouts" style="background-color: burlywood"  :style="layout_3_3.style"
+               v-if="layoutType === 3" @mouseover="mouseOver"></div>
         </div>
 
       </div>
@@ -37,6 +46,7 @@
     },
     data () {
       return {
+        uploadedFile: null,
         layout_1_1: {},
         layout_1_2: {},
         layout_1_3: {},
@@ -50,11 +60,16 @@
     },
     created () {
       this.$bus.$on('MENU_CLICKED', this.menuClicked)
+      this.$bus.$on('FILE_UPLOADED', this.setUploadedFile)
     },
     mounted () {
       this.initLayouts()
     },
     methods: {
+      setUploadedFile (uploadedFile) {
+        this.uploadedFile = uploadedFile
+        console.log(this.uploadedFile)
+      },
       initLayouts () {
         this.layout_1_1 = {
           obj: this.$refs.layout1By1, // == document.getElementById('layout-1-1'),
@@ -209,6 +224,9 @@
       mouseOver (e) {
         console.log(`MouseOver : `)
         console.log(e.target)
+      },
+      onScroll (e) {
+        console.log('scrolling')
       }
     }
   }

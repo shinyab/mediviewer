@@ -22,14 +22,15 @@ export default {
         icon: 'icon-layout-2x2',
         type: 'layout'
       }
-    },
-    {
-      name: '3By3',
-      meta: {
-        label: '3 X 3',
-        icon: 'icon-layout-3x3',
-        type: 'layout'
-      }
     }
+    // ,
+    // {
+    //   name: '3By3',
+    //   meta: {
+    //     label: '3 X 3',
+    //     icon: 'icon-layout-3x3',
+    //     type: 'layout'
+    //   }
+    // }
   ]
 }

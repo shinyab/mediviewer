@@ -1,6 +1,20 @@
 <template>
   <aside class="menu app-sidebar">
     <ul class="menu-list">
+      <li>
+
+        <b-upload v-model="files" accept=".zip" @change.native="fileUploaded">
+          <a class="button is-white" style="height: 55px; overflow-x: auto; overflow-y: hidden">
+            <div style="margin-top: 5px">
+              <icon name="upload"></icon>
+              <span v-if="files && files.length" style="height: 100px;">{{ files[0].name }}</span>
+              <span v-else="">Load DICOM file</span>
+            </div>
+          </a>
+        </b-upload>
+
+      </li>
+
       <li v-for="(menu, index) in menus">
 
         <a v-if="menu.children && menu.children.length" :aria-expanded="isExpanded(menu)" @click="toggle(index, menu)">
@@ -36,6 +50,11 @@
     components: {
       Expanding
     },
+    data () {
+      return {
+        files: null
+      }
+    },
     computed: mapGetters({
       menus: 'menus'
     }),
@@ -54,12 +73,17 @@
       },
       menuClicked (menu) {
         this.$bus.$emit('MENU_CLICKED', menu)
+      },
+      fileUploaded () {
+        this.$bus.$emit('FILE_UPLOADED', this.files[0])
       }
     }
   }
 </script>
 
 <style lang="scss" scoped>
+  @import "../../style/bh_style.scss";
+
   .app-sidebar {
     position: fixed;
     top: 52px;
@@ -69,7 +93,7 @@
     width: 180px;
     height: 100vh;
     z-index: 1023;
-    background-color: #3c3c3c;
+    background-color: $sidebar-bg-color;
     box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
     overflow-y: auto;
 
@@ -89,12 +113,12 @@
             transform: rotate(180deg);
           }
         }
-        color: gray;
+        color: $sidebar-label-color;
       }
 
       li ul {
         margin: 0 10px 0 -5px;
-        color: gray;
+        color: $sidebar-label-color;
       }
     }
   }
