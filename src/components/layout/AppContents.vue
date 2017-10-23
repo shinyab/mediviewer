@@ -12,6 +12,5 @@
 
 <style lang="scss" scoped>
   #app-main {
-    /*padding-top: 52px*/
   }
 </style>

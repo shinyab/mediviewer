@@ -5,25 +5,25 @@
       <div class="container is-fluid is-marginless app-content">
 
         <div class="layout-area">
-          <div id="layout-1-1" ref="layout1By1" class="layouts" style="background-color: black" :style="layout_1_1.style"
+          <div id="layout-1-1" ref="layout1By1" class="layouts" :style="layout_1_1.style"
                v-if="layoutType === 1 || layoutType === 2 || layoutType === 3" @mouseover="mouseOver"></div>
 
-          <div id="layout-1-2" ref="layout1By2" class="layouts" style="background-color: bisque"  :style="layout_1_2.style"
+          <div id="layout-1-2" ref="layout1By2" class="layouts" :style="layout_1_2.style"
                v-if="layoutType === 2 || layoutType === 3" @mouseover="mouseOver"></div>
-          <div id="layout-2-1" ref="layout2By1" class="layouts" style="background-color: aquamarine"  :style="layout_2_1.style"
+          <div id="layout-2-1" ref="layout2By1" class="layouts" :style="layout_2_1.style"
                v-if="layoutType === 2 || layoutType === 3" @mouseover="mouseOver"></div>
-          <div id="layout-2-2" ref="layout2By2" class="layouts" style="background-color: aqua"  :style="layout_2_2.style"
+          <div id="layout-2-2" ref="layout2By2" class="layouts" :style="layout_2_2.style"
                v-if="layoutType === 2 || layoutType === 3" @mouseover="mouseOver"></div>
 
-          <div id="layout-1-3" ref="layout1By3" class="layouts" style="background-color: yellow"  :style="layout_1_3.style"
+          <div id="layout-1-3" ref="layout1By3" class="layouts" :style="layout_1_3.style"
                v-if="layoutType === 3" @mouseover="mouseOver"></div>
-          <div id="layout-2-3" ref="layout2By3" class="layouts" style="background-color: rebeccapurple"  :style="layout_2_3.style"
+          <div id="layout-2-3" ref="layout2By3" class="layouts" :style="layout_2_3.style"
                v-if="layoutType === 3" @mouseover="mouseOver"></div>
-          <div id="layout-3-1" ref="layout3By1" class="layouts" style="background-color: blue"  :style="layout_3_1.style"
+          <div id="layout-3-1" ref="layout3By1" class="layouts" :style="layout_3_1.style"
                v-if="layoutType === 3" @mouseover="mouseOver"></div>
-          <div id="layout-3-2" ref="layout3By2" class="layouts" style="background-color: green"  :style="layout_3_2.style"
+          <div id="layout-3-2" ref="layout3By2" class="layouts" :style="layout_3_2.style"
                v-if="layoutType === 3" @mouseover="mouseOver"></div>
-          <div id="layout-3-3" ref="layout3By3" class="layouts" style="background-color: burlywood"  :style="layout_3_3.style"
+          <div id="layout-3-3" ref="layout3By3" class="layouts" :style="layout_3_3.style"
                v-if="layoutType === 3" @mouseover="mouseOver"></div>
         </div>
 
@@ -93,126 +93,97 @@
         if (menuName === '1By1') {
           this.$store.commit('SET_LAYOUT_TYPE', 1)
 
-          this.layout_1_1 = {
-//            obj: this.$refs.layout1By1,
-            style: {
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0
-            }
+          this.layout_1_1.style = {
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0
           }
         } else if (menuName === '2By2') {
           this.$store.commit('SET_LAYOUT_TYPE', 2)
 
-          this.layout_1_1 = {
-            style: {
-              top: 0,
-              left: 0,
-              right: '50%',
-              bottom: '50%'
-            }
+          this.layout_1_1.style = {
+            top: 0,
+            left: 0,
+            right: '50%',
+            bottom: '50%'
           }
-          this.layout_1_2 = {
-            style: {
-              top: 0,
-              left: '50%',
-              right: 0,
-              bottom: '50%'
-            }
+          this.layout_1_2.style = {
+            top: 0,
+            left: '50%',
+            right: 0,
+            bottom: '50%'
           }
-          this.layout_2_1 = {
-            style: {
-              top: '50%',
-              left: 0,
-              right: '50%',
-              bottom: 0
-            }
+          this.layout_2_1.style = {
+            top: '50%',
+            left: 0,
+            right: '50%',
+            bottom: 0
           }
-          this.layout_2_2 = {
-            style: {
-              top: '50%',
-              left: '50%',
-              right: 0,
-              bottom: 0
-            }
+          this.layout_2_2.style = {
+            top: '50%',
+            left: '50%',
+            right: 0,
+            bottom: 0
           }
         } else if (menuName === '3By3') {
           this.$store.commit('SET_LAYOUT_TYPE', 3)
 
-          this.layout_1_1 = {
-            style: {
-              top: 0,
-              left: 0,
-              right: '66.6%',
-              bottom: '66.6%'
-            }
+          this.layout_1_1.style = {
+            top: 0,
+            left: 0,
+            right: '66.6%',
+            bottom: '66.6%'
           }
-          this.layout_1_2 = {
-            style: {
-              top: 0,
-              left: '33.3%',
-              right: '33.3%',
-              bottom: '66.6%'
-            }
+          this.layout_1_2.style = {
+            top: 0,
+            left: '33.3%',
+            right: '33.3%',
+            bottom: '66.6%'
           }
-          this.layout_1_3 = {
-            style: {
-              top: 0,
-              left: '66.6%',
-              right: 0,
-              bottom: '66.6%'
-            }
+          this.layout_1_3.style = {
+            top: 0,
+            left: '66.6%',
+            right: 0,
+            bottom: '66.6%'
           }
 
-          this.layout_2_1 = {
-            style: {
-              top: '33.3%',
-              left: 0,
-              right: '66.6%',
-              bottom: '33.3%'
-            }
+          this.layout_2_1.style = {
+            top: '33.3%',
+            left: 0,
+            right: '66.6%',
+            bottom: '33.3%'
           }
-          this.layout_2_2 = {
-            style: {
-              top: '33.3%',
-              left: '33.3%',
-              right: '33.3%',
-              bottom: '33.3%'
-            }
+          this.layout_2_2.style = {
+            top: '33.3%',
+            left: '33.3%',
+            right: '33.3%',
+            bottom: '33.3%'
           }
-          this.layout_2_3 = {
-            style: {
-              top: '33.3%',
-              left: '66.6%',
-              right: 0,
-              bottom: '33.3%'
-            }
+          this.layout_2_3.style = {
+            top: '33.3%',
+            left: '66.6%',
+            right: 0,
+            bottom: '33.3%'
           }
 
-          this.layout_3_1 = {
-            style: {
-              top: '66.6%',
-              left: 0,
-              right: '66.6%',
-              bottom: 0
-            }
+          this.layout_3_1.style = {
+            top: '66.6%',
+            left: 0,
+            right: '66.6%',
+            bottom: 0
           }
-          this.layout_3_2 = {
-            style: {
-              top: '66.6%',
-              left: '33.3%',
-              right: '33.3%',
-              bottom: 0
-            }
+          this.layout_3_2.style = {
+            top: '66.6%',
+            left: '33.3%',
+            right: '33.3%',
+            bottom: 0
           }
-          this.layout_3_3 = {
-            style: {
-              top: '66.6%',
-              left: '66.6%',
-              right: 0,
-              bottom: 0
-            }
+          this.layout_3_3.style = {
+            top: '66.6%',
+            left: '66.6%',
+            right: 0,
+            bottom: 0
           }
         }
       },
@@ -233,6 +204,8 @@
 </script>
 
 <style lang="scss" scoped>
+  @import "../style/bh_style.scss";
+
   #app-content-area {
   }
 
@@ -258,7 +231,7 @@
           position: absolute;
           padding: 1em;
           border: 1px solid #000;
-          background-color: #282828;
+          background-color: $layouts-bg-color;
         }
 
          /*1 X 1*/

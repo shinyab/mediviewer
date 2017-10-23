@@ -18,6 +18,6 @@
   }
 </script>
 
-<style lang="scss">
-  @import "~bulma/sass/utilities/_all";
+<style>
+
 </style>
