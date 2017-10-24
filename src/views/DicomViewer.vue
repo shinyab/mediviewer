@@ -162,25 +162,20 @@
           })
           .then(function (buffer) {
             self.dicomfiles = buffer
-            self.dicomfiles.forEach(function (ar) {
-              var byteArray = new Uint8Array(ar)
+            self.dicomfiles.forEach(function (byteArray) {
               // parseDicom is undefined in ver 1.7.5
               var dataSet = dicomParser.parseDicom(byteArray/*, options */)
               var patientId = dataSet.string('x00080060')
               console.log('PatientId is ' + patientId)
             })
-//            var byteArray = new Uint8Array(self.dicomfiles[0])
-//            // parseDicom is undefined in ver 1.7.5
-//            var dataSet = dicomParser.parseDicom(byteArray/*, options */)
-//            var patientId = dataSet.string('x00100020')
-//            console.log('PatientId is ' + patientId)
           })
       },
       extractZip (zip) {
         var files = Object.keys(zip.files)
         var loadData = []
         files.forEach(function (filename) {
-          loadData.push(zip.files[filename].async('arraybuffer'))  // file data
+//          loadData.push(zip.files[filename].async('arraybuffer'))  // file data
+          loadData.push(zip.files[filename].async('uint8array'))  // file data
         })
 
         return Promise.all(loadData)
