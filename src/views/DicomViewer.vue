@@ -105,7 +105,6 @@
 
   import Sidebar from '@/components/layout/Sidebar'
   import JSZIP from 'jszip'
-  import dicomParser from 'dicom-parser'
 
   export default {
     name: 'DicomViewer',
@@ -162,11 +161,9 @@
           })
           .then(function (buffer) {
             self.dicomfiles = buffer
-            self.dicomfiles.forEach(function (byteArray) {
-              // parseDicom is undefined in ver 1.7.5
-              var dataSet = dicomParser.parseDicom(byteArray/*, options */)
-              var patientId = dataSet.string('x00080060')
-              console.log('PatientId is ' + patientId)
+            console.log('length of dicom :' + self.dicomfiles.length)
+            self.dicomfiles.forEach(function (str) {
+              console.log('>> ' + str)
             })
           })
       },
@@ -174,7 +171,6 @@
         var files = Object.keys(zip.files)
         var loadData = []
         files.forEach(function (filename) {
-//          loadData.push(zip.files[filename].async('arraybuffer'))  // file data
           loadData.push(zip.files[filename].async('uint8array'))  // file data
         })
 
