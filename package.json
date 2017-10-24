@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "buefy": "^0.5.4",
+    "dicom-parser": "1.7.3",
     "fs": "0.0.1-security",
     "node-sass": "^4.5.3",
     "sass-loader": "^6.0.6",
