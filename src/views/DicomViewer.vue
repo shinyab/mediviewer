@@ -104,6 +104,7 @@
 //  import {init, animate} from '@/lib/three/'
 
   import Sidebar from '@/components/layout/Sidebar'
+  import JSZIP from 'jszip'
 
   export default {
     name: 'DicomViewer',
@@ -132,7 +133,8 @@
         mouseLastPosition: {},
         mouseTimer: null,
         mousemove_ok: true,
-        isMousedown: false
+        isMousedown: false,
+        dicomfiles: null
       }
     },
     created () {
@@ -153,6 +155,31 @@
       setUploadedFile (uploadedFile) {
         this.uploadedFile = uploadedFile
         console.log(this.uploadedFile)
+
+        let self = this
+        JSZIP.loadAsync(uploadedFile)
+          .then(function (zip) {
+            return self.extractZip(zip)
+          })
+          .then(function (buffer) {
+            self.dicomfiles = buffer
+            console.log('length of dicom :' + self.dicomfiles.length)
+            self.dicomfiles.forEach(function (str) {
+              console.log('>> ' + str)
+            })
+          })
+      },
+      extractZip (zip) {
+        var files = Object.keys(zip.files)
+        var loadData = []
+        files.forEach(function (filename) {
+          loadData.push(zip.files[filename].async('string'))  // file data
+        })
+
+        return Promise.all(loadData)
+          .then(function (rawdata) {
+            return rawdata
+          })
       },
       initLayouts () {
         this.layout_1_1 = {

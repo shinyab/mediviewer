@@ -11,7 +11,7 @@ Vue.use(Vuex)
 const state = {
   userId: 'abcd',
   currentLayout: {
-    name: '1By1'
+    name: '2By2'
   },
   focusedCanvas: {},
   currentAction: {},
