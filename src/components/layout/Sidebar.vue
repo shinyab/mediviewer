@@ -14,7 +14,7 @@
         <a v-else
            :class="{ active: currentMenu.name == menu.name }"
            @click="menuClicked(menu)">
-          {{ menu.meta.label }}
+          <span>{{ menu.meta.label }}</span>
         </a>
 
         <expanding v-if="menu.children && menu.children.length">
@@ -25,7 +25,7 @@
                 <a
                   :class="{ active: currentLayout == subMenu.name }"
                   @click="menuClicked(subMenu)">
-                  {{ subMenu.meta.label }}
+                  <span>{{ subMenu.meta.label }}</span>
                 </a>
               </li>
             </template>
@@ -34,7 +34,7 @@
                 <a
                   :class="{ active: currentMenu.name == subMenu.name }"
                   @click="menuClicked(subMenu)">
-                  {{ subMenu.meta.label }}
+                  <span>{{ subMenu.meta.label }}</span>
                 </a>
               </li>
             </template>
