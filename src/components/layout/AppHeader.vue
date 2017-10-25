@@ -7,7 +7,6 @@
         <b-upload v-model="files" accept=".zip" @change.native="fileUploaded">
           <a class="button is-white" style="width: 100%; height: 100%;">
             <img src="/static/sample/imgs/folder_open.png" style="width: 24px; height: 24px; top: 0; left: 0;">
-            <!--<icon name="folder-open"></icon>-->
             &nbsp;<span>Load DICOM file</span>
           </a>
         </b-upload>
@@ -52,8 +51,8 @@
     box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
     background-color: $header-bg-color;
 
-    .container {
-      margin: auto 10px;
-    }
+    /*.container {*/
+      /*margin: auto 10px;*/
+    /*}*/
   }
 </style>

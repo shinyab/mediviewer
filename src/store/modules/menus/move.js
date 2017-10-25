@@ -2,7 +2,7 @@ export default {
   name: 'Move',
   meta: {
     label: 'Move',
-    icon: 'icon-move',
+    icon: 'move.png',
     type: 'move'
   }
 }

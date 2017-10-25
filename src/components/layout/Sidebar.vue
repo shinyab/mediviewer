@@ -6,7 +6,8 @@
 
         <a v-if="menu.children && menu.children.length" :aria-expanded="isExpanded(menu)" @click="toggle(index, menu)">
           <!--<img src="/static/logo.png" style="width: 25px; height: 25px; top: 0; left: 0;">-->
-          {{ menu.meta.label }}
+          <img v-if="menu.meta.icon" :src="`/static/sample/imgs/${menu.meta.icon}`" style="width: 24px; height: 24px; top: 0; left: 0;">
+          &nbsp;{{ menu.meta.label }}
           <span class="icon is-small is-angle" v-if="menu.children && menu.children.length">
             <icon name="caret-down"></icon>
           </span>
@@ -14,7 +15,8 @@
         <a v-else
            :class="{ active: currentMenu.name == menu.name }"
            @click="menuClicked(menu)">
-          <span>{{ menu.meta.label }}</span>
+          <img v-if="menu.meta.icon" :src="`/static/sample/imgs/${menu.meta.icon}`" style="width: 24px; height: 24px; top: 0; left: 0;">
+          &nbsp;{{ menu.meta.label }}
         </a>
 
         <expanding v-if="menu.children && menu.children.length">
@@ -25,7 +27,8 @@
                 <a
                   :class="{ active: currentLayout == subMenu.name }"
                   @click="menuClicked(subMenu)">
-                  <span>{{ subMenu.meta.label }}</span>
+                  <img v-if="subMenu.meta.icon" :src="`/static/sample/imgs/${subMenu.meta.icon}`" style="width: 24px; height: 24px; top: 0; left: 0;">
+                  &nbsp;<span>{{ subMenu.meta.label }}</span>
                 </a>
               </li>
             </template>
@@ -34,7 +37,8 @@
                 <a
                   :class="{ active: currentMenu.name == subMenu.name }"
                   @click="menuClicked(subMenu)">
-                  <span>{{ subMenu.meta.label }}</span>
+                  <img v-if="subMenu.meta.icon" :src="`/static/sample/imgs/${subMenu.meta.icon}`" style="width: 24px; height: 24px; top: 0; left: 0;">
+                  &nbsp;<span>{{ subMenu.meta.label }}</span>
                 </a>
               </li>
             </template>
@@ -94,10 +98,10 @@
     position: fixed;
     top: 52px;
     left: 0;
-    botton: 0;
-    padding: 0;
+    bottom: 0;
+    padding: 0 0 50px;
     width: 250px;
-    height: 100vh;
+    height: 100%;
     z-index: 1025;
     background-color: $sidebar-bg-color;
     box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);

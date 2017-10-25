@@ -3,7 +3,7 @@ export default {
   type: 'layout',
   meta: {
     label: 'Layout',
-    icon: 'icon-layout',
+    icon: 'layouts.png',
     type: 'layout',
     expanded: false
   },
@@ -12,7 +12,7 @@ export default {
       name: '1By1',
       meta: {
         label: '1 X 1',
-        icon: 'icon-layout-1x1',
+        icon: '1x1.png',
         type: 'layout'
       }
     },
@@ -20,7 +20,7 @@ export default {
       name: '2By2',
       meta: {
         label: '2 X 2',
-        icon: 'icon-layout-2x2',
+        icon: '2x2.png',
         type: 'layout'
       }
     }
