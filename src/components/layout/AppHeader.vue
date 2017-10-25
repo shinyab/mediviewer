@@ -6,7 +6,8 @@
       <b-field style="position: fixed; left: 0; top: 0; height: 52px; width: 250px; z-index: 1025;">
         <b-upload v-model="files" accept=".zip" @change.native="fileUploaded">
           <a class="button is-white" style="width: 100%; height: 100%;">
-            <icon name="upload"></icon>&nbsp;<span>Load DICOM file</span>
+            <!--<img src="/static/logo.png" style="width: 25px; height: 25px; top: 0; left: 0;">-->
+            <icon name="folder-open"></icon>&nbsp;<span>Load DICOM file</span>
           </a>
         </b-upload>
       </b-field>
