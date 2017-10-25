@@ -9,8 +9,9 @@ import menus from './modules/menus'
 Vue.use(Vuex)
 
 const state = {
-  userId: 'aaa',
-  layoutType: 1
+  userId: 'abcd',
+  currentLayout: '1By1',
+  currentMenu: {}
 }
 
 const store = new Vuex.Store({

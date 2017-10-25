@@ -1,5 +1,6 @@
 export default {
   name: 'Layout',
+  type: 'layout',
   meta: {
     label: 'Layout',
     icon: 'icon-layout',

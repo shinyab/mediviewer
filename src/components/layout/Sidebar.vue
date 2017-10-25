@@ -1,48 +1,56 @@
 <template>
   <aside class="menu app-sidebar">
+
     <ul class="menu-list">
-      <li>
-
-        <b-upload v-model="files" accept=".zip" @change.native="fileUploaded">
-          <a class="button is-white" style="height: 55px; overflow-x: auto; overflow-y: hidden">
-            <div style="margin-top: 5px">
-              <icon name="upload"></icon>
-              <span v-if="files && files.length" style="height: 100px;">{{ files[0].name }}</span>
-              <span v-else="">Load DICOM file</span>
-            </div>
-          </a>
-        </b-upload>
-
-      </li>
-
       <li v-for="(menu, index) in menus">
 
         <a v-if="menu.children && menu.children.length" :aria-expanded="isExpanded(menu)" @click="toggle(index, menu)">
+          <!--<img src="/static/logo.png" style="width: 25px; height: 25px; top: 0; left: 0;">-->
           {{ menu.meta.label }}
           <span class="icon is-small is-angle" v-if="menu.children && menu.children.length">
-            <icon name="arrow-down"></icon>
+            <icon name="caret-down"></icon>
           </span>
         </a>
-        <a v-else @click="menuClicked(menu)">
+        <a v-else
+           :class="{ active: currentMenu.name == menu.name }"
+           @click="menuClicked(menu)">
           {{ menu.meta.label }}
         </a>
 
         <expanding v-if="menu.children && menu.children.length">
           <ul v-show="isExpanded(menu)">
-            <li v-for="subMenu in menu.children">
-              <a @click="menuClicked(subMenu)">
-                {{ subMenu.meta.label }}
-              </a>
-            </li>
+
+            <template v-if="menu.type === 'layout'">
+              <li v-for="subMenu in menu.children">
+                <a
+                  :class="{ active: currentLayout == subMenu.name }"
+                  @click="menuClicked(subMenu)">
+                  {{ subMenu.meta.label }}
+                </a>
+              </li>
+            </template>
+            <template v-else>
+              <li v-for="subMenu in menu.children">
+                <a
+                  :class="{ active: currentMenu.name == subMenu.name }"
+                  @click="menuClicked(subMenu)">
+                  {{ subMenu.meta.label }}
+                </a>
+              </li>
+            </template>
+
           </ul>
         </expanding>
+
       </li>
     </ul>
   </aside>
 </template>
 
 <script>
-  import {mapGetters, mapActions} from 'vuex'
+  import {mapGetters, mapState, mapActions} from 'vuex'
+  import * as busType from '@/util/bus/bus-types'
+
   import Expanding from 'vue-bulma-expanding'
 
   export default {
@@ -50,14 +58,15 @@
     components: {
       Expanding
     },
-    data () {
-      return {
-        files: null
-      }
+    computed: {
+      ...mapGetters({
+        menus: 'menus'
+      }),
+      ...mapState({
+        currentLayout: 'currentLayout',
+        currentMenu: 'currentMenu'
+      })
     },
-    computed: mapGetters({
-      menus: 'menus'
-    }),
     methods: {
       ...mapActions([
         'expandMenu'
@@ -72,10 +81,7 @@
         })
       },
       menuClicked (menu) {
-        this.$bus.$emit('MENU_CLICKED', menu)
-      },
-      fileUploaded () {
-        this.$bus.$emit('FILE_UPLOADED', this.files[0])
+        this.$bus.$emit(busType.MENU_CLICKED, menu)
       }
     }
   }
@@ -90,9 +96,9 @@
     left: 0;
     botton: 0;
     padding: 0;
-    width: 180px;
+    width: 250px;
     height: 100vh;
-    z-index: 1023;
+    z-index: 1025;
     background-color: $sidebar-bg-color;
     box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
     overflow-y: auto;
@@ -116,9 +122,13 @@
         color: $sidebar-label-color;
       }
 
+      li a.active {
+        color: white;
+        background-color: midnightblue;
+      }
+
       li ul {
-        margin: 0 10px 0 -5px;
-        color: $sidebar-label-color;
+        margin: 0 0 0 -13px;
       }
     }
   }

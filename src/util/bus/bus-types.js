@@ -1,0 +1,3 @@
+export const MENU_CLICKED = 'MENU_CLICKED'
+
+export const FILE_UPLOADED = 'FILE_UPLOADED'
