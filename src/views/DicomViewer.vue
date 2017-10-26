@@ -172,6 +172,7 @@
                 console.log('Parsing dicom completed')
                 console.log(typeof loader.data[0])
                 // merge series. All series have the same SeriesInstanceUID
+                console.log(JSON.stringify(loader.data[0], null, 2))
                 let series = loader.data[0].mergeSeries(loader.data)[0]
                 loader.free()
                 loader = null
