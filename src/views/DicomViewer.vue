@@ -105,7 +105,8 @@
 
   import Sidebar from '@/components/layout/Sidebar'
   import JSZIP from 'jszip'
-  import dicomParser from 'dicom-parser'
+//  import DicomParser from 'dicom-parser'
+  import Medic3D from '../../../Medic3D/dist/medic3d'
 
   export default {
     name: 'DicomViewer',
@@ -162,12 +163,22 @@
           })
           .then(function (buffer) {
             self.dicomfiles = buffer
-            self.dicomfiles.forEach(function (byteArray) {
-              // parseDicom is undefined in ver 1.7.5
-              var dataSet = dicomParser.parseDicom(byteArray/*, options */)
-              var patientId = dataSet.string('x00080060')
-              console.log('PatientId is ' + patientId)
-            })
+            console.log('amount files : ' + buffer.length)
+            // using ami
+            let LoadersVolume = Medic3D.Loaders.Volume    // export default { Volume }
+            let loader = new LoadersVolume()
+            loader.loadZip(buffer)
+              .then(function () {
+                console.log('Parsing dicom completed')
+                console.log(typeof loader.data[0])
+                // merge series. All series have the same SeriesInstanceUID
+                let series = loader.data[0].mergeSeries(loader.data)[0]
+                loader.free()
+                loader = null
+                // get first stack from series
+                let stack = series.stack[0]
+                stack.prepare()
+              })
           })
       },
       extractZip (zip) {
@@ -177,17 +188,12 @@
           loadData.push(zip.files[filename].async('uint8array'))  // file data
         })
 
+        console.log('amount files >> ' + files)
+
         return Promise.all(loadData)
           .then(function (rawdata) {
             return rawdata
           })
-      },
-      str2ab (str) {
-        var uint = new Uint8Array(str.length)
-        for (var i = 0, j = str.length; i < j; ++i) {
-          uint[i] = str.charCodeAt(i)
-        }
-        return uint
       },
       initLayouts () {
         this.layout_1_1 = {
