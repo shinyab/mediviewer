@@ -21,28 +21,24 @@
 
         <expanding v-if="menu.children && menu.children.length">
           <ul v-show="isExpanded(menu)">
-
-            <template v-if="menu.type === 'layout'">
-              <li v-for="subMenu in menu.children">
-                <a
-                  :class="{ active: currentLayout == subMenu.name }"
-                  @click="menuClicked(subMenu)">
-                  <img v-if="subMenu.meta.icon" :src="`/static/sample/imgs/${subMenu.meta.icon}`" style="width: 24px; height: 24px; top: 0; left: 0;">
-                  &nbsp;<span>{{ subMenu.meta.label }}</span>
-                </a>
-              </li>
-            </template>
-            <template v-else>
-              <li v-for="subMenu in menu.children">
-                <a
-                  :class="{ active: currentMenu.name == subMenu.name }"
-                  @click="menuClicked(subMenu)">
-                  <img v-if="subMenu.meta.icon" :src="`/static/sample/imgs/${subMenu.meta.icon}`" style="width: 24px; height: 24px; top: 0; left: 0;">
-                  &nbsp;<span>{{ subMenu.meta.label }}</span>
-                </a>
-              </li>
-            </template>
-
+            <li v-for="subMenu in menu.children">
+              <a
+                v-if="menu.type === 'layout'"
+                :class="{ active: currentLayout == subMenu.name }"
+                @click="menuClicked(subMenu)">
+                <img v-if="subMenu.meta.icon" :src="`/static/sample/imgs/${subMenu.meta.icon}`"
+                     style="width: 24px; height: 24px; top: 0; left: 0;">
+                &nbsp;<span>{{ subMenu.meta.label }}</span>
+              </a>
+              <a
+                v-else
+                :class="{ active: currentMenu.name == subMenu.name }"
+                @click="menuClicked(subMenu)">
+                <img v-if="subMenu.meta.icon" :src="`/static/sample/imgs/${subMenu.meta.icon}`"
+                     style="width: 24px; height: 24px; top: 0; left: 0;">
+                &nbsp;<span>{{ subMenu.meta.label }}</span>
+              </a>
+            </li>
           </ul>
         </expanding>
 
@@ -117,6 +113,21 @@
     }
 
     .menu-list {
+      a {
+        &:hover {
+          background-color: green;
+          color: white;
+        }
+        &:active {
+          background-color: red;
+          color: yellow;
+        }
+        /*&:focus {*/
+          /*color: white;*/
+          /*background-color: midnightblue;*/
+        /*}*/
+      }
+
       li a {
         &[aria-expanded="true"] {
           .is-angle {
@@ -126,10 +137,10 @@
         color: $sidebar-label-color;
       }
 
-      li a.active {
-        color: white;
-        background-color: midnightblue;
-      }
+      /*li a.active {*/
+        /*color: white;*/
+        /*background-color: midnightblue;*/
+      /*}*/
 
       li ul {
         margin: 0 0 0 -13px;

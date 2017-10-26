@@ -37,6 +37,8 @@
   import * as mutationType from '@/store/mutation-types'
   import * as busType from '@/util/bus/bus-types'
 
+  import {init, animate} from '@/lib/three/'
+
   import Sidebar from '@/components/layout/Sidebar'
 
   export default {
@@ -61,7 +63,7 @@
 //        layout_2_3: {},
 //        layout_3_1: {},
 //        layout_3_2: {},
-//        layout_3_3: {}
+//        layout_3_3: {},
       }
     },
     created () {
@@ -70,6 +72,9 @@
     },
     mounted () {
       this.initLayouts()
+
+      init()
+      animate()
     },
     methods: {
       setUploadedFile (uploadedFile) {

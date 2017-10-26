@@ -14,6 +14,7 @@
     "buefy": "^0.5.4",
     "node-sass": "^4.5.3",
     "sass-loader": "^6.0.6",
+    "three": "^0.87.1",
     "vue": "^2.5.2",
     "vue-awesome": "^2.3.3",
     "vue-bulma-expanding": "^0.0.1",
