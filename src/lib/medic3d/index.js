@@ -1,7 +1,7 @@
 import JSZIP from 'jszip'
 import * as THREE from 'three';
 import Medic3D from '../../../../Medic3D/dist/medic3d'
-// import dat from 'dat.gui'
+// import * as dat from 'dat.gui';
 
 // standard global variables
 // let stats;
@@ -120,6 +120,7 @@ export function init () {
   function animate () {
     // we are ready when both meshes have been loaded
     if (ready) {
+      console.log('#animate');
       // render
       r0.controls.update();
       r1.controls.update();
@@ -153,10 +154,10 @@ export function init () {
       r2.renderer.render(r2.scene, r2.camera);
       // mesh
       r2.renderer.clearDepth();
-      data.forEach(function (object, key) {
-        object.materialFront.clippingPlanes = [clipPlane2];
-        object.materialBack.clippingPlanes = [clipPlane2];
-      });
+      // data.forEach(function (object, key) {
+      //   object.materialFront.clippingPlanes = [clipPlane2];
+      //   object.materialBack.clippingPlanes = [clipPlane2];
+      // });
       r2.renderer.render(sceneClip, r2.camera);
       // localizer
       r2.renderer.clearDepth();
@@ -167,10 +168,10 @@ export function init () {
       r3.renderer.render(r3.scene, r3.camera);
       // mesh
       r3.renderer.clearDepth();
-      data.forEach(function (object, key) {
-        object.materialFront.clippingPlanes = [clipPlane3];
-        object.materialBack.clippingPlanes = [clipPlane3];
-      });
+      // data.forEach(function (object, key) {
+      //   object.materialFront.clippingPlanes = [clipPlane3];
+      //   object.materialBack.clippingPlanes = [clipPlane3];
+      // });
       r3.renderer.render(sceneClip, r3.camera);
       // localizer
       r3.renderer.clearDepth();
@@ -456,8 +457,6 @@ export function loadZip (uploadedFile) {
 
             // update the geometry will create a new mesh
             localizerHelper.geometry = refHelper.slice.geometry;
-
-            ready = true;
           }
 
           function updateClipPlane (refObj, clipPlane) {
@@ -642,7 +641,6 @@ export function loadZip (uploadedFile) {
           function onScroll (event) {
             console.log('# onScroll');
             const id = event.target.domElement.id;
-            console.log('#id' + id);
             let stackHelper = null;
             switch (id) {
               case r1.domId:
@@ -659,8 +657,6 @@ export function loadZip (uploadedFile) {
                 return;
             }
 
-            console.log(stackHelper);
-
             if (event.delta > 0) {
               if (stackHelper.index >= stackHelper.orientationMaxIndex - 1) {
                 return false;
@@ -672,7 +668,6 @@ export function loadZip (uploadedFile) {
               }
               stackHelper.index -= 1;
             }
-
             onGreenChanged();
             onRedChanged();
             onYellowChanged();
@@ -780,7 +775,7 @@ export function loadZip (uploadedFile) {
             //
             //   // good to go
             //   if (meshesLoaded === data.size) {
-            //     ready = true;
+            ready = true;
             //   }
             // });
           }
