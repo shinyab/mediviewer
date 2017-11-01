@@ -101,12 +101,9 @@
   import * as mutationType from '@/store/mutation-types'
   import * as busType from '@/util/bus/bus-types'
 
-//  import {init, animate} from '@/lib/three/'
+  import {init, loadZip} from '@/lib/medic3d/'
 
   import Sidebar from '@/components/layout/Sidebar'
-  import JSZIP from 'jszip'
-//  import DicomParser from 'dicom-parser'
-  import Medic3D from '../../../Medic3D/dist/medic3d'
 
   export default {
     name: 'DicomViewer',
@@ -125,7 +122,6 @@
         uploadedFile: null,
         layout_1_1: {},
         layout_1_2: {},
-//        layout_1_3: {},
         layout_2_1: {},
         layout_2_2: {},
 //        layout_2_3: {},
@@ -136,7 +132,8 @@
         mouseTimer: null,
         mousemove_ok: true,
         isMousedown: false,
-        dicomfiles: null
+        dicomfiles: null,
+        r0: {}
       }
     },
     created () {
@@ -148,72 +145,29 @@
       }, 100)
     },
     mounted () {
+      console.log('### Mounted');
       this.initLayouts()
-
-//      init()
-//      animate()
     },
     methods: {
       setUploadedFile (uploadedFile) {
         this.uploadedFile = uploadedFile
-        let self = this
-        JSZIP.loadAsync(uploadedFile)
-          .then(function (zip) {
-            return self.extractZip(zip)
-          })
-          .then(function (buffer) {
-            self.dicomfiles = buffer
-            console.log('amount files : ' + buffer.length)
-            // using ami
-            let LoadersVolume = Medic3D.Loaders.Volume    // export default { Volume }
-            let loader = new LoadersVolume()
-            loader.loadZip(buffer)
-              .then(function () {
-                console.log('Parsing dicom completed')
-                console.log(typeof loader.data[0])
-                // merge series. All series have the same SeriesInstanceUID
-                console.log(JSON.stringify(loader.data[0], null, 2))
-                let series = loader.data[0].mergeSeries(loader.data)[0]
-                loader.free()
-                loader = null
-                // get first stack from series
-                let stack = series.stack[0]
-                stack.prepare()
-              })
-          })
-      },
-      extractZip (zip) {
-        var files = Object.keys(zip.files)
-        var loadData = []
-        files.forEach(function (filename) {
-          loadData.push(zip.files[filename].async('uint8array'))  // file data
-        })
-
-        console.log('amount files >> ' + files)
-
-        return Promise.all(loadData)
-          .then(function (rawdata) {
-            return rawdata
-          })
+        loadZip(uploadedFile);
+        init();
       },
       initLayouts () {
-        this.layout_1_1 = {
-          obj: this.$refs.layout1By1, // == document.getElementById('layout-1-1'),
-          style: {
-            top: 0,
-            left: 0,
-            right: 0,
-            bottom: 0
-          }
-        }
-        this.layout_1_2 = { obj: this.$refs.layout1By2 } // == document.getElementById('layout-1-2'),
-//        this.layout_1_3 = { obj: this.$refs.layout1By3 } // == document.getElementById('layout-1-3'),
-        this.layout_2_1 = { obj: this.$refs.layout2By1 } // == document.getElementById('layout-2-1'),
-        this.layout_2_2 = { obj: this.$refs.layout2By2 } // == document.getElementById('layout-2-2'),
-//        this.layout_2_3 = { obj: this.$refs.layout2By3 } // == document.getElementById('layout-2-3'),
-//        this.layout_3_1 = { obj: this.$refs.layout3By1 } // == document.getElementById('layout-3-1'),
-//        this.layout_3_2 = { obj: this.$refs.layout3By2 } // == document.getElementById('layout-3-2'),
-//        this.layout_3_3 = { obj: this.$refs.layout3By3 } // == document.getElementById('layout-3-3'),
+//        this.layout_1_1 = {
+//          obj: this.$refs.layout1By1, // == document.getElementById('layout-1-1'),
+//          style: {
+//            top: 0,
+//            left: 0,
+//            right: 0,
+//            bottom: 0
+//          }
+//        }
+//        this.layout_1_2 = { obj: this.$refs.layout1By2 } // == document.getElementById('layout-1-2'),
+//        this.layout_2_1 = { obj: this.$refs.layout2By1 } // == document.getElementById('layout-2-1'),
+//        this.layout_2_2 = { obj: this.$refs.layout2By2 } // == document.getElementById('layout-2-2'),
+        this.setLayoutsWithMenuName('2By2');
       },
       setLayoutsWithMenuName (layout) {
         if (layout.name === '1By1') {
@@ -253,66 +207,6 @@
             bottom: 0
           }
         }
-//        else if (menuName === '3By3') {
-//          this.$store.commit('SET_LAYOUT_TYPE', menuName)
-//
-//          this.layout_1_1.style = {
-//            top: 0,
-//            left: 0,
-//            right: '66.6%',
-//            bottom: '66.6%'
-//          }
-//          this.layout_1_2.style = {
-//            top: 0,
-//            left: '33.3%',
-//            right: '33.3%',
-//            bottom: '66.6%'
-//          }
-//          this.layout_1_3.style = {
-//            top: 0,
-//            left: '66.6%',
-//            right: 0,
-//            bottom: '66.6%'
-//          }
-//
-//          this.layout_2_1.style = {
-//            top: '33.3%',
-//            left: 0,
-//            right: '66.6%',
-//            bottom: '33.3%'
-//          }
-//          this.layout_2_2.style = {
-//            top: '33.3%',
-//            left: '33.3%',
-//            right: '33.3%',
-//            bottom: '33.3%'
-//          }
-//          this.layout_2_3.style = {
-//            top: '33.3%',
-//            left: '66.6%',
-//            right: 0,
-//            bottom: '33.3%'
-//          }
-//
-//          this.layout_3_1.style = {
-//            top: '66.6%',
-//            left: 0,
-//            right: '66.6%',
-//            bottom: 0
-//          }
-//          this.layout_3_2.style = {
-//            top: '66.6%',
-//            left: '33.3%',
-//            right: '33.3%',
-//            bottom: 0
-//          }
-//          this.layout_3_3.style = {
-//            top: '66.6%',
-//            left: '66.6%',
-//            right: 0,
-//            bottom: 0
-//          }
-//        }
       },
       menuClicked (menu) {
         if (menu.type === 'layout') {
