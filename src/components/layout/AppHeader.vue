@@ -16,6 +16,15 @@
         <span v-if="files && files.length" class="nav-load-file-label">&nbsp; | &nbsp;Viewer : {{ files[0].name }}</span>
       </div>
 
+      <b-field style="position: fixed; left: 260px; top: 0; height: 52px; width: 250px; z-index: 1025;">
+        <b-upload v-model="files" accept=".zip" @change.native="loadSegmetation">
+          <a class="button is-white" style="width: 100%; height: 100%;">
+            <img src="/static/sample/imgs/folder_open.png" style="width: 24px; height: 24px; top: 0; left: 0;">
+            &nbsp;<span>Load Segmentation</span>
+          </a>
+        </b-upload>
+      </b-field>
+
       <nav class="nav">
         <div class="nav-left">
           <router-link to="/viewer" class="nav-item hero-brand">
@@ -49,7 +58,11 @@
     methods: {
       fileUploaded () {
         this.$bus.$emit(busType.FILE_UPLOADED, this.files[0])
+      },
+      loadSegmetation () {
+        this.$bus.$emit(busType.FILE_UPLOADED_SEG, this.files[0])
       }
+
     }
   }
 </script>

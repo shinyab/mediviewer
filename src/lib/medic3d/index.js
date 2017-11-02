@@ -1,10 +1,11 @@
 import JSZIP from 'jszip'
 import * as THREE from 'three';
 import Medic3D from '../../../../Medic3D/dist/medic3d'
-// import * as dat from 'dat.gui';
+// import * as fs from 'fs'
+// import PNG from 'pngjs'
+var PNG = require('pngjs').PNG;
 
 // standard global variables
-// let stats;
 let ready = false;
 
 let redTextureTarget = null;
@@ -79,40 +80,6 @@ const r3 = {
   localizerScene: null
 };
 
-// data to be loaded
-let dataInfo = [
-  ['adi1', {
-    location:
-      'https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/mesh.stl',
-    label: 'Left',
-    loaded: false,
-    material: null,
-    materialFront: null,
-    materialBack: null,
-    mesh: null,
-    meshFront: null,
-    meshBack: null,
-    color: 0xe91e63,
-    opacity: 0.7
-  }],
-  ['adi2', {
-    location:
-      'https://cdn.rawgit.com/FNNDSC/data/master/dicom/adi_brain/mesh2.stl',
-    label: 'Right',
-    loaded: false,
-    material: null,
-    materialFront: null,
-    materialBack: null,
-    mesh: null,
-    meshFront: null,
-    meshBack: null,
-    color: 0x03a9f4,
-    opacity: 1
-  }]
-];
-
-let data = new Map(dataInfo);
-
 export function init () {
   /**
    * Called on each animation frame
@@ -120,7 +87,7 @@ export function init () {
   function animate () {
     // we are ready when both meshes have been loaded
     if (ready) {
-      console.log('#animate');
+      // console.log('#animate');
       // render
       r0.controls.update();
       r1.controls.update();
@@ -135,16 +102,6 @@ export function init () {
       r1.renderer.render(r1.scene, r1.camera);
       // mesh
       r1.renderer.clearDepth();
-      // data.forEach(function (object, key) {
-      //   object.materialFront.clippingPlanes = [clipPlane1];
-      //   object.materialBack.clippingPlanes = [clipPlane1];
-      //   r1.renderer.render(object.scene, r1.camera, redTextureTarget, true);
-      //   r1.renderer.clearDepth();
-      //   redContourMaterial.uniforms.uWidth.value = object.selected ? 2 : 1;
-      //   r1.renderer.render(redCountourScene, r1.camera);
-      //   r1.renderer.clearDepth();
-      // });
-
       // localizer
       r1.renderer.clearDepth();
       r1.renderer.render(r1.localizerScene, r1.camera);
@@ -154,10 +111,6 @@ export function init () {
       r2.renderer.render(r2.scene, r2.camera);
       // mesh
       r2.renderer.clearDepth();
-      // data.forEach(function (object, key) {
-      //   object.materialFront.clippingPlanes = [clipPlane2];
-      //   object.materialBack.clippingPlanes = [clipPlane2];
-      // });
       r2.renderer.render(sceneClip, r2.camera);
       // localizer
       r2.renderer.clearDepth();
@@ -168,17 +121,11 @@ export function init () {
       r3.renderer.render(r3.scene, r3.camera);
       // mesh
       r3.renderer.clearDepth();
-      // data.forEach(function (object, key) {
-      //   object.materialFront.clippingPlanes = [clipPlane3];
-      //   object.materialBack.clippingPlanes = [clipPlane3];
-      // });
       r3.renderer.render(sceneClip, r3.camera);
       // localizer
       r3.renderer.clearDepth();
       r3.renderer.render(r3.localizerScene, r3.camera);
     }
-    // stats.update();
-
     // request new frame
     requestAnimationFrame(function () {
       animate();
@@ -186,6 +133,15 @@ export function init () {
   }
 
   // renderers
+  if (ready) {
+    console.log('Already setup');
+    clearThree(r0.scene);
+    clearThree(r1.scene);
+    clearThree(r2.scene);
+    clearThree(r3.scene);
+  } else {
+    console.log('First time');
+  }
   initRenderer3D(r0);
   initRenderer2D(r3);
   initRenderer2D(r2);
@@ -193,7 +149,12 @@ export function init () {
 
   // start rendering loop
   animate();
-  // ready = true;
+}
+
+function clearThree (scene) {
+  while (scene.children.length > 0) {
+    scene.remove(scene.children[0]);
+  }
 }
 
 // extra variables to show mesh plane intersections in 2D renderers
@@ -204,54 +165,66 @@ let clipPlane3 = new THREE.Plane(new THREE.Vector3(0, 0, 0), 0);
 
 function initRenderer3D (renderObj) {
   // renderer
-  renderObj.domElement = document.getElementById(renderObj.domId);
-  renderObj.renderer = new THREE.WebGLRenderer({
-    antialias: true
-  });
+  if (renderObj.domElement === null) {
+    renderObj.domElement = document.getElementById(renderObj.domId);
+  } else {
+    return;
+  }
 
-  renderObj.renderer.setSize(
-    renderObj.domElement.clientWidth, renderObj.domElement.clientHeight);
-  renderObj.renderer.setClearColor(renderObj.color, 1);
-  renderObj.renderer.domElement.id = renderObj.targetID;
+  if (renderObj.renderer === null) {
+    renderObj.renderer = new THREE.WebGLRenderer({
+      antialias: true
+    });
+    renderObj.renderer.setSize(renderObj.domElement.clientWidth, renderObj.domElement.clientHeight);
+    renderObj.renderer.setClearColor(renderObj.color, 1);
+    renderObj.renderer.domElement.id = renderObj.targetID;
+  }
+
   renderObj.domElement.appendChild(renderObj.renderer.domElement);
 
   if (renderObj.domElement == null) {
     return;
   }
   // camera
-  renderObj.camera = new THREE.PerspectiveCamera(
-    45, renderObj.domElement.clientWidth / renderObj.domElement.clientHeight,
-    0.1, 100000);
-  renderObj.camera.position.x = 250;
-  renderObj.camera.position.y = 250;
-  renderObj.camera.position.z = 250;
+  if (renderObj.camera === null) {
+    renderObj.camera = new THREE.PerspectiveCamera(
+      45, renderObj.domElement.clientWidth / renderObj.domElement.clientHeight,
+      0.1, 100000);
+    renderObj.camera.position.x = 250;
+    renderObj.camera.position.y = 250;
+    renderObj.camera.position.z = 250;
+  }
 
   // controls
-  // renderObj.controls = new ControlsTrackball(
-  renderObj.controls = new Medic3D.Controls.Trackball(
-    renderObj.camera, renderObj.domElement);
-  renderObj.controls.rotateSpeed = 5.5;
-  renderObj.controls.zoomSpeed = 1.2;
-  renderObj.controls.panSpeed = 0.8;
-  renderObj.controls.staticMoving = true;
-  renderObj.controls.dynamicDampingFactor = 0.3;
+  if (renderObj.controls === null) {
+    renderObj.controls = new Medic3D.Controls.Trackball(renderObj.camera, renderObj.domElement);
+    renderObj.controls.rotateSpeed = 5.5;
+    renderObj.controls.zoomSpeed = 1.2;
+    renderObj.controls.panSpeed = 0.8;
+    renderObj.controls.staticMoving = true;
+    renderObj.controls.dynamicDampingFactor = 0.3;
+  }
 
   // scene
-  renderObj.scene = new THREE.Scene();
+  if (renderObj.scene === null) {
+    renderObj.scene = new THREE.Scene();
+  }
 
   // light
-  renderObj.light = new THREE.DirectionalLight(0xffffff, 1);
-  renderObj.light.position.copy(renderObj.camera.position);
-  renderObj.scene.add(renderObj.light);
-
-  // stats
-  // stats = new Stats();
-  // renderObj.domElement.appendChild(stats.domElement);
+  if (renderObj.light === null) {
+    renderObj.light = new THREE.DirectionalLight(0xffffff, 1);
+    renderObj.light.position.copy(renderObj.camera.position);
+    renderObj.scene.add(renderObj.light);
+  }
 }
 
 function initRenderer2D (rendererObj) {
   // renderer
-  rendererObj.domElement = document.getElementById(rendererObj.domId);
+  if (rendererObj.domElement === null) {
+    rendererObj.domElement = document.getElementById(rendererObj.domId);
+  } else {
+    return;
+  }
 
   rendererObj.renderer = new THREE.WebGLRenderer({
     antialias: true
@@ -265,7 +238,6 @@ function initRenderer2D (rendererObj) {
   rendererObj.domElement.appendChild(rendererObj.renderer.domElement);
 
   // camera
-  // rendererObj.camera = new CamerasOrthographic(
   rendererObj.camera = new Medic3D.Cameras.Orthographic(
     rendererObj.domElement.clientWidth / -2,
     rendererObj.domElement.clientWidth / 2,
@@ -274,7 +246,6 @@ function initRenderer2D (rendererObj) {
     1, 1000);
 
   // controls
-  // rendererObj.controls = new ControlsOrthographic(
   rendererObj.controls = new Medic3D.Controls.TrackballOrtho(
     rendererObj.camera, rendererObj.domElement);
   rendererObj.controls.staticMoving = true;
@@ -288,7 +259,7 @@ function initRenderer2D (rendererObj) {
 export function loadZip (uploadedFile) {
   JSZIP.loadAsync(uploadedFile)
     .then(function (zip) {
-      return extractZip(zip)
+      return extractZip(zip, 'uint8array');
     })
     .then(function (buffer) {
       console.log('Extracted zip files is read');
@@ -305,10 +276,11 @@ export function loadZip (uploadedFile) {
           let stack = series.stack[0]
           stack.prepare()
 
+          console.log('slice ' + stack._numberOfFrames);
+
           // To decide what type of split window(1*1, 2*2)
           // Split is set as 1*1 if slice is one
           // domIDs are already defined as layout-1-1, layout-1-2, layout-2-1, layout-2-2
-
           // center 3d camera/control on the stack
           let centerLPS = stack.worldCenter();
           r0.camera.lookAt(centerLPS.x, centerLPS.y, centerLPS.z);
@@ -332,18 +304,14 @@ export function loadZip (uploadedFile) {
               format: THREE.RGBAFormat
             }
           );
-
           // need 1 per tooth...
-          // let uniformsLayerMix = ShadersContourUniform.uniforms();
           let uniformsLayerMix = Medic3D.Shaders.ContourUniform.uniforms();
           uniformsLayerMix.uTextureFilled.value = redTextureTarget.texture;
           uniformsLayerMix.uWidth.value = 1.0;
           uniformsLayerMix.uCanvasWidth.value = redTextureTarget.width;
           uniformsLayerMix.uCanvasHeight.value = redTextureTarget.height;
 
-          // let fls = new ShadersContourFragment(uniformsLayerMix);
           let fls = new Medic3D.Shaders.ContourFragment(uniformsLayerMix);
-          // let vls = new ShadersContourVertex();
           let vls = new Medic3D.Shaders.ContourVertex();
           redContourMaterial = new THREE.ShaderMaterial(
             {side: THREE.DoubleSide,
@@ -402,39 +370,8 @@ export function loadZip (uploadedFile) {
             }
           ]);
 
-          // let gui = new dat.GUI({
-          //   autoPlace: false,
-          // });
-
-          // let customContainer = document.getElementById('my-gui-container');
-          // customContainer.appendChild(gui.domElement);
-
-          // Red
-          // let stackFolder1 = gui.addFolder('Axial (Red)');
-          // let redChanged = stackFolder1.add(
-          //   r1.stackHelper,
-          //   'index', 0, r1.stackHelper.orientationMaxIndex).step(1).listen();
-          // stackFolder1.add(
-          //   r1.stackHelper.slice, 'interpolation', 0, 1).step(1).listen();
-          //
-          // // Yellow
-          // let stackFolder2 = gui.addFolder('Sagittal (yellow)');
-          // let yellowChanged = stackFolder2.add(
-          //   r2.stackHelper,
-          //   'index', 0, r2.stackHelper.orientationMaxIndex).step(1).listen();
-          // stackFolder2.add(
-          //   r2.stackHelper.slice, 'interpolation', 0, 1).step(1).listen();
-          //
-          // // Green
-          // let stackFolder3 = gui.addFolder('Coronal (green)');
-          // let greenChanged = stackFolder3.add(
-          //   r3.stackHelper,
-          //   'index', 0, r3.stackHelper.orientationMaxIndex).step(1).listen();
-          // stackFolder3.add(
-          //   r3.stackHelper.slice, 'interpolation', 0, 1).step(1).listen();
-
           /**
-           * Update Layer Mix
+           * Update Layer Mix. Guide line control
            */
           function updateLocalizer (refObj, targetLocalizersHelpers) {
             let refHelper = refObj.stackHelper;
@@ -507,14 +444,10 @@ export function loadZip (uploadedFile) {
             }
           }
 
-          // redChanged.onChange(onRedChanged);
-
           function onGreenChanged () {
             updateLocalizer(r3, [r1.localizerHelper, r2.localizerHelper]);
             updateClipPlane(r3, clipPlane3);
           }
-
-          // greenChanged.onChange(onGreenChanged);
 
           function onDoubleClick (event) {
             const canvas = event.target.parentElement;
@@ -713,96 +646,81 @@ export function loadZip (uploadedFile) {
           }
 
           window.addEventListener('resize', onWindowResize, false);
-
-          // load meshes on the stack is all set
-          // let meshesLoaded = 0;
-          function loadSTLObject (object) {
-            // const stlLoader = new THREE.STLLoader();
-            // stlLoader.load(object.location, function (geometry) {
-            //   // 3D mesh
-            //   object.material = new THREE.MeshLambertMaterial({
-            //     opacity: object.opacity,
-            //     color: object.color,
-            //     clippingPlanes: [],
-            //     transparent: true
-            //   });
-            //   object.mesh = new THREE.Mesh(geometry, object.material);
-            //   object.mesh.objRef = object;
-            //   const RASToLPS = new THREE.Matrix4();
-            //   RASToLPS.set(-1, 0, 0, 0,
-            //     0, -1, 0, 0,
-            //     0, 0, 1, 0,
-            //     0, 0, 0, 1);
-            //   // object.mesh.applyMatrix(RASToLPS);
-            //   r0.scene.add(object.mesh);
-            //
-            //   object.scene = new THREE.Scene();
-            //
-            //   // front
-            //   object.materialFront = new THREE.MeshBasicMaterial({
-            //     color: object.color,
-            //     side: THREE.FrontSide,
-            //     depthWrite: true,
-            //     opacity: 0,
-            //     transparent: true,
-            //     clippingPlanes: []
-            //   });
-            //
-            //   object.meshFront = new THREE.Mesh(geometry, object.materialFront);
-            //   // object.meshFront.applyMatrix(RASToLPS);
-            //   object.scene.add(object.meshFront);
-            //
-            //   // back
-            //   object.materialBack = new THREE.MeshBasicMaterial({
-            //     color: object.color,
-            //     side: THREE.BackSide,
-            //     depthWrite: true,
-            //     opacity: object.opacity,
-            //     transparent: true,
-            //     clippingPlanes: []
-            //   });
-            //
-            //   object.meshBack = new THREE.Mesh(geometry, object.materialBack);
-            //   // object.meshBack.applyMatrix(RASToLPS);
-            //   object.scene.add(object.meshBack);
-            //   sceneClip.add(object.scene);
-            //
-            //   meshesLoaded++;
-            //
-            //   onGreenChanged();
-            //   onRedChanged();
-            //   onYellowChanged();
-            //
-            //   // good to go
-            //   if (meshesLoaded === data.size) {
-            ready = true;
-            //   }
-            // });
-          }
-
-          data.forEach(function (object, key) {
-            loadSTLObject(object);
-          });
+          ready = true;
         })
     })
 
-  function extractZip (zip) {
-    var files = Object.keys(zip.files)
-    var loadData = []
-    files.forEach(function (filename) {
-      loadData.push(zip.files[filename].async('uint8array'))  // file data
-    })
+  // function extractZip (zip) {
+  //   var files = Object.keys(zip.files)
+  //   var loadData = []
+  //   files.forEach(function (filename) {
+  //     loadData.push(zip.files[filename].async('uint8array'))  // file data
+  //   })
+  //
+  //   return Promise.all(loadData)
+  //     .then(function (rawdata) {
+  //       return rawdata
+  //     })
+  // }
+}
 
-    return Promise.all(loadData)
-      .then(function (rawdata) {
-        return rawdata
-      })
-  }
+function extractZip (zip, type) {
+  var files = Object.keys(zip.files)
+  var loadData = []
+  files.forEach(function (filename) {
+    loadData.push(zip.files[filename].async(type))  // file data
+  })
+
+  return Promise.all(loadData)
+    .then(function (rawdata) {
+      return rawdata
+    })
+}
+
+export function loadSegmentation (uploadedFile) {
+  JSZIP.loadAsync(uploadedFile)
+    .then(function (zip) {
+      // print files
+      var files = Object.keys(zip.files);
+      files.forEach(function (filename) {
+        console.log(filename);
+      });
+      return extractZip(zip, 'arraybuffer');
+    })
+    .then(function (buffer) {
+      loadZipPngs(buffer)
+        .then(function () {
+
+        });
+    })
+}
+
+function loadZipPngs (zip) {
+  const loadSequences = [];
+
+  zip.forEach((rawdata) => {
+    loadSequences.push(
+      loadSegmentationRawdata(rawdata)
+    );
+  });
+
+  return Promise.all(loadSequences);
+}
+
+function loadSegmentationRawdata (rawdata) {
+  return new Promise((resolve, reject) => {
+    // PNG.parse(rawdata, function (err, data) {
+    //   console.log('Error : ' + err + ' Length : ' + data.length);
+    // });
+    // console.log('Png rawdata ' + rawdata.length);
+    new PNG({filterType: 4}).parse(rawdata, function (error, data) {
+      console.log(error, data);
+    });
+    resolve();
+  });
 }
 
 function initHelpersStack (rendererObj, stack) {
-  // console.log(JSON.stringify(rendererObj, null, 2));
-  // rendererObj.stackHelper = new HelpersStack(stack);
   rendererObj.stackHelper = new Medic3D.Helpers.Stack(stack);
   rendererObj.stackHelper.bbox.visible = false;
   rendererObj.stackHelper.borderColor = rendererObj.sliceColor;

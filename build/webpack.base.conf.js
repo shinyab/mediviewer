@@ -9,6 +9,7 @@ function resolve (dir) {
 }
 
 module.exports = {
+  // target : 'node',
   entry: {
     app: './src/main.js'
   },
@@ -72,5 +73,8 @@ module.exports = {
         }
       }
     ]
+  },
+  node: {
+    fs: 'empty'
   }
 }
