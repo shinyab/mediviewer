@@ -9,7 +9,7 @@
           <img v-if="menu.meta.icon" :src="`/static/sample/imgs/${menu.meta.icon}`" style="width: 24px; height: 24px; top: 0; left: 0;">
           &nbsp;{{ menu.meta.label }}
           <span class="icon is-small is-angle" v-if="menu.children && menu.children.length">
-            <icon name="caret-down"></icon>
+            <icon name="angle-down"></icon>
           </span>
         </a>
         <a v-else
@@ -92,15 +92,14 @@
 
   .app-sidebar {
     position: fixed;
-    top: 52px;
+    top: $header-height;
     left: 0;
     bottom: 0;
     padding: 0 0 50px;
-    width: 250px;
+    width: $sidebar-width;
     height: 100%;
     z-index: 1025;
-    background-color: $sidebar-bg-color;
-    box-shadow: 0 2px 3px rgba(0, 0, 0, 0.1);
+    background-color: $sidebar-menu-bg-color;
     overflow-y: auto;
 
     .icon {
@@ -114,13 +113,14 @@
 
     .menu-list {
       a {
+        margin: 3px;
         &:hover {
-          background-color: green;
-          color: white;
+          background-color: $sidebar-menu-over-bg-color;
+          color: $sidebar-menu-over-label-color;
         }
         &:active {
-          background-color: red;
-          color: yellow;
+          background-color: $sidebar-menu-press-bg-color;
+          color: $sidebar-menu-press-label-color;
         }
         /*&:focus {*/
           /*color: white;*/
@@ -134,16 +134,22 @@
             transform: rotate(180deg);
           }
         }
-        color: $sidebar-label-color;
+        color: $sidebar-menu-label-color;
       }
 
-      /*li a.active {*/
-        /*color: white;*/
-        /*background-color: midnightblue;*/
-      /*}*/
+      li a.active {
+        background-color: $sidebar-menu-select-bg-color;
+        color: $sidebar-menu-select-label-color;
+      }
+
+      aside ul {
+        background-color: #232228;
+      }
 
       li ul {
-        margin: 0 0 0 -13px;
+        margin: 0 0 0 25px;
+        border-left-color: #d8d8d8;
+        background-color: #16151a;
       }
     }
   }

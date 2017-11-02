@@ -22,9 +22,10 @@ export function init() {
   scene.add( mesh );
 
   renderer = new THREE.WebGLRenderer( { antialias: true } );
-  renderer.setSize( window.innerWidth, window.innerHeight );
+  renderer.setSize( 800, 700 );
 
-  document.getElementById('layout-1-1').appendChild( renderer.domElement );
+  // document.getElementById('layout-1-1').appendChild( renderer.domElement );
+  document.getElementById('layout-1-2').appendChild( renderer.domElement );
   // document.body.appendChild( renderer.domElement );
 }
 

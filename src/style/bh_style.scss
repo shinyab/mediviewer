@@ -1,9 +1,40 @@
+/* Global */
+$button-normal-color: #232228;
+$button-select-color: #583edb;
+$button-over-color: #4c456d;
+$button-press-color: #371bc2;
+
 /* AppHeader.vue */
-$header-bg-color: #3c3c3c;
+$header-height: 80px;
+
+$header-bg-color: #0d0c0f;
+
+$header-load-file-button-normal-color: $button-select-color;
+$header-load-file-button-normal-label-color: white;
+
+$header-help-button-normal-color: $button-press-color;
+$header-help-button-normal-label-color: white;
 
 /* Sidebar.vue */
-$sidebar-bg-color: #3c3c3c;
-$sidebar-label-color: gray;
+$sidebar-width: 242px;
+
+$sidebar-menu-bg-color: $button-normal-color;
+$sidebar-menu-label-color: #b6b6b6;
+
+$sidebar-submenu-bg-color: $button-normal-color;
+$sidebar-submenu-label-color: #8e8e8e;
+
+$sidebar-menu-normal-bg-color: $button-normal-color;
+$sidebar-menu-normal-label-color: #b6b6b6;
+
+$sidebar-menu-select-bg-color: $button-select-color;
+$sidebar-menu-select-label-color: #b6b6b6;
+
+$sidebar-menu-over-bg-color: $button-over-color;
+$sidebar-menu-over-label-color: white;
+
+$sidebar-menu-press-bg-color: $button-press-color;
+$sidebar-menu-press-label-color: #9787eb;
 
 /* Viewer */
-$layouts-bg-color: #262626;
+$layouts-bg-color: black;

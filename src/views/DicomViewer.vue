@@ -5,15 +5,23 @@
       <div class="container is-fluid is-marginless app-content">
 
         <div class="layout-area">
+
           <div id="layout-1-1" ref="layout1By1" class="layouts" :style="layout_1_1.style"
                v-if="currentLayout === '1By1' || currentLayout === '2By2' || currentLayout === '3By'" @mouseover="mouseOver"></div>
 
           <div id="layout-1-2" ref="layout1By2" class="layouts" :style="layout_1_2.style"
-               v-if="currentLayout === '2By2' || currentLayout === '3By'" @mouseover="mouseOver"></div>
+               v-show="currentLayout === '2By2' || currentLayout === '3By'" @mouseover="mouseOver"></div>
           <div id="layout-2-1" ref="layout2By1" class="layouts" :style="layout_2_1.style"
-               v-if="currentLayout === '2By2' || currentLayout === '3By'" @mouseover="mouseOver"></div>
+               v-show="currentLayout === '2By2' || currentLayout === '3By'" @mouseover="mouseOver"></div>
           <div id="layout-2-2" ref="layout2By2" class="layouts" :style="layout_2_2.style"
-               v-if="currentLayout === '2By2' || currentLayout === '3By'" @mouseover="mouseOver"></div>
+               v-show="currentLayout === '2By2' || currentLayout === '3By'" @mouseover="mouseOver"></div>
+
+          <!--<div id="layout-1-2" ref="layout1By2" class="layouts" :style="layout_1_2.style"-->
+               <!--v-if="currentLayout === '2By2' || currentLayout === '3By'" @mouseover="mouseOver"></div>-->
+          <!--<div id="layout-2-1" ref="layout2By1" class="layouts" :style="layout_2_1.style"-->
+               <!--v-if="currentLayout === '2By2' || currentLayout === '3By'" @mouseover="mouseOver"></div>-->
+          <!--<div id="layout-2-2" ref="layout2By2" class="layouts" :style="layout_2_2.style"-->
+               <!--v-if="currentLayout === '2By2' || currentLayout === '3By'" @mouseover="mouseOver"></div>-->
 
           <!--<div id="layout-1-3" ref="layout1By3" class="layouts" :style="layout_1_3.style"-->
                <!--v-if="currentLayout === '3By'" @mouseover="mouseOver"></div>-->
@@ -225,11 +233,11 @@
 
   .viewer-area {
     padding: 0;
-    padding-top: 52px;
-    padding-left: 180px;
+    padding-top: $header-height;
+    padding-left: $sidebar-width;
     width: 100vw;
     height: 100vh;
-    background-color: #282828;
+    background-color: #000000;
 
     .app-content {
       height: 100%;
@@ -244,8 +252,9 @@
         .layouts {
           position: absolute;
           padding: 1em;
-          border: 1px solid #000;
+          border: 1px solid #fff;
           background-color: $layouts-bg-color;
+          overflow: hidden;
         }
       }
     }
