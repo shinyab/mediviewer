@@ -101,7 +101,7 @@
   import * as mutationType from '@/store/mutation-types'
   import * as busType from '@/util/bus/bus-types'
 
-  import {init, loadZip, loadSegmentation} from '@/lib/medic3d/'
+  import {init, loadZip, loadSegmentation, getStack} from '@/lib/medic3d/'
 
   import Sidebar from '@/components/layout/Sidebar'
 
@@ -157,6 +157,7 @@
       loadSegmentation (uploadFile) {
         console.log(uploadFile);
         loadSegmentation(uploadFile);
+        console.log('Stack ' + getStack()._numberOfFrames);
       },
       initLayouts () {
 //        this.layout_1_1 = {
