@@ -116,7 +116,7 @@ export function init () {
     render.renderer.render(render.scene, render.camera);
     // mesh
     render.renderer.clearDepth();
-    render.renderer.render(sceneClip, r2.camera);
+    render.renderer.render(sceneClip, render.camera);
     // localizer
     render.renderer.clearDepth();
     render.renderer.render(render.localizerScene, render.camera);
@@ -248,12 +248,20 @@ export function loadZip (uploadedFile) {
 
       loader.loadZip(buffer)
         .then(function () {
+          // {Array.<ModelsSeries>} Array of series properly merged.
           let series = loader.data[0].mergeSeries(loader.data)[0]
           loader.free()
           loader = null
 
           // get first stack from series
           let stack = series.stack[0]
+          // Compute cosines
+          // Order frames
+          // computeSpacing
+          // snityCheck
+          // init some vars
+          // compute min/max
+          // compute transformation matrices
           stack.prepare()
 
           // To decide what type of split window(1*1, 2*2)
@@ -366,23 +374,54 @@ export function loadSegmentation (uploadedFile) {
       return extractZip(zip, 'arraybuffer');
     })
     .then(function (buffer) {
-      loadZipPngs(buffer)
-        .then(function () {
-
-        });
+      return loadZipPngs(buffer)
     })
+    .then(function (data) {
+      console.log('Loaded seg. ' + data.length);
+
+      var stack = getStack();
+      if (stack !== null) {
+        console.log('rawdata size ' + stack.rawData.length);
+        console.log('stack._frame.length ' + stack._frame.length);
+        console.log('stack.rawData.length ' + stack.rawData.length);
+        // console.log('stack._frame.pixelData.length ' + stack._frame.pixelData.length);
+        // for (var fr = 0; fr < 170; fr++) {
+        //   for (var y = 0; y < 250; y++) {
+        //     for (var x = 0; x < 250; x++) {
+        //       // console.log('value ' + stack._frame[fr].getPixelData(y, x));
+        //       stack._frame[fr]._pixelData[y * 255 + x] = 0;
+        //     }
+        //   }
+        // }
+        for (var fr = 0; fr < stack._frame.length; fr++) {
+          for (var y = 0; y < 256; y++) {
+            for (var x = 0; x < 256; x++) {
+              var po = (y * 255 + x) * 4;
+              if (data[fr].data[po] !== 0 ||
+              data[fr].data[po + 1] !== 0 ||
+              data[fr].data[po + 2] !== 0) {
+                stack._frame[fr]._pixelData[y * 255 + x] = 450;
+              }
+            }
+          }
+        }
+        combineMpr(r0, r1, getStack());
+        combineMpr(r0, r2, getStack());
+        combineMpr(r0, r3, getStack());
+      }
+    });
 }
 
 function loadZipPngs (zip) {
-  const loadSequences = [];
+  const loadSequencesSeg = [];
 
   zip.forEach((rawdata) => {
-    loadSequences.push(
+    loadSequencesSeg.push(
       loadSegmentationRawdata(rawdata)
     );
   });
 
-  return Promise.all(loadSequences);
+  return Promise.all(loadSequencesSeg);
 }
 
 function loadSegmentationRawdata (rawdata) {
@@ -391,8 +430,9 @@ function loadSegmentationRawdata (rawdata) {
       if (error) {
         console.log('Error : ' + error);
       }
+      console.log('loaded png' + data);
+      resolve(data);
     });
-    resolve();
   });
 }
 
@@ -552,12 +592,9 @@ function onDoubleClick (event) {
       // CoreUtils.worldToData(stackHelper.stack.lps2IJK, intersects[0].point);
       Medic3D.Core.Utils.worldToData(stackHelper.stack.lps2IJK, intersects[0].point);
 
-    r1.stackHelper.index =
-      ijk.getComponent((r1.stackHelper.orientation + 2) % 3);
-    r2.stackHelper.index =
-      ijk.getComponent((r2.stackHelper.orientation + 2) % 3);
-    r3.stackHelper.index =
-      ijk.getComponent((r3.stackHelper.orientation + 2) % 3);
+    r1.stackHelper.index = ijk.getComponent((r1.stackHelper.orientation + 2) % 3);
+    r2.stackHelper.index = ijk.getComponent((r2.stackHelper.orientation + 2) % 3);
+    r3.stackHelper.index = ijk.getComponent((r3.stackHelper.orientation + 2) % 3);
 
     onGreenChanged();
     onRedChanged();
