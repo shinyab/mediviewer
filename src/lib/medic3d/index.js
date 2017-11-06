@@ -34,7 +34,8 @@ const r1 = {
   light: null,
   stackHelper: null,
   localizerHelper: null,
-  localizerScene: null
+  localizerScene: null,
+  name: 'r1'
 };
 
 // 2d sagittal renderer
@@ -52,7 +53,8 @@ const r2 = {
   light: null,
   stackHelper: null,
   localizerHelper: null,
-  localizerScene: null
+  localizerScene: null,
+  name: 'r2'
 };
 
 // 2d coronal renderer
@@ -70,7 +72,8 @@ const r3 = {
   light: null,
   stackHelper: null,
   localizerHelper: null,
-  localizerScene: null
+  localizerScene: null,
+  name: 'r3'
 };
 
 let gStack = null;
@@ -304,7 +307,6 @@ export function loadZip (uploadedFile) {
 }
 
 function combineMpr (target, plane, stack) {
-// red slice
   initHelpersStack(plane, stack);
   target.scene.add(plane.scene);
 }
@@ -368,6 +370,8 @@ function extractZip (zip, type) {
     })
 }
 
+// Todo : to create slice mesh for display segmentation.
+// Slice has to be transference
 export function loadSegmentation (uploadedFile) {
   JSZIP.loadAsync(uploadedFile)
     .then(function (zip) {
@@ -384,15 +388,7 @@ export function loadSegmentation (uploadedFile) {
         console.log('rawdata size ' + stack.rawData.length);
         console.log('stack._frame.length ' + stack._frame.length);
         console.log('stack.rawData.length ' + stack.rawData.length);
-        // console.log('stack._frame.pixelData.length ' + stack._frame.pixelData.length);
-        // for (var fr = 0; fr < 170; fr++) {
-        //   for (var y = 0; y < 250; y++) {
-        //     for (var x = 0; x < 250; x++) {
-        //       // console.log('value ' + stack._frame[fr].getPixelData(y, x));
-        //       stack._frame[fr]._pixelData[y * 255 + x] = 0;
-        //     }
-        //   }
-        // }
+
         for (var fr = 0; fr < stack._frame.length; fr++) {
           for (var y = 0; y < 256; y++) {
             for (var x = 0; x < 256; x++) {
@@ -405,11 +401,28 @@ export function loadSegmentation (uploadedFile) {
             }
           }
         }
+
+        removeSceneByName(r1);
+        removeSceneByName(r2);
+        removeSceneByName(r3);
+
         combineMpr(r0, r1, getStack());
         combineMpr(r0, r2, getStack());
         combineMpr(r0, r3, getStack());
       }
     });
+}
+
+function removeSceneByName (render) {
+  var selectedObj = r0.scene.getObjectByName(render.name);
+  if (selectedObj === null) {
+    console.log('Not found Object3D ' + render.name);
+    return;
+  } else {
+    console.log('Found Object3D ' + render.name);
+  }
+  r0.scene.remove(r0.scene.getObjectByName(render.name));
+  render.scene.remove(render.scene.getObjectByName(render.name));
 }
 
 function loadZipPngs (zip) {
@@ -440,10 +453,13 @@ function initHelpersStack (rendererObj, stack) {
   rendererObj.stackHelper = new Medic3D.Helpers.Stack(stack);
   rendererObj.stackHelper.bbox.visible = false;
   rendererObj.stackHelper.borderColor = rendererObj.sliceColor;
-  rendererObj.stackHelper.slice.canvasWidth =
-    rendererObj.domElement.clientWidth;
-  rendererObj.stackHelper.slice.canvasHeight =
-    rendererObj.domElement.clientHeight;
+  rendererObj.stackHelper.slice.canvasWidth = rendererObj.domElement.clientWidth;
+  rendererObj.stackHelper.slice.canvasHeight = rendererObj.domElement.clientHeight;
+
+  // for removing THREE.Object3D by name
+  rendererObj.stackHelper.name = rendererObj.name;
+
+  console.log('#initHelpersStack name : ' + rendererObj.name);
 
   // set camera
   let worldbb = stack.worldBoundingBox();
@@ -473,7 +489,7 @@ function initHelpersStack (rendererObj, stack) {
   rendererObj.camera.fitBox(2, 1);
   rendererObj.stackHelper.orientation = rendererObj.camera.stackOrientation;
   rendererObj.stackHelper.index = Math.floor(rendererObj.stackHelper.orientationMaxIndex / 2);
-  rendererObj.scene.add(rendererObj.stackHelper);
+  rendererObj.scene.add(rendererObj.stackHelper); // stackHelper extends THREE.Object3D
 }
 
 function initHelpersLocalizer (rendererObj, stack, referencePlane, localizers) {

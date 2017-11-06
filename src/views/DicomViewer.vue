@@ -158,6 +158,7 @@
         console.log(uploadFile);
         loadSegmentation(uploadFile);
         console.log('Stack ' + getStack()._numberOfFrames);
+        // Todo : assign (slice, segmentation)
       },
       initLayouts () {
 //        this.layout_1_1 = {
