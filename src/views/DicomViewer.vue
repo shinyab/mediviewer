@@ -173,7 +173,7 @@
 //        this.layout_1_2 = { obj: this.$refs.layout1By2 } // == document.getElementById('layout-1-2'),
 //        this.layout_2_1 = { obj: this.$refs.layout2By1 } // == document.getElementById('layout-2-1'),
 //        this.layout_2_2 = { obj: this.$refs.layout2By2 } // == document.getElementById('layout-2-2'),
-        this.setLayoutsWithMenuName('2By2');
+        this.setLayoutsWithMenuName({name: '2By2'});
       },
       setLayoutsWithMenuName (layout) {
         if (layout.name === '1By1') {
