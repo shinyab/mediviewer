@@ -103,6 +103,10 @@
     &:hover {
       background-color: #4c456d;
     }
+
+    &:active {
+      background-color: #27305e;
+    }
   }
   .nav-load-file-label {
     margin-left: 177px;

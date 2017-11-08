@@ -10,8 +10,8 @@
             <img v-if="menu.meta.icon" :src="`/static/images/icons/svg/${menu.meta.icon}`">
             <div class="menu-item-label">
               <span>{{ menu.meta.label }}</span>
-              <icon name="angle-down" class="is-angle"></icon>
             </div>
+            <icon name="angle-down" class="is-angle"></icon>
           </a>
         </template>
         <template v-else>
@@ -123,6 +123,7 @@
     z-index: 1025;
     background-color: $sidebar-menu-bg-color;
     overflow-y: auto;
+    overflow-x: hidden;
 
     .fa-icon {
       margin-top: 8px;
@@ -138,6 +139,7 @@
 
     .menu-list {
       overflow-y: auto;
+      overflow-x: hidden;
 
       li a {
         &[aria-expanded="true"] {
@@ -219,7 +221,7 @@
         padding-top: 3px;
         padding-left: 24px;
         padding-bottom: 3px;
-        width: $sidebar-width;
+        width: 100%;
         border-left: none;
         background-color: $sidebar-submenu-bg-color;
 
@@ -238,6 +240,7 @@
               position: relative;
               top: 3px;
               margin-left: 3px;
+              font-size: 14px;
               vertical-align: middle;
             }
 

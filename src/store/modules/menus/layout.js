@@ -3,7 +3,7 @@ export default {
   type: 'expand',
   meta: {
     label: 'Divide Display',
-    icon: 'img-nor-05-divide-display.svg',
+    icon: 'img-over-05-divide-display.svg',
     expanded: false
   },
   children: [
@@ -12,7 +12,7 @@ export default {
       type: 'layout',
       meta: {
         label: '1 X 1',
-        icon: 'img-lnb-radio-sel.svg'
+        icon: 'img-lnb-radio-sel-pre.svg'
       }
     },
     {
@@ -20,7 +20,7 @@ export default {
       type: 'layout',
       meta: {
         label: '2 X 2',
-        icon: 'img-lnb-radio-nor.svg'
+        icon: 'img-lnb-radio-nor-pre.svg'
       }
     }
     // ,

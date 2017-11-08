@@ -2,8 +2,8 @@ import * as types from '../../mutation-types'
 
 import Divider from './divider'
 import layout from './layout'
-// import rotate from './rotate'
-// import move from './move'
+import filter from './filter'
+import annotations from './annotations'
 
 /*
 * - type :
@@ -19,7 +19,7 @@ const state = {
       type: 'action',
       meta: {
         label: 'Brain ROI Segmentation',
-        icon: 'img-nor-01-brain-roi-segmentation.svg'
+        icon: 'img-over-01-brain-roi-segmentation.svg'
       }
     },
     {
@@ -27,7 +27,7 @@ const state = {
       type: 'action',
       meta: {
         label: 'Segmentation Result\nOveray',
-        icon: 'img-nor-02-segmentation-result-overay.svg'
+        icon: 'img-over-02-segmentation-result-overay.svg'
       }
     },
     {
@@ -35,7 +35,7 @@ const state = {
       type: 'action',
       meta: {
         label: 'Analysis Report',
-        icon: 'img-nor-03-analysis-roport.svg'
+        icon: 'img-over-03-analysis-roport.svg'
       }
     },
     {
@@ -43,7 +43,7 @@ const state = {
       type: 'action',
       meta: {
         label: 'Open Segmentations',
-        icon: 'img-nor-18-open-segmentations.svg'
+        icon: 'img-over-18-open-segmentations.svg'
       }
     },
     {
@@ -51,7 +51,7 @@ const state = {
       type: 'action',
       meta: {
         label: 'Save As Derived',
-        icon: 'img-nor-04-svae-as-derived.svg'
+        icon: 'img-over-04-svae-as-derived.svg'
       }
     },
     Divider,
@@ -62,7 +62,15 @@ const state = {
       type: 'select',
       meta: {
         label: 'Pan',
-        icon: 'img-nor-06-pan.svg'
+        icon: 'img-over-06-pan.svg'
+      }
+    },
+    {
+      name: 'Stack',
+      type: 'select',
+      meta: {
+        label: 'Stack',
+        icon: 'img-over-19-stack.svg'
       }
     },
     {
@@ -70,7 +78,7 @@ const state = {
       type: 'action',
       meta: {
         label: 'Zoom In',
-        icon: 'img-nor-07-zoom-in.svg'
+        icon: 'img-over-07-zoom-in.svg'
       }
     },
     {
@@ -78,7 +86,7 @@ const state = {
       type: 'action',
       meta: {
         label: 'Zoom Out',
-        icon: 'img-nor-08-zoom-out.svg'
+        icon: 'img-over-08-zoom-out.svg'
       }
     },
     Divider,
@@ -87,7 +95,7 @@ const state = {
       type: 'select',
       meta: {
         label: 'Window Level',
-        icon: 'img-nor-09-window-level.svg'
+        icon: 'img-over-09-window-level.svg'
       }
     },
     {
@@ -95,7 +103,43 @@ const state = {
       type: 'action',
       meta: {
         label: 'Fit',
-        icon: 'img-nor-10-fit.svg'
+        icon: 'img-over-10-fit.svg'
+      }
+    },
+    {
+      name: 'OneToOne',
+      type: 'action',
+      meta: {
+        label: 'One to One',
+        icon: 'img-over-11-one-to-one.svg'
+      }
+    },
+    filter,
+    {
+      name: 'Reload',
+      type: 'action',
+      meta: {
+        label: 'Reload',
+        icon: 'img-over-13-reload.svg'
+      }
+    },
+    Divider,
+    annotations,
+    {
+      name: 'LoadAnnotation',
+      type: 'action',
+      meta: {
+        label: 'Load Annotation',
+        icon: 'img-over-15-load-annotation.svg'
+      }
+    },
+    Divider,
+    {
+      name: 'HideTags',
+      type: 'action',
+      meta: {
+        label: 'Hide Tags',
+        icon: 'img-over-16-hide-tags.svg'
       }
     }
   ]

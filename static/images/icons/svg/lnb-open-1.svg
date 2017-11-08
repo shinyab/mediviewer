@@ -1,0 +1,281 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="242" height="1210" viewBox="0 0 242 1210">
+    <defs>
+        <linearGradient id="a" x1="50%" x2="50%" y1="2.904%" y2="100%">
+            <stop offset="0%" stop-color="#1E1E1E"/>
+            <stop offset="100%" stop-color="#2E2E2E"/>
+        </linearGradient>
+    </defs>
+    <g fill="none" fill-rule="evenodd">
+        <path fill="#232228" d="M0 0h242v1210H0z"/>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="15" font-weight="600">
+            <tspan x="54" y="167">Open Segmentations</tspan>
+        </text>
+        <path fill="#16151A" d="M0 768h228v96H0zM0 966h228v142H0zM0 286h228v96H0z"/>
+        <rect width="2" height="66" x="24" y="300" fill="#D8D8D8" opacity=".2" rx="1"/>
+        <rect width="2" height="66" x="24" y="784" fill="#D8D8D8" opacity=".2" rx="1"/>
+        <rect width="2" height="112" x="24" y="982" fill="#D8D8D8" opacity=".2" rx="1"/>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="15" font-weight="600">
+            <tspan x="54" y="68">Segmentation Result</tspan> <tspan x="54" y="84">Overay</tspan>
+        </text>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="15" font-weight="600">
+            <tspan x="54" y="29">Brain ROI Segmentation</tspan>
+        </text>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="15" font-weight="600">
+            <tspan x="54" y="121">Analysis Report</tspan>
+        </text>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="15" font-weight="600">
+            <tspan x="54" y="213">Save As Derived</tspan>
+        </text>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="15" font-weight="600">
+            <tspan x="54" y="267">Divide Display</tspan>
+        </text>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="15" font-weight="600">
+            <tspan x="54" y="419">Pan</tspan>
+        </text>
+        <g stroke="#FFF" stroke-width="2" transform="translate(15 445)">
+            <path stroke-linecap="round" d="M13 25.96h6.012a7 7 0 0 0 7-7V13"/>
+            <path stroke-linecap="round" d="M8 21.944h8.951a5 5 0 0 0 5-5V8"/>
+            <rect width="14" height="14" x="4" y="4" rx="2"/>
+        </g>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="15" font-weight="600">
+            <tspan x="54" y="464">Stack</tspan>
+        </text>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="15" font-weight="600">
+            <tspan x="54" y="611">Window Level</tspan>
+        </text>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="15" font-weight="600">
+            <tspan x="54" y="511">Zoom In</tspan>
+        </text>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="15" font-weight="600">
+            <tspan x="54" y="657">Fit</tspan>
+        </text>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="15" font-weight="600">
+            <tspan x="54" y="557">Zoom Out</tspan>
+        </text>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="15" font-weight="600">
+            <tspan x="54" y="703">One to One</tspan>
+        </text>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="15" font-weight="600">
+            <tspan x="54" y="749">Filter</tspan>
+        </text>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="15" font-weight="600">
+            <tspan x="54" y="893">Reload</tspan>
+        </text>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="15" font-weight="600">
+            <tspan x="54" y="947">Annotations</tspan>
+        </text>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="15" font-weight="600">
+            <tspan x="54" y="1137">Load Annotation</tspan>
+        </text>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="15" font-weight="600">
+            <tspan x="54" y="1192">Hide Tags</tspan>
+        </text>
+        <path fill="#2D2D2D" d="M6 234h218v2H6zM6 386h218v2H6zM6 578h218v2H6zM6 914h218v2H6zM6 1158h218v2H6z"/>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="15" font-weight="600">
+            <tspan x="82" y="316">1 x 1</tspan>
+        </text>
+        <text fill="#E0E0E0" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="15" font-weight="600">
+            <tspan x="82" y="362">2 x 2</tspan>
+        </text>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="15" font-weight="600">
+            <tspan x="82" y="798">Invert</tspan>
+        </text>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="15" font-weight="600">
+            <tspan x="82" y="995">Ruler</tspan>
+        </text>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="15" font-weight="600">
+            <tspan x="82" y="1043">Poly Ruler</tspan>
+        </text>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="15" font-weight="600">
+            <tspan x="82" y="1088">Protractor</tspan>
+        </text>
+        <text fill="#FFF" font-family="AppleSDGothicNeo-ExtraBold, Apple SD Gothic Neo" font-size="15" font-weight="600">
+            <tspan x="82" y="844">Brightness Contrast</tspan>
+        </text>
+        <path fill="url(#a)" d="M0 286h228v4H0zM0 768h228v4H0zM0 966h228v4H0z" opacity=".2"/>
+        <path fill="url(#a)" d="M0 860h228v4H0z" opacity=".2" transform="matrix(1 0 0 -1 0 1724)"/>
+        <path fill="url(#a)" d="M0 1104h228v4H0z" opacity=".2" transform="matrix(1 0 0 -1 0 2212)"/>
+        <path fill="url(#a)" d="M0 378h228v4H0z" opacity=".2" transform="matrix(1 0 0 -1 0 760)"/>
+        <path fill="#3B3A40" d="M228 0h14v943h-14z"/>
+        <rect width="8" height="403" x="231" y="2" fill="#787782" rx="4"/>
+        <path fill="#FFF" d="M199.778 939.745l-5.72 5.72a.97.97 0 1 1-1.373-1.373l6.407-6.406a.968.968 0 0 1 1.372 0l6.406 6.406a.97.97 0 0 1-1.373 1.372l-5.719-5.719zM199.778 741.745l-5.72 5.72a.97.97 0 1 1-1.373-1.373l6.407-6.406a.968.968 0 0 1 1.372 0l6.406 6.406a.97.97 0 0 1-1.373 1.372l-5.719-5.719zM199.778 259.745l-5.72 5.72a.97.97 0 1 1-1.373-1.373l6.407-6.406a.968.968 0 0 1 1.372 0l6.406 6.406a.97.97 0 0 1-1.373 1.372l-5.719-5.719z"/>
+        <circle cx="10" cy="10" r="9" stroke="#E0E0E0" stroke-width="2" transform="translate(44 301)"/>
+        <g transform="translate(44 347)">
+            <circle cx="10" cy="10" r="9" stroke="#FFF" stroke-width="2"/>
+            <circle cx="10" cy="10" r="5" fill="#DDD"/>
+        </g>
+        <path stroke="#FFF" stroke-width="2" d="M30.492 197.009a1 1 0 0 0-.984 0l-9 5.08a1 1 0 0 0-.508.87v10.082a1 1 0 0 0 .508.87l9 5.08a1 1 0 0 0 .984 0l9-5.08a1 1 0 0 0 .508-.87v-10.082a1 1 0 0 0-.508-.87l-9-5.08z"/>
+        <g fill="#FFF" transform="translate(25 201)">
+            <rect width="2" height="9" x="4" rx="1"/>
+            <path d="M4.95 7.071L2.12 4.243A1 1 0 1 0 .707 5.657l3.536 3.535a.997.997 0 0 0 1.414 0l3.535-3.535a1 1 0 1 0-1.414-1.414L4.95 7.07z"/>
+            <rect width="10" height="2" y="11" rx="1"/>
+        </g>
+        <g stroke="#FFF" stroke-width="2" transform="translate(18 250)">
+            <rect width="9" height="9" x="1" y="1" rx="2"/>
+            <rect width="9" height="9" x="1" y="14" rx="2"/>
+            <rect width="9" height="9" x="14" y="1" rx="2"/>
+            <rect width="9" height="9" x="14" y="14" rx="2"/>
+        </g>
+        <g transform="translate(18 495)">
+            <circle cx="9" cy="9" r="9" stroke="#FFF" stroke-width="2"/>
+            <g fill="#FFF" transform="translate(4 4)">
+                <rect width="3" height="9" x="13.182" y="9.682" rx="1.5" transform="scale(-1 1) rotate(45 0 -21.263)"/>
+                <path d="M6 4V1a1 1 0 1 0-2 0v3H1a1 1 0 1 0 0 2h3v3a1 1 0 1 0 2 0V6h3a1 1 0 1 0 0-2H6z"/>
+            </g>
+        </g>
+        <g fill="#FFF" transform="translate(18 402)">
+            <rect width="2" height="20" x="11" y="2" rx="1"/>
+            <path d="M11.95 2.828l2.828 2.829a1 1 0 0 0 1.414-1.414L12.657.707a.997.997 0 0 0-1.414 0L7.707 4.243a1 1 0 1 0 1.414 1.414l2.829-2.829zM11.95 21.071l2.828-2.828a1 1 0 1 1 1.414 1.414l-3.535 3.535a.997.997 0 0 1-1.414 0l-3.536-3.535a1 1 0 0 1 1.414-1.414l2.829 2.828zM2.828 11.95l2.829 2.828a1 1 0 1 1-1.414 1.414L.707 12.657a.997.997 0 0 1 0-1.414l3.536-3.536a1 1 0 0 1 1.414 1.414L2.828 11.95zM21.071 11.95l-2.828 2.828a1 1 0 0 0 1.414 1.414l3.535-3.535a.997.997 0 0 0 0-1.414l-3.535-3.536a1 1 0 1 0-1.414 1.414l2.828 2.829z"/>
+            <rect width="2" height="20" x="11" y="2" rx="1" transform="rotate(90 12 12)"/>
+        </g>
+        <g transform="translate(18 541)">
+            <circle cx="9" cy="9" r="9" stroke="#FFF" stroke-width="2"/>
+            <g fill="#FFF" transform="translate(4 8)">
+                <rect width="3" height="9" x="13.182" y="5.682" rx="1.5" transform="scale(-1 1) rotate(45 0 -25.263)"/>
+                <rect width="10" height="2" rx="1"/>
+            </g>
+        </g>
+        <g fill="#FFF" transform="translate(18 594)">
+            <circle cx="12" cy="12" r="6"/>
+            <rect width="2" height="5" x="11" rx="1"/>
+            <rect width="2" height="5" x="11" y="19" rx="1"/>
+            <rect width="5" height="2" x="19" y="11" rx="1"/>
+            <rect width="5" height="2" x="1.975" y="3.475" rx="1" transform="rotate(45 4.475 4.475)"/>
+            <rect width="5" height="2" x="1.975" y="19" rx="1" transform="scale(1 -1) rotate(45 52.76 0)"/>
+            <rect width="5" height="2" x="16.975" y="3.475" rx="1" transform="scale(-1 1) rotate(45 0 -42.542)"/>
+            <rect width="5" height="2" x="16.975" y="19" rx="1" transform="rotate(-135 19.475 20)"/>
+            <rect width="5" height="2" y="11" rx="1"/>
+        </g>
+        <g fill="#FFF" transform="translate(18 640)">
+            <rect width="2" height="12" x="17.95" y="-1.05" rx="1" transform="rotate(45 18.95 4.95)"/>
+            <rect width="2" height="12" x="18" y="13" rx="1" transform="scale(1 -1) rotate(45 64.87 0)"/>
+            <rect width="2" height="12" x="3.95" y="-1.05" rx="1" transform="scale(-1 1) rotate(45 0 -7)"/>
+            <rect width="2" height="12" x="4" y="13" rx="1" transform="rotate(-135 5 19)"/>
+            <path d="M22 22h-4a1 1 0 0 0 0 2h5a.997.997 0 0 0 1-1v-5a1 1 0 0 0-2 0v4zM2 22h4a1 1 0 0 1 0 2H1a.997.997 0 0 1-1-1v-5a1 1 0 0 1 2 0v4zM22 2h-4a1 1 0 0 1 0-2h5a.997.997 0 0 1 1 1v5a1 1 0 0 1-2 0V2zM2 2h4a1 1 0 1 0 0-2H1a.997.997 0 0 0-1 1v5a1 1 0 1 0 2 0V2z"/>
+        </g>
+        <g fill="#FFF" transform="translate(18 686)">
+            <rect width="2" height="10" x="6" y="7" rx="1"/>
+            <rect width="2" height="10" x="16" y="7" rx="1"/>
+            <path d="M22 22.05h-4a1 1 0 0 0 0 2h5a.997.997 0 0 0 1-1v-5a1 1 0 1 0-2 0v4zM2 22.05h4a1 1 0 0 1 0 2H1a.997.997 0 0 1-1-1v-5a1 1 0 1 1 2 0v4zM22 2.05h-4a1 1 0 0 1 0-2h5a.997.997 0 0 1 1 1v5a1 1 0 0 1-2 0v-4zM2 2.05h4a1 1 0 0 0 0-2H1a.997.997 0 0 0-1 1v5a1 1 0 1 0 2 0v-4z"/>
+            <circle cx="12" cy="10" r="1"/>
+            <circle cx="12" cy="14" r="1"/>
+            <rect width="2" height="6" x="19.828" y="-.172" rx="1" transform="rotate(45 20.828 2.828)"/>
+            <rect width="2" height="6" x="1.828" y="17.828" rx="1" transform="rotate(45 2.828 20.828)"/>
+            <rect width="2" height="6" x="1.828" y="-.172" rx="1" transform="rotate(-45 2.828 2.828)"/>
+            <rect width="2" height="6" x="19.828" y="17.828" rx="1" transform="rotate(-45 20.828 20.828)"/>
+        </g>
+        <path stroke="#FFF" stroke-width="2" d="M21 733h18a2 2 0 0 1 2 2v9.453a2 2 0 0 1-.607 1.436l-8.811 8.547a2 2 0 0 1-1.393.564H21a2 2 0 0 1-2-2v-18a2 2 0 0 1 2-2z"/>
+        <path fill="#FFF" d="M30 755v-9a2 2 0 0 1 2-2h9l-11 11z"/>
+        <g stroke="#FFF" stroke-width="2" transform="translate(43 782)">
+            <path d="M2 0h18a2 2 0 0 1 2 2v18a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2z"/>
+            <circle cx="11" cy="11" r="5"/>
+        </g>
+        <path fill="#FFF" d="M54 799a6 6 0 1 1 0-12v12z"/>
+        <g stroke="#FFF" stroke-width="2" transform="translate(43 828)">
+            <path d="M2 0h18a2 2 0 0 1 2 2v18a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2z"/>
+            <circle cx="11" cy="11" r="4"/>
+        </g>
+        <g fill="#FFF" transform="translate(45 830)">
+            <path d="M9 13a4 4 0 1 1 0-8v8z"/>
+            <rect width="2" height="3" x="8" rx="1"/>
+            <rect width="2" height="3" x="8" y="15" rx="1"/>
+            <rect width="3" height="2" y="8" rx="1"/>
+            <rect width="3" height="2" x="1.968" y="2.768" rx="1" transform="rotate(45 3.468 3.768)"/>
+            <rect width="3" height="2" x="2" y="14" rx="1" transform="scale(1 -1) rotate(45 39.713 0)"/>
+            <rect width="3" height="2" x="13.268" y="2.768" rx="1" transform="scale(-1 1) rotate(45 0 -31.885)"/>
+            <rect width="3" height="2" x="13" y="14" rx="1" transform="rotate(-135 14.5 15)"/>
+            <rect width="3" height="2" x="15" y="8" rx="1"/>
+        </g>
+        <g fill="#FFF">
+            <path d="M28 881a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2h20a2 2 0 0 0-2-2H28zM35.13 890.206a.498.498 0 0 1-.365.115l-1.532 1.286a.5.5 0 1 0 .643.766l.365-.306a3.744 3.744 0 0 1-3.75 3.683 3.749 3.749 0 0 1-3.326-2.017.75.75 0 0 0-1.33.694 5.249 5.249 0 0 0 8.986.543 5.225 5.225 0 0 0 .914-2.714zm-8.37 1.01a3.75 3.75 0 0 1 6.833-1.837.75.75 0 1 0 1.237-.849 5.251 5.251 0 0 0-9.527 2.226l-.187-.323a.5.5 0 1 0-.866.5l1 1.732a.498.498 0 0 0 .683.183l1.732-1a.5.5 0 0 0-.5-.866l-.404.234zM20.332 885H39.67a2 2 0 0 1 1.977 2.304l-1.385 9A2 2 0 0 1 38.284 898H21.716a2 2 0 0 1-1.977-1.696l-1.385-9A2 2 0 0 1 20.331 885z"/>
+        </g>
+        <g fill="#FFF" transform="translate(17 930)">
+            <path d="M4.102 19.355l5.202-1.194a.5.5 0 0 0 .242-.84l-4.008-4.009a.5.5 0 0 0-.841.242l-1.194 5.202a.5.5 0 0 0 .599.6zM18.571 2.308l1.98 1.979a2 2 0 0 1 0 2.828l-9.651 9.65a.5.5 0 0 1-.707 0l-4.1-4.1a.5.5 0 0 1 0-.707l9.65-9.65a2 2 0 0 1 2.828 0z"/>
+            <rect width="24" height="2" x="1" y="22" rx="1"/>
+        </g>
+        <g fill="#FFF" transform="translate(49 983)">
+            <rect width="7" height="2" rx="1"/>
+            <rect width="7" height="2" y="6" rx="1"/>
+            <rect width="7" height="2" y="12" rx="1"/>
+            <rect width="7" height="2" y="3" rx="1"/>
+            <rect width="7" height="2" y="9" rx="1"/>
+            <rect width="7" height="2" y="15" rx="1"/>
+            <rect width="2" height="14" x="12" y="1" rx="1"/>
+        </g>
+        <g stroke="#FFF" stroke-width="2" transform="translate(42 979)">
+            <rect width="14" height="22" y="1" rx="2"/>
+            <circle cx="20" cy="3" r="2"/>
+            <circle cx="20" cy="21" r="2"/>
+        </g>
+        <g fill="#FFF" transform="translate(45 1029)">
+            <rect width="7" height="2" rx="1"/>
+            <rect width="7" height="2" y="6" rx="1"/>
+            <rect width="7" height="2" y="12" rx="1"/>
+            <rect width="7" height="2" y="3" rx="1"/>
+            <rect width="7" height="2" y="9" rx="1"/>
+            <rect width="7" height="2" y="15" rx="1"/>
+        </g>
+        <g stroke="#FFF" stroke-width="2" transform="translate(42 1025)">
+            <rect width="9" height="22" y="1" rx="2"/>
+            <circle cx="20" cy="3" r="2"/>
+            <circle cx="20" cy="21" r="2"/>
+            <circle cx="14" cy="12" r="2"/>
+            <path d="M18.87 20.011l-4.365-6.607M14.713 10.13l4.444-6.116"/>
+        </g>
+        <g fill="#FFF" transform="translate(45 1075)">
+            <rect width="7" height="2" rx="1"/>
+            <rect width="7" height="2" y="6" rx="1"/>
+            <rect width="7" height="2" y="12" rx="1"/>
+            <rect width="7" height="2" y="3" rx="1"/>
+            <rect width="7" height="2" y="9" rx="1"/>
+            <rect width="7" height="2" y="15" rx="1"/>
+        </g>
+        <g stroke="#FFF" stroke-width="2" transform="translate(42 1071)">
+            <rect width="9" height="22" y="1" rx="2"/>
+            <circle cx="20" cy="3" r="2"/>
+            <circle cx="20" cy="21" r="2"/>
+            <circle cx="14" cy="12" r="2"/>
+            <path d="M17.219 16.125A4.863 4.863 0 0 0 19.5 12a4.863 4.863 0 0 0-2.275-4.12M18.87 20.011l-4.365-6.607M14.713 10.13l4.444-6.116"/>
+        </g>
+        <g fill="#FFF">
+            <path d="M28 1124a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2h20a2 2 0 0 0-2-2H28zM20.331 1128H39.67a2 2 0 0 1 1.977 2.304l-1.385 9a2 2 0 0 1-1.977 1.696H21.716a2 2 0 0 1-1.977-1.696l-1.385-9a2 2 0 0 1 1.977-2.304zm6.207 11.088l1.908-.438a.5.5 0 0 0 .241-.84l-1.47-1.47a.5.5 0 0 0-.84.241l-.438 1.908a.5.5 0 0 0 .599.6zm7.361-8.674a1 1 0 0 0-1.414 0l-4.596 4.596a.5.5 0 0 0 0 .708l1.591 1.59a.5.5 0 0 0 .707 0l4.596-4.596a1 1 0 0 0 0-1.414l-.884-.884z"/>
+        </g>
+        <g>
+            <g transform="translate(23 1175)">
+                <path stroke="#FFF" stroke-width="2" d="M2 0h10a2 2 0 0 1 2 2v18.863a.5.5 0 0 1-.838.369l-5.486-5.03a1 1 0 0 0-1.352 0l-5.486 5.03A.5.5 0 0 1 0 20.863V2a2 2 0 0 1 2-2z"/>
+                <circle cx="7" cy="6" r="2" fill="#FFF"/>
+            </g>
+        </g>
+        <g fill="#FFF">
+            <path d="M20 158h19.338a2 2 0 0 1 1.977 2.304l-1.385 9A2 2 0 0 1 37.953 171H21.385a2 2 0 0 1-1.977-1.696l-1.384-9A2 2 0 0 1 20 158zm10.925 1.418a2.497 2.497 0 0 0-2.512 0l-2.497 1.453a2.497 2.497 0 0 0-1.24 2.158v2.942c0 .889.472 1.71 1.24 2.158l2.497 1.453a2.497 2.497 0 0 0 2.512 0l2.497-1.453a2.497 2.497 0 0 0 1.24-2.158v-2.942c0-.889-.472-1.71-1.24-2.158l-2.497-1.453z"/>
+            <path d="M29.475 164.528l-.722-.722a.51.51 0 1 0-.723.722l1.084 1.084a.51.51 0 0 0 .722 0l1.795-1.795a.51.51 0 1 0-.722-.722l-1.434 1.433zm.705-3.934l2.5 1.486a1 1 0 0 1 .49.86v3.02a1 1 0 0 1-.49.86l-2.5 1.486a1 1 0 0 1-1.022 0l-2.5-1.486a1 1 0 0 1-.489-.86v-3.02a1 1 0 0 1 .49-.86l2.5-1.486a1 1 0 0 1 1.02 0zM27.67 154a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2h20a2 2 0 0 0-2-2h-10z"/>
+        </g>
+        <g>
+            <path stroke="#FFF" stroke-width="2" d="M30.492 13.009a1 1 0 0 0-.984 0l-9 5.08a1 1 0 0 0-.508.87v10.082a1 1 0 0 0 .508.87l9 5.08a1 1 0 0 0 .984 0l9-5.08a1 1 0 0 0 .508-.87V18.959a1 1 0 0 0-.508-.87l-9-5.08z"/>
+            <g fill="#FFF" transform="translate(24 18)">
+                <rect width="2" height="4" x="5" rx="1"/>
+                <rect width="2" height="4" x="5" y="8" rx="1"/>
+                <circle cx="6" cy="6" r="1"/>
+                <rect width="4" height="2" x="8" y="5" rx="1"/>
+                <rect width="4" height="2" y="5" rx="1"/>
+            </g>
+        </g>
+        <g stroke="#FFF">
+            <g stroke-width="2">
+                <path fill="#FFF" d="M30.673 66.013l-1.596 2.763a2 2 0 0 1-1.732 1h-3.19a2 2 0 0 1-1.732-1l-1.596-2.763a2 2 0 0 1 0-2l1.596-2.763a2 2 0 0 1 1.732-1h3.19a2 2 0 0 1 1.732 1l1.596 2.763a2 2 0 0 1 0 2z"/>
+                <path d="M30.673 76.013l-1.596 2.763a2 2 0 0 1-1.732 1h-3.19a2 2 0 0 1-1.732-1l-1.596-2.763a2 2 0 0 1 0-2l1.596-2.763a2 2 0 0 1 1.732-1h3.19a2 2 0 0 1 1.732 1l1.596 2.763a2 2 0 0 1 0 2zM39.673 71.013l-1.596 2.763a2 2 0 0 1-1.732 1h-3.19a2 2 0 0 1-1.732-1l-1.596-2.763a2 2 0 0 1 0-2l1.596-2.763a2 2 0 0 1 1.732-1h3.19a2 2 0 0 1 1.732 1l1.596 2.763a2 2 0 0 1 0 2z"/>
+            </g>
+        </g>
+        <g>
+            <g transform="translate(19 105)">
+                <rect width="22" height="22" stroke="#FFF" stroke-width="2" rx="2"/>
+                <g fill="#FFF" transform="translate(3 3)">
+                    <rect width="16" height="7" rx="1"/>
+                    <rect width="16" height="1" y="9" rx=".5"/>
+                    <rect width="16" height="1" y="12" rx=".5"/>
+                    <rect width="6" height="1" y="15" rx=".5"/>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
