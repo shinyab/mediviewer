@@ -91,12 +91,13 @@ export function init () {
   /**
    * Called on each animation frame
    */
+  // let sl = 0;
   function animate () {
     // we are ready when both meshes have been loaded
     if (ready) {
       // console.log('#animate');
       // render
-      r0.controls.update();
+      r0.controls.update(); // trackball.update
       r1.controls.update();
       r2.controls.update();
       r3.controls.update();
@@ -107,6 +108,16 @@ export function init () {
       renderDo(r1);
       renderDo(r2);
       renderDo(r3);
+
+      // if (r1.stackHelper !== null) {
+      //   r1.stackHelper.slice.windowCenter = sl;
+      //   r2.stackHelper.slice.windowCenter = sl;
+      //   r3.stackHelper.slice.windowCenter = sl;
+      //   sl++;
+      //   if (sl > 300) {
+      //     sl = 0;
+      //   }
+      // }
     }
     // request new frame
     requestAnimationFrame(function () {
@@ -239,6 +250,8 @@ function initRenderer2D (rendererObj) {
   rendererObj.scene = new THREE.Scene();
 }
 
+var ctrlMprGuide = false;
+
 export function loadZip (uploadedFile) {
   JSZIP.loadAsync(uploadedFile)
     .then(function (zip) {
@@ -249,10 +262,10 @@ export function loadZip (uploadedFile) {
       let LoadersVolume = Medic3D.Loaders.Volume    // export default { Volume }
       let loader = new LoadersVolume()
 
-      loader.loadZip(buffer)
+      loader.loadZip(buffer)  //
         .then(function () {
           // {Array.<ModelsSeries>} Array of series properly merged.
-          let series = loader.data[0].mergeSeries(loader.data)[0]
+          let series = loader.data[0].mergeSeries(loader.data)[0] // loader.data = series
           loader.free()
           loader = null
 
@@ -285,19 +298,31 @@ export function loadZip (uploadedFile) {
 
           initHelpersLocalizerAll(stack);
 
-          onGreenChanged();
-          onRedChanged();
-          onYellowChanged();
+          if (ctrlMprGuide) {
+            onGreenChanged();
+            onRedChanged();
+            onYellowChanged();
+          }
 
           // event listeners
-          r0.domElement.addEventListener('dblclick', onDoubleClick);
-          r1.domElement.addEventListener('dblclick', onDoubleClick);
-          r2.domElement.addEventListener('dblclick', onDoubleClick);
-          r3.domElement.addEventListener('dblclick', onDoubleClick);
+          // r0.domElement.addEventListener('dblclick', onDoubleClick);
+          // r1.domElement.addEventListener('dblclick', onDoubleClick);
+          // r2.domElement.addEventListener('dblclick', onDoubleClick);
+          // r3.domElement.addEventListener('dblclick', onDoubleClick);
+          // add click event
           r0.domElement.addEventListener('click', onClick);
+          r1.domElement.addEventListener('click', onClick);
+          r2.domElement.addEventListener('click', onClick);
+          r3.domElement.addEventListener('click', onClick);
+          // add scroll event
           r1.controls.addEventListener('OnScroll', onScroll);
           r2.controls.addEventListener('OnScroll', onScroll);
           r3.controls.addEventListener('OnScroll', onScroll);
+          // add others event
+          r1.controls.addEventListener('mousedown', onDown);
+          r1.controls.addEventListener('mousemove', onMove);
+          r1.controls.addEventListener('mouseup', onUp);
+
           window.addEventListener('resize', onWindowResize, false);
           ready = true;
 
@@ -306,6 +331,12 @@ export function loadZip (uploadedFile) {
     })
 }
 
+/**
+ *
+ * @param target 3D Viewer
+ * @param plane one of orthogonal view
+ * @param stack series dicom
+ */
 function combineMpr (target, plane, stack) {
   initHelpersStack(plane, stack);
   target.scene.add(plane.scene);
@@ -450,7 +481,7 @@ function loadSegmentationRawdata (rawdata) {
 }
 
 function initHelpersStack (rendererObj, stack) {
-  rendererObj.stackHelper = new Medic3D.Helpers.Stack(stack);
+  rendererObj.stackHelper = new Medic3D.Helpers.Stack(stack); // create texture, bbox, slice
   rendererObj.stackHelper.bbox.visible = false;
   rendererObj.stackHelper.borderColor = rendererObj.sliceColor;
   rendererObj.stackHelper.slice.canvasWidth = rendererObj.domElement.clientWidth;
@@ -458,8 +489,6 @@ function initHelpersStack (rendererObj, stack) {
 
   // for removing THREE.Object3D by name
   rendererObj.stackHelper.name = rendererObj.name;
-
-  console.log('#initHelpersStack name : ' + rendererObj.name);
 
   // set camera
   let worldbb = stack.worldBoundingBox();
@@ -486,9 +515,9 @@ function initHelpersStack (rendererObj, stack) {
   rendererObj.camera.canvas = canvas;
   rendererObj.camera.orientation = rendererObj.sliceOrientation;
   rendererObj.camera.update();
-  rendererObj.camera.fitBox(2, 1);
+  rendererObj.camera.fitBox(2, 1);  // direction, factor
   rendererObj.stackHelper.orientation = rendererObj.camera.stackOrientation;
-  rendererObj.stackHelper.index = Math.floor(rendererObj.stackHelper.orientationMaxIndex / 2);
+  rendererObj.stackHelper.index = Math.floor(rendererObj.stackHelper.orientationMaxIndex / 2);  // move to mid of slice
   rendererObj.scene.add(rendererObj.stackHelper); // stackHelper extends THREE.Object3D
 }
 
@@ -565,58 +594,58 @@ function onGreenChanged () {
   updateClipPlane(r3, clipPlane3);
 }
 
-function onDoubleClick (event) {
-  const canvas = event.target.parentElement;
-  const id = event.target.id;
-  const mouse = {
-    x: ((event.clientX - canvas.offsetLeft) / canvas.clientWidth) * 2 - 1,
-    y: -((event.clientY - canvas.offsetTop) / canvas.clientHeight) * 2 + 1
-  };
-  //
-  let camera = null;
-  let stackHelper = null;
-  let scene = null;
-  switch (id) {
-    case '0':
-      camera = r0.camera;
-      stackHelper = r1.stackHelper;
-      scene = r0.scene;
-      break;
-    case '1':
-      camera = r1.camera;
-      stackHelper = r1.stackHelper;
-      scene = r1.scene;
-      break;
-    case '2':
-      camera = r2.camera;
-      stackHelper = r2.stackHelper;
-      scene = r2.scene;
-      break;
-    case '3':
-      camera = r3.camera;
-      stackHelper = r3.stackHelper;
-      scene = r3.scene;
-      break;
-  }
-
-  const raycaster = new THREE.Raycaster();
-  raycaster.setFromCamera(mouse, camera);
-
-  const intersects = raycaster.intersectObjects(scene.children, true);
-  if (intersects.length > 0) {
-    let ijk =
-      // CoreUtils.worldToData(stackHelper.stack.lps2IJK, intersects[0].point);
-      Medic3D.Core.Utils.worldToData(stackHelper.stack.lps2IJK, intersects[0].point);
-
-    r1.stackHelper.index = ijk.getComponent((r1.stackHelper.orientation + 2) % 3);
-    r2.stackHelper.index = ijk.getComponent((r2.stackHelper.orientation + 2) % 3);
-    r3.stackHelper.index = ijk.getComponent((r3.stackHelper.orientation + 2) % 3);
-
-    onGreenChanged();
-    onRedChanged();
-    onYellowChanged();
-  }
-}
+// function onDoubleClick (event) {
+//   const canvas = event.target.parentElement;
+//   const id = event.target.id;
+//   const mouse = {
+//     x: ((event.clientX - canvas.offsetLeft) / canvas.clientWidth) * 2 - 1,
+//     y: -((event.clientY - canvas.offsetTop) / canvas.clientHeight) * 2 + 1
+//   };
+//   //
+//   let camera = null;
+//   let stackHelper = null;
+//   let scene = null;
+//   switch (id) {
+//     case '0':
+//       camera = r0.camera;
+//       stackHelper = r1.stackHelper;
+//       scene = r0.scene;
+//       break;
+//     case '1':
+//       camera = r1.camera;
+//       stackHelper = r1.stackHelper;
+//       scene = r1.scene;
+//       break;
+//     case '2':
+//       camera = r2.camera;
+//       stackHelper = r2.stackHelper;
+//       scene = r2.scene;
+//       break;
+//     case '3':
+//       camera = r3.camera;
+//       stackHelper = r3.stackHelper;
+//       scene = r3.scene;
+//       break;
+//   }
+//
+//   const raycaster = new THREE.Raycaster();
+//   raycaster.setFromCamera(mouse, camera);
+//
+//   const intersects = raycaster.intersectObjects(scene.children, true);
+//   if (intersects.length > 0) {
+//     let ijk =
+//       // CoreUtils.worldToData(stackHelper.stack.lps2IJK, intersects[0].point);
+//       Medic3D.Core.Utils.worldToData(stackHelper.stack.lps2IJK, intersects[0].point);
+//
+//     r1.stackHelper.index = ijk.getComponent((r1.stackHelper.orientation + 2) % 3);
+//     r2.stackHelper.index = ijk.getComponent((r2.stackHelper.orientation + 2) % 3);
+//     r3.stackHelper.index = ijk.getComponent((r3.stackHelper.orientation + 2) % 3);
+//
+//     onGreenChanged();
+//     onRedChanged();
+//     onYellowChanged();
+//   }
+// }
 
 function onScroll (event) {
   console.log('# onScroll');
@@ -654,6 +683,18 @@ function onScroll (event) {
   onYellowChanged();
 }
 
+function onDown (event) {
+  console.log('#down');
+}
+
+function onMove (event) {
+  console.log('#move');
+}
+
+function onUp (event) {
+  console.log('#up');
+}
+
 function windowResize2D (rendererObj) {
   rendererObj.camera.canvas = {
     width: rendererObj.domElement.clientWidth,
@@ -682,7 +723,7 @@ function onWindowResize () {
 }
 
 function onClick (event) {
-  console.log('# onClick');
+  console.log('#onClick');
   const canvas = event.target.parentElement;
   const id = event.target.id;
   const mouse = {
@@ -703,16 +744,19 @@ function onClick (event) {
       camera = r1.camera;
       stackHelper = r1.stackHelper;
       scene = r1.scene;
+      r1.stackHelper.slice.windowCenter += 2;
       break;
     case '2':
       camera = r2.camera;
       stackHelper = r2.stackHelper;
       scene = r2.scene;
+      r2.stackHelper.slice.windowCenter += 2;
       break;
     case '3':
       camera = r3.camera;
       stackHelper = r3.stackHelper;
       scene = r3.scene;
+      r3.stackHelper.slice.windowCenter += 2;
       break;
   }
 
