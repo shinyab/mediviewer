@@ -9,8 +9,13 @@ import menus from './modules/menus'
 Vue.use(Vuex)
 
 const state = {
-  userId: 'aaa',
-  layoutType: 1
+  userId: 'abcd',
+  currentLayout: {
+    name: '2By2'
+  },
+  focusedCanvas: {},
+  currentAction: {},
+  currentSelect: {}
 }
 
 const store = new Vuex.Store({

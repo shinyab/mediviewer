@@ -12,11 +12,17 @@
   },
   "dependencies": {
     "buefy": "^0.5.4",
+    "dat.gui": "^0.6.1",
+    "dicom-parser": "^1.7.5",
     "node-sass": "^4.5.3",
+    "pngjs": "^3.3.0",
     "sass-loader": "^6.0.6",
+    "stats-js": "^1.0.0-alpha1",
+    "three": "^0.87.1",
     "vue": "^2.5.2",
     "vue-awesome": "^2.3.3",
     "vue-bulma-expanding": "^0.0.1",
+    "vue-draggable-resizable": "^1.5.2",
     "vue-router": "^3.0.1",
     "vuex": "^3.0.0"
   },

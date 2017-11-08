@@ -1,14 +1,147 @@
 import * as types from '../../mutation-types'
 
+import Divider from './divider'
 import layout from './layout'
-import rotate from './rotate'
-import move from './move'
+import filter from './filter'
+import annotations from './annotations'
 
+/*
+* - type :
+*    > action : 클릭후 바로적용
+*    > select : 다른 메뉴 그룹과 CheckBox 형태로 적용
+*    > layout : Divide Display
+*    > expand : Sub Menu를 가짐
+* */
 const state = {
   items: [
+    {
+      name: 'BrainRoiSegmentation',
+      type: 'action',
+      meta: {
+        label: 'Brain ROI Segmentation',
+        icon: 'img-over-01-brain-roi-segmentation.svg'
+      }
+    },
+    {
+      name: 'SegmentationResultOveray',
+      type: 'action',
+      meta: {
+        label: 'Segmentation Result\nOveray',
+        icon: 'img-over-02-segmentation-result-overay.svg'
+      }
+    },
+    {
+      name: 'AnalysisReport',
+      type: 'action',
+      meta: {
+        label: 'Analysis Report',
+        icon: 'img-over-03-analysis-roport.svg'
+      }
+    },
+    {
+      name: 'OpenSegmentations',
+      type: 'action',
+      meta: {
+        label: 'Open Segmentations',
+        icon: 'img-over-18-open-segmentations.svg'
+      }
+    },
+    {
+      name: 'SaveAsDerived',
+      type: 'action',
+      meta: {
+        label: 'Save As Derived',
+        icon: 'img-over-04-svae-as-derived.svg'
+      }
+    },
+    Divider,
     layout,
-    move,
-    rotate
+    Divider,
+    {
+      name: 'Pan',
+      type: 'select',
+      meta: {
+        label: 'Pan',
+        icon: 'img-over-06-pan.svg'
+      }
+    },
+    {
+      name: 'Stack',
+      type: 'select',
+      meta: {
+        label: 'Stack',
+        icon: 'img-over-19-stack.svg'
+      }
+    },
+    {
+      name: 'ZoomIn',
+      type: 'action',
+      meta: {
+        label: 'Zoom In',
+        icon: 'img-over-07-zoom-in.svg'
+      }
+    },
+    {
+      name: 'ZoomOut',
+      type: 'action',
+      meta: {
+        label: 'Zoom Out',
+        icon: 'img-over-08-zoom-out.svg'
+      }
+    },
+    Divider,
+    {
+      name: 'WindowLevel',
+      type: 'select',
+      meta: {
+        label: 'Window Level',
+        icon: 'img-over-09-window-level.svg'
+      }
+    },
+    {
+      name: 'Fit',
+      type: 'action',
+      meta: {
+        label: 'Fit',
+        icon: 'img-over-10-fit.svg'
+      }
+    },
+    {
+      name: 'OneToOne',
+      type: 'action',
+      meta: {
+        label: 'One to One',
+        icon: 'img-over-11-one-to-one.svg'
+      }
+    },
+    filter,
+    {
+      name: 'Reload',
+      type: 'action',
+      meta: {
+        label: 'Reload',
+        icon: 'img-over-13-reload.svg'
+      }
+    },
+    Divider,
+    annotations,
+    {
+      name: 'LoadAnnotation',
+      type: 'action',
+      meta: {
+        label: 'Load Annotation',
+        icon: 'img-over-15-load-annotation.svg'
+      }
+    },
+    Divider,
+    {
+      name: 'HideTags',
+      type: 'action',
+      meta: {
+        label: 'Hide Tags',
+        icon: 'img-over-16-hide-tags.svg'
+      }
+    }
   ]
 }
 

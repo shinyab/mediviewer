@@ -1,26 +1,26 @@
 export default {
-  name: 'Layout',
+  name: 'DivideDisplay',
+  type: 'expand',
   meta: {
-    label: 'Layout',
-    icon: 'icon-layout',
-    type: 'layout',
+    label: 'Divide Display',
+    icon: 'img-over-05-divide-display.svg',
     expanded: false
   },
   children: [
     {
       name: '1By1',
+      type: 'layout',
       meta: {
         label: '1 X 1',
-        icon: 'icon-layout-1x1',
-        type: 'layout'
+        icon: 'img-lnb-radio-sel-pre.svg'
       }
     },
     {
       name: '2By2',
+      type: 'layout',
       meta: {
         label: '2 X 2',
-        icon: 'icon-layout-2x2',
-        type: 'layout'
+        icon: 'img-lnb-radio-nor-pre.svg'
       }
     }
     // ,

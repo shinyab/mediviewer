@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30">
+    <g fill="#CFCFCF" fill-rule="evenodd" transform="translate(3 3)">
+        <rect width="2" height="10" x="6" y="7" rx="1"/>
+        <rect width="2" height="10" x="16" y="7" rx="1"/>
+        <path d="M22 22.05h-4a1 1 0 0 0 0 2h5a.997.997 0 0 0 1-1v-5a1 1 0 1 0-2 0v4zM2 22.05h4a1 1 0 0 1 0 2H1a.997.997 0 0 1-1-1v-5a1 1 0 1 1 2 0v4zM22 2.05h-4a1 1 0 0 1 0-2h5a.997.997 0 0 1 1 1v5a1 1 0 0 1-2 0v-4zM2 2.05h4a1 1 0 0 0 0-2H1a.997.997 0 0 0-1 1v5a1 1 0 1 0 2 0v-4z"/>
+        <circle cx="12" cy="10" r="1"/>
+        <circle cx="12" cy="14" r="1"/>
+        <rect width="2" height="6" x="19.828" y="-.172" rx="1" transform="rotate(45 20.828 2.828)"/>
+        <rect width="2" height="6" x="1.828" y="17.828" rx="1" transform="rotate(45 2.828 20.828)"/>
+        <rect width="2" height="6" x="1.828" y="-.172" rx="1" transform="rotate(-45 2.828 2.828)"/>
+        <rect width="2" height="6" x="19.828" y="17.828" rx="1" transform="rotate(-45 20.828 20.828)"/>
+    </g>
+</svg>

@@ -19,5 +19,7 @@
 </script>
 
 <style>
-
+  html {
+    overflow: hidden;
+  }
 </style>

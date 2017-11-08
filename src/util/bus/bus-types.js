@@ -1,0 +1,5 @@
+export const MENU_CLICKED = 'MENU_CLICKED'
+
+export const FILE_UPLOADED = 'FILE_UPLOADED'
+
+export const FILE_UPLOADED_SEG = 'FILE_UPLOADED_SEG'
