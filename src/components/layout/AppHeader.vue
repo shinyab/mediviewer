@@ -25,11 +25,11 @@
           </router-link>
         </div>
 
-        <div class="nav-right">
-          <a class="button nav-help-button">
-            Help
-          </a>
-        </div>
+        <!--<div class="nav-right">-->
+          <!--<a class="button nav-help-button">-->
+            <!--Help-->
+          <!--</a>-->
+        <!--</div>-->
       </nav>
 
     </div>
@@ -62,6 +62,7 @@
     width: 100%;
     z-index: 1024;
     background-color: $header-bg-color;
+    font-weight: bold;
   }
 
   .hero .nav {

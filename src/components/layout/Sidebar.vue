@@ -1,48 +1,70 @@
 <template>
   <aside class="menu app-sidebar">
-
     <ul class="menu-list">
-      <li v-for="(menu, index) in menus">
-
-        <a v-if="menu.children && menu.children.length" :aria-expanded="isExpanded(menu)" @click="toggle(index, menu)">
-          <!--<img src="/static/logo.png" style="width: 25px; height: 25px; top: 0; left: 0;">-->
-          <img v-if="menu.meta.icon" :src="`/static/sample/imgs/${menu.meta.icon}`" style="width: 24px; height: 24px; top: 0; left: 0;">
-          &nbsp;{{ menu.meta.label }}
-          <span class="icon is-small is-angle" v-if="menu.children && menu.children.length">
-            <icon name="angle-down"></icon>
-          </span>
-        </a>
-        <a v-else
-           :class="{ active: currentMenu.name == menu.name }"
-           @click="menuClicked(menu)">
-          <img v-if="menu.meta.icon" :src="`/static/sample/imgs/${menu.meta.icon}`" style="width: 24px; height: 24px; top: 0; left: 0;">
-          &nbsp;{{ menu.meta.label }}
-        </a>
+      <li v-for="(menu, index) in menus"
+          class="menu-item"
+          :class="{ divider: menu.type == 'divider' }">
+        <template v-if="menu.children && menu.children.length">
+          <a :aria-expanded="isExpanded(menu)"
+             @click="expandMenuToggle(index, menu)">
+            <img v-if="menu.meta.icon" :src="`/static/images/icons/svg/${menu.meta.icon}`">
+            <div class="menu-item-label">
+              <span>{{ menu.meta.label }}</span>
+              <icon name="angle-down" class="is-angle"></icon>
+            </div>
+          </a>
+        </template>
+        <template v-else>
+          <a v-if="menu.type === 'action'"
+             :class="{ active: currentSelect.name == menu.name }"
+             @click="menuClicked(menu)"
+            >
+            <img v-if="menu.meta.icon" :src="`/static/images/icons/svg/${menu.meta.icon}`">
+            <div>
+              <span>{{ menu.meta.label }}</span>
+            </div>
+          </a>
+          <a v-else-if="menu.type === 'select'"
+             :class="{ active: currentSelect.name == menu.name }"
+             @click="menuClicked(menu)"
+            >
+            <img v-if="menu.meta.icon" :src="`/static/images/icons/svg/${menu.meta.icon}`">
+            <div>
+              <span>{{ menu.meta.label }}</span>
+            </div>
+          </a>
+        </template>
 
         <expanding v-if="menu.children && menu.children.length">
           <ul v-show="isExpanded(menu)">
-            <li v-for="subMenu in menu.children">
+            <li v-for="subMenu in menu.children"
+                class="submenu-item">
               <a
-                v-if="menu.type === 'layout'"
-                :class="{ active: currentLayout == subMenu.name }"
+                v-if="subMenu.type === 'layout'"
+                :class="{ active: currentLayout.name == subMenu.name }"
                 @click="menuClicked(subMenu)">
-                <img v-if="subMenu.meta.icon" :src="`/static/sample/imgs/${subMenu.meta.icon}`"
-                     style="width: 24px; height: 24px; top: 0; left: 0;">
-                &nbsp;<span>{{ subMenu.meta.label }}</span>
+                <img v-if="currentLayout.name == subMenu.name" :src="`/static/images/icons/svg/img-lnb-radio-sel.svg`">
+                <img v-else :src="`/static/images/icons/svg/img-lnb-radio-nor.svg`">
+                <span>{{ subMenu.meta.label }}</span>
+              </a>
+              <a
+                v-else-if="subMenu.type === 'select'"
+                :class="{ active: currentSelect.name == subMenu.name }"
+                @click="menuClicked(subMenu)">
+                <img v-if="subMenu.meta.icon" :src="`/static/images/icons/svg/${subMenu.meta.icon}`">
+                <span>{{ subMenu.meta.label }}</span>
               </a>
               <a
                 v-else
-                :class="{ active: currentMenu.name == subMenu.name }"
                 @click="menuClicked(subMenu)">
-                <img v-if="subMenu.meta.icon" :src="`/static/sample/imgs/${subMenu.meta.icon}`"
-                     style="width: 24px; height: 24px; top: 0; left: 0;">
-                &nbsp;<span>{{ subMenu.meta.label }}</span>
+                <img v-if="subMenu.meta.icon" :src="`/static/images/icons/svg/${subMenu.meta.icon}`">
+                <span>{{ subMenu.meta.label }}</span>
               </a>
             </li>
           </ul>
         </expanding>
-
       </li>
+
     </ul>
   </aside>
 </template>
@@ -64,7 +86,7 @@
       }),
       ...mapState({
         currentLayout: 'currentLayout',
-        currentMenu: 'currentMenu'
+        currentSelect: 'currentSelect'
       })
     },
     methods: {
@@ -74,7 +96,7 @@
       isExpanded (menu) {
         return menu.meta.expanded
       },
-      toggle (index, menu) {
+      expandMenuToggle (index, menu) {
         this.expandMenu({
           index: index,
           expanded: !menu.meta.expanded
@@ -95,15 +117,18 @@
     top: $header-height;
     left: 0;
     bottom: 0;
-    padding: 0 0 50px;
+    padding: 0 0 $header-height;
     width: $sidebar-width;
     height: 100%;
     z-index: 1025;
     background-color: $sidebar-menu-bg-color;
     overflow-y: auto;
 
-    .icon {
-      vertical-align: baseline;
+    .fa-icon {
+      margin-top: 8px;
+      width: 27px;
+      height: 27px;
+      color: #787782;
       &.is-angle {
         position: absolute;
         right: 10px;
@@ -112,6 +137,121 @@
     }
 
     .menu-list {
+      overflow-y: auto;
+
+      li a {
+        &[aria-expanded="true"] {
+          .is-angle {
+            transform: rotate(180deg);
+          }
+        }
+        color: $sidebar-menu-label-color;
+      }
+
+      a {
+        margin: 1px 3px;
+        padding: 0;
+        height: 44px;
+
+        &:hover {
+          background-color: $sidebar-menu-over-bg-color;
+          color: $sidebar-menu-over-label-color;
+        }
+        &:active {
+          background-color: $sidebar-menu-press-bg-color;
+          color: $sidebar-menu-press-label-color;
+        }
+
+        img {
+          margin-top: 7px;
+          width: 30px;
+          height: 30px;
+        }
+      }
+
+      a.active {
+        background-color: $sidebar-menu-select-bg-color;
+        color: $sidebar-menu-select-label-color;
+      }
+
+      li.menu-item {
+        a {
+          img {
+            margin-left: 7px;
+          }
+
+          div {
+            position: absolute;
+            margin-top: -41px;
+            padding-right: 8px;
+            left: 55px;
+            height: 44px;
+            width: 190px;
+            display: table;
+
+            span {
+              display: table-cell;
+              vertical-align: middle;
+              font-size: 14px;
+              color: $sidebar-menu-normal-label-color;
+            }
+          }
+
+          -webkit-touch-callout: none;
+          -webkit-user-select: none;
+          -khtml-user-select: none;
+          -moz-user-select: none;
+          -ms-user-select: none;
+          user-select: none;
+        }
+      }
+
+      li.divider {
+        height: 2px;
+        background-color: $sidebar-menu-divider-bg-color;
+      }
+
+      /* for submenu */
+      li ul {
+        margin-top: 0;
+        margin-left: 0;
+        margin-bottom: 0;
+        padding-top: 3px;
+        padding-left: 24px;
+        padding-bottom: 3px;
+        width: $sidebar-width;
+        border-left: none;
+        background-color: $sidebar-submenu-bg-color;
+
+        li.submenu-item {
+          margin-top: -1px;
+          margin-left: 0;
+          padding-left: 0;
+
+          a {
+            img {
+              margin-left: 5px;
+              vertical-align: middle;
+            }
+
+            span {
+              position: relative;
+              top: 3px;
+              margin-left: 3px;
+              vertical-align: middle;
+            }
+
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+          }
+        }
+      }
+
+/*
       a {
         margin: 3px;
         &:hover {
@@ -122,10 +262,6 @@
           background-color: $sidebar-menu-press-bg-color;
           color: $sidebar-menu-press-label-color;
         }
-        /*&:focus {*/
-          /*color: white;*/
-          /*background-color: midnightblue;*/
-        /*}*/
       }
 
       li a {
@@ -151,6 +287,7 @@
         border-left-color: #d8d8d8;
         background-color: #16151a;
       }
+*/
     }
   }
 </style>

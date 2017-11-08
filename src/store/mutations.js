@@ -6,6 +6,9 @@ export default {
     state.currentLayout = layout
   },
   SELECT_MENU (state, menu) {
-    state.currentMenu = menu
+    state.currentSelect = menu
+  },
+  SELECT_CANVAS (state, canvas) {
+    state.focusedCanvas = canvas
   }
 }

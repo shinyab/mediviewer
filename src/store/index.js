@@ -10,8 +10,12 @@ Vue.use(Vuex)
 
 const state = {
   userId: 'abcd',
-  currentLayout: '1By1',
-  currentMenu: {}
+  currentLayout: {
+    name: '1By1'
+  },
+  focusedCanvas: {},
+  currentAction: {},
+  currentSelect: {}
 }
 
 const store = new Vuex.Store({

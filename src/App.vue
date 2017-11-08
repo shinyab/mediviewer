@@ -19,7 +19,7 @@
 </script>
 
 <style>
-  body {
+  html {
     overflow: hidden;
   }
 </style>
