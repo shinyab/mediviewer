@@ -14,16 +14,20 @@
       </div>
       <div class="seg-list">
         <div class="seg-list-item"
-          v-for="(index, n) in 15"
+          v-for="(segmentation, index) in segmentations"
           >
           <div class="seg-list-item-inner"
-            :class="{ even: index % 2 == 0 }"
-            @click="segmentationItemClicked"
+            :class="[{ even: index % 2 == 0 }, { selected: segmentation.selected }]"
+            @click="segmentationItemClicked($event, index, segmentation)"
             @mousedown="stopMovable">
-            <img src="/static/images/icons/svg/btn-check-checkbox.svg"
-              @click="segmentationVisibleToggle">
-            <span>Segmentation {{ n }}</span>
-            <div class="seg-color"></div>
+            <img v-show="segmentation.visible" :src="`/static/images/icons/svg/btn-check-checkbox.svg`"
+                 @click="setSegmentationVisible($event, index, segmentation)">
+            <img v-show="segmentation.visible === false" :src="`/static/images/icons/svg/btn-uncheck-checkbox.svg`"
+              @click="setSegmentationVisible($event, index, segmentation)">
+            <span>{{ segmentation.meta.label }}</span>
+            <div class="seg-color"
+                 :style="{ backgroundColor: segmentation.meta.color }"
+              ></div>
           </div>
         </div>
       </div>
@@ -32,11 +36,21 @@
 </template>
 
 <script>
+  import {mapGetters, mapActions} from 'vuex'
   import * as busType from '@/util/bus/bus-types'
 
   export default {
     name: 'SegmentationPopup',
+    computed: {
+      ...mapGetters({
+        segmentations: 'segmentations'
+      })
+    },
     methods: {
+      ...mapActions([
+        'segmentationVisibleToggle',
+        'segmentationSelectedToggle'
+      ]),
       closePopup (e) {
         this.$bus.$emit(busType.SHOW_SEGMENTATION_POPUP, false)
         e.stopPropagation()
@@ -44,13 +58,20 @@
       stopMovable (e) {
         e.stopPropagation()
       },
-      segmentationItemClicked (e) {
-        console.log('segmentationItemClicked')
-        e.stopPropagation()
+      segmentationItemClicked (event, index, segmentation) {
+        this.segmentationSelectedToggle({
+          index: index,
+          selected: !segmentation.selected
+        })
+        event.stopPropagation()
       },
-      segmentationVisibleToggle (e) {
-        console.log('segmentationToggle')
-        e.stopPropagation()
+      setSegmentationVisible (event, index, segmentation) {
+//        console.log(`segmentationToggle : ${index}`)
+        this.segmentationVisibleToggle({
+          index: index,
+          visible: !segmentation.visible
+        })
+        event.stopPropagation()
       }
     }
   }
@@ -135,7 +156,7 @@
               width: 54px;
               height: 8px;
               right: 32px;
-              background-color: orange;
+              /*background-color: orange;*/
               display: inline;
               border-radius: 5px;
             }
@@ -151,6 +172,18 @@
           }
           .seg-list-item-inner.even {
             background-color: #323232;
+
+            &:hover {
+              cursor: pointer;
+              background-color: $button-over-color;
+            }
+            &:active {
+              cursor: pointer;
+              background-color: $button-press-color;
+            }
+          }
+          .seg-list-item-inner.selected {
+            background-color: $button-select-color;
 
             &:hover {
               cursor: pointer;

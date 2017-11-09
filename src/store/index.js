@@ -5,6 +5,7 @@ import actions from './actions'
 import mutations from './mutations'
 
 import menus from './modules/menus'
+import segmentations from './modules/segmentations'
 
 Vue.use(Vuex)
 
@@ -21,7 +22,8 @@ const state = {
 const store = new Vuex.Store({
   state,
   modules: {
-    menus
+    menus,
+    segmentations
   },
   actions,
   mutations
