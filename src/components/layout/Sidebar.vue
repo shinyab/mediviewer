@@ -178,6 +178,15 @@
       a.active {
         background-color: $sidebar-menu-select-bg-color;
         color: $sidebar-menu-select-label-color;
+
+        &:hover {
+          background-color: $sidebar-menu-over-bg-color;
+          color: $sidebar-menu-over-label-color;
+        }
+        &:active {
+          background-color: $sidebar-menu-press-bg-color;
+          color: $sidebar-menu-press-label-color;
+        }
       }
 
       li.menu-item {
