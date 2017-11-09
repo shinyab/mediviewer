@@ -103,6 +103,10 @@
         })
       },
       menuClicked (menu) {
+        if (menu.name === 'SegmentationResultOveray') {
+          this.$bus.$emit(busType.SHOW_SEGMENTATION_POPUP)
+          return
+        }
         this.$bus.$emit(busType.MENU_CLICKED, menu)
       }
     }

@@ -1,25 +1,175 @@
 <template>
   <vue-draggable-resizable
+    class="seg-popup"
     :parent="true"
     :x="0" :y="80" :z="2000"
     :w="350" :h="400"
     :minw="350" :minh="400">
-    <div style="margin-top:40px; width:100%; height: 80%; background-color: #0d0c0f">
-      <ul style="height: 100%">
-        <li v-for="n in 10" style="cursor: crosshair;">
-          awefwaefawef
-        </li>
-      </ul>
+    <div class="seg-popup-inner">
+      <div class="seg-header">
+        <span>Segmentation Result Overay</span>
+        <img src="/static/images/icons/svg/btn-close-nor.svg"
+          @click="closePopup"
+          @mousedown="stopMovable">
+      </div>
+      <div class="seg-list">
+        <div class="seg-list-item"
+          v-for="(index, n) in 15"
+          >
+          <div class="seg-list-item-inner"
+            :class="{ even: index % 2 == 0 }"
+            @click="segmentationItemClicked"
+            @mousedown="stopMovable">
+            <img src="/static/images/icons/svg/btn-check-checkbox.svg"
+              @click="segmentationVisibleToggle">
+            <span>Segmentation {{ n }}</span>
+            <div class="seg-color"></div>
+          </div>
+        </div>
+      </div>
     </div>
   </vue-draggable-resizable>
 </template>
 
 <script>
+  import * as busType from '@/util/bus/bus-types'
+
   export default {
-    name: 'SegmentationPopup'
+    name: 'SegmentationPopup',
+    methods: {
+      closePopup (e) {
+        this.$bus.$emit(busType.SHOW_SEGMENTATION_POPUP, false)
+        e.stopPropagation()
+      },
+      stopMovable (e) {
+        e.stopPropagation()
+      },
+      segmentationItemClicked (e) {
+        console.log('segmentationItemClicked')
+        e.stopPropagation()
+      },
+      segmentationVisibleToggle (e) {
+        console.log('segmentationToggle')
+        e.stopPropagation()
+      }
+    }
   }
 </script>
 
 <style lang="scss" scoped>
+  @import "../../style/bh_style.scss";
 
+  .seg-popup {
+    box-shadow: 5px 5px 30px black;
+
+    .seg-popup-inner {
+      width: 100%;
+      height: 100%;
+      background-color: #282828;
+      border-radius: 5px;
+      overflow: hidden;
+
+      .seg-header {
+        margin-left: 15px;
+        width: 100%;
+        height: 48px;
+
+        span {
+          position: relative;
+          top: 10px;
+          font-size: 15px;
+          vertical-align: middle;
+          color: #e3e3e3;
+        }
+
+        img {
+          vertical-align: middle;
+          margin-right: 15px;
+          width: 48px;
+          height: 48px;
+          float: right;
+
+          &:hover {
+            cursor: pointer;
+            background-color: $button-over-color;
+          }
+        }
+      }
+
+      .seg-list {
+        position: absolute;
+        width: 100%;
+        top: 48px;
+        bottom: 0;
+        background-color: #383838;
+        overflow-y: auto;
+        overflow-x: hidden;
+        border-bottom-left-radius: 5px;
+        border-bottom-right-radius: 5px;
+
+        .seg-list-item {
+          width: 100%;
+          height: 50px;
+
+          .seg-list-item-inner {
+            margin: 0 1px;
+            width: 100%;
+            height: 48px;
+            border-radius: 5px;
+            background-color: #383838;
+
+            img {
+              margin-left: 5px;
+              vertical-align: middle;
+            }
+            span {
+              position: relative;
+              display: inline-block;
+              max-width: 60%;
+              color: white;
+              vertical-align: middle;
+            }
+            div.seg-color {
+              position: absolute;
+              margin-top: 20px;
+              width: 54px;
+              height: 8px;
+              right: 32px;
+              background-color: orange;
+              display: inline;
+              border-radius: 5px;
+            }
+
+            &:hover {
+              cursor: pointer;
+              background-color: $button-over-color;
+            }
+            &:active {
+              cursor: pointer;
+              background-color: $button-press-color;
+            }
+          }
+          .seg-list-item-inner.even {
+            background-color: #323232;
+
+            &:hover {
+              cursor: pointer;
+              background-color: $button-over-color;
+            }
+            &:active {
+              cursor: pointer;
+              background-color: $button-press-color;
+            }
+          }
+        }
+      }
+
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+  }
 </style>
