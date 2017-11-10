@@ -2,7 +2,7 @@
   <vue-draggable-resizable
     class="seg-popup"
     :parent="true"
-    :x="0" :y="80" :z="2000"
+    :x="250" :y="125" :z="2000"
     :w="350" :h="400"
     :minw="350" :minh="400">
     <div class="seg-popup-inner">
@@ -26,7 +26,7 @@
               @click="setSegmentationVisible($event, index, segmentation)">
             <span>{{ segmentation.meta.label }}</span>
             <div class="seg-color"
-                 :style="{ backgroundColor: segmentation.meta.color }"
+              :style="{ backgroundColor: segmentation.meta.color }"
               ></div>
           </div>
         </div>

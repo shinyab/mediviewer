@@ -13,17 +13,20 @@
           </b-upload>
         </b-field>
 
-        <span v-if="files && files.length" class="nav-load-file-label">&nbsp; | &nbsp;Viewer : {{ files[0].name }}</span>
+        <span class="nav-load-file-label">
+          <template v-if="files && files.length">&nbsp; | &nbsp;Dicom : {{ files[0].name }}</template>
+          <template v-if="segmentationFile">&nbsp; | &nbsp;Segmentation : {{ segmentationFile.name }}</template>
+        </span>
       </div>
 
-      <b-field style="position: fixed; left: 260px; top: 0; height: 52px; width: 250px; z-index: 1025;">
-        <b-upload v-model="files" accept=".zip" @change.native="loadSegmetation">
-          <a class="button is-white" style="width: 100%; height: 100%;">
-            <img src="/static/sample/imgs/folder_open.png" style="width: 24px; height: 24px; top: 0; left: 0;">
-            &nbsp;<span>Load Segmentation</span>
-          </a>
-        </b-upload>
-      </b-field>
+      <!--<b-field style="position: fixed; left: 260px; top: 0; height: 52px; width: 250px; z-index: 1025;">-->
+        <!--<b-upload v-model="files" accept=".zip" @change.native="loadSegmetation">-->
+          <!--<a class="button is-white" style="width: 100%; height: 100%;">-->
+            <!--<img src="/static/sample/imgs/folder_open.png" style="width: 24px; height: 24px; top: 0; left: 0;">-->
+            <!--&nbsp;<span>Load Segmentation</span>-->
+          <!--</a>-->
+        <!--</b-upload>-->
+      <!--</b-field>-->
 
       <nav class="nav">
         <div class="nav-left">
@@ -52,17 +55,23 @@
     name: 'AppHeader',
     data () {
       return {
-        files: null
+        files: null,
+        segmentationFile: null
       }
+    },
+    created () {
+      this.$bus.$on(busType.FILE_UPLOADED_SEG, this.segmentationFileUploaded)
     },
     methods: {
       fileUploaded () {
         this.$bus.$emit(busType.FILE_UPLOADED, this.files[0])
       },
       loadSegmetation () {
-        this.$bus.$emit(busType.FILE_UPLOADED_SEG, this.files[0])
+//        this.$bus.$emit(busType.FILE_UPLOADED_SEG, this.files[0])
+      },
+      segmentationFileUploaded (segmentationFile) {
+        this.segmentationFile = segmentationFile
       }
-
     }
   }
 </script>
@@ -125,7 +134,7 @@
     margin-left: 177px;
     margin-top: 30px;
     top: 0px;
-    width: 400px;
+    width: 800px;
     height: 20px;
     font-size: 15px;
     color: white;

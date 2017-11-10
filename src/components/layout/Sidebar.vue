@@ -1,79 +1,92 @@
 <template>
-  <aside class="menu app-sidebar">
-    <ul class="menu-list">
-      <li v-for="(menu, index) in menus"
-          class="menu-item"
-          :class="{ divider: menu.type == 'divider' }">
-        <template v-if="menu.children && menu.children.length">
-          <a :aria-expanded="isExpanded(menu)"
-             @click="expandMenuToggle(index, menu)">
-            <img v-if="menu.meta.icon" :src="`/static/images/icons/svg/${menu.meta.icon}`">
-            <div class="menu-item-label">
-              <span>{{ menu.meta.label }}</span>
-            </div>
-            <icon name="angle-down" class="is-angle"></icon>
-          </a>
-        </template>
-        <template v-else>
-          <a v-if="menu.type === 'select'"
-             :class="{ active: currentSelect.name == menu.name }"
-             @click="menuClicked(menu)"
+  <div>
+    <div class="app-sidebar-dimmed-view" id="dimmed-view"
+      v-show="!isFileUploaded"></div>
+    <aside class="menu app-sidebar">
+      <ul class="menu-list">
+        <li v-for="(menu, index) in menus"
+            class="menu-item"
+            :class="{ divider: menu.type == 'divider' }">
+          <template v-if="menu.children && menu.children.length">
+            <a :aria-expanded="isExpanded(menu)"
+               @click="expandMenuToggle(index, menu)">
+              <img v-if="menu.meta.icon" :src="`/static/images/icons/svg/${menu.meta.icon}`">
+              <div class="menu-item-label">
+                <span>{{ menu.meta.label }}</span>
+              </div>
+              <icon name="angle-down" class="is-angle"></icon>
+            </a>
+          </template>
+          <template v-else>
+            <a v-if="menu.type === 'select'"
+               :class="{ active: currentSelect.name == menu.name }"
+               @click="menuClicked(menu)"
             >
-            <img v-if="menu.meta.icon" :src="`/static/images/icons/svg/${menu.meta.icon}`">
-            <div>
-              <span>{{ menu.meta.label }}</span>
-            </div>
-          </a>
-          <a v-else-if="menu.type === 'action'"
-             @click="menuClicked(menu)"
+              <img v-if="menu.meta.icon" :src="`/static/images/icons/svg/${menu.meta.icon}`">
+              <div>
+                <span>{{ menu.meta.label }}</span>
+              </div>
+            </a>
+            <a v-else-if="menu.type === 'action'"
+               @click="menuClicked(menu)"
             >
-            <img v-if="menu.meta.icon" :src="`/static/images/icons/svg/${menu.meta.icon}`">
-            <div>
-              <span>{{ menu.meta.label }}</span>
-            </div>
-          </a>
-          <a v-else-if="menu.type === 'toggle'"
-             @click="menuClicked(menu)"
-          >
-            <img v-if="menu.meta.icon" :src="`/static/images/icons/svg/${menu.meta.icon}`">
-            <div>
-              <span>{{ menu.meta.label }}</span>
-            </div>
-          </a>
-        </template>
+              <img v-if="menu.meta.icon" :src="`/static/images/icons/svg/${menu.meta.icon}`">
+              <div>
+                <span>{{ menu.meta.label }}</span>
+              </div>
+            </a>
+            <a v-else-if="menu.type === 'toggle'"
+               @click="menuClicked(menu)"
+            >
+              <img v-if="menu.meta.icon" :src="`/static/images/icons/svg/${menu.meta.icon}`">
+              <div>
+                <span>{{ menu.meta.label }}</span>
+              </div>
+            </a>
+            <!--<a v-else-if="menu.type === 'file'"-->
+            <!--&gt;-->
+              <!--<input type="file">-->
+              <!--<img v-if="menu.meta.icon" :src="`/static/images/icons/svg/${menu.meta.icon}`">-->
+              <!--<div>-->
+                <!--<span>{{ menu.meta.label }}</span>-->
+              <!--</div>-->
+            <!--</a>-->
+          </template>
 
-        <expanding v-if="menu.children && menu.children.length">
-          <ul v-show="isExpanded(menu)">
-            <li v-for="subMenu in menu.children"
-                class="submenu-item">
-              <a
-                v-if="subMenu.type === 'layout'"
-                :class="{ active: currentLayout.name == subMenu.name }"
-                @click="menuClicked(subMenu)">
-                <img v-if="currentLayout.name == subMenu.name" :src="`/static/images/icons/svg/img-lnb-radio-sel.svg`">
-                <img v-else :src="`/static/images/icons/svg/img-lnb-radio-nor.svg`">
-                <span>{{ subMenu.meta.label }}</span>
-              </a>
-              <a
-                v-else-if="subMenu.type === 'select'"
-                :class="{ active: currentSelect.name == subMenu.name }"
-                @click="menuClicked(subMenu)">
-                <img v-if="subMenu.meta.icon" :src="`/static/images/icons/svg/${subMenu.meta.icon}`">
-                <span>{{ subMenu.meta.label }}</span>
-              </a>
-              <a
-                v-else
-                @click="menuClicked(subMenu)">
-                <img v-if="subMenu.meta.icon" :src="`/static/images/icons/svg/${subMenu.meta.icon}`">
-                <span>{{ subMenu.meta.label }}</span>
-              </a>
-            </li>
-          </ul>
-        </expanding>
-      </li>
+          <expanding v-if="menu.children && menu.children.length">
+            <ul v-show="isExpanded(menu)">
+              <li v-for="subMenu in menu.children"
+                  class="submenu-item">
+                <a
+                  v-if="subMenu.type === 'layout'"
+                  :class="{ active: currentLayout.name == subMenu.name }"
+                  @click="menuClicked(subMenu)">
+                  <img v-if="currentLayout.name == subMenu.name"
+                       :src="`/static/images/icons/svg/img-lnb-radio-sel.svg`">
+                  <img v-else :src="`/static/images/icons/svg/img-lnb-radio-nor.svg`">
+                  <span>{{ subMenu.meta.label }}</span>
+                </a>
+                <a
+                  v-else-if="subMenu.type === 'select'"
+                  :class="{ active: currentSelect.name == subMenu.name }"
+                  @click="menuClicked(subMenu)">
+                  <img v-if="subMenu.meta.icon" :src="`/static/images/icons/svg/${subMenu.meta.icon}`">
+                  <span>{{ subMenu.meta.label }}</span>
+                </a>
+                <a
+                  v-else
+                  @click="menuClicked(subMenu)">
+                  <img v-if="subMenu.meta.icon" :src="`/static/images/icons/svg/${subMenu.meta.icon}`">
+                  <span>{{ subMenu.meta.label }}</span>
+                </a>
+              </li>
+            </ul>
+          </expanding>
+        </li>
 
-    </ul>
-  </aside>
+      </ul>
+    </aside>
+  </div>
 </template>
 
 <script>
@@ -84,6 +97,11 @@
 
   export default {
     name: 'Sidebar',
+    data () {
+      return {
+        isFileUploaded: false
+      }
+    },
     components: {
       Expanding
     },
@@ -94,6 +112,11 @@
       ...mapState({
         currentLayout: 'currentLayout',
         currentSelect: 'currentSelect'
+      })
+    },
+    created () {
+      this.$bus.$on(busType.FILE_UPLOADED, () => {
+        this.isFileUploaded = true
       })
     },
     methods: {
@@ -110,6 +133,19 @@
           expanded: !menu.meta.expanded
         })
       },
+      openSegmentations () {
+        var f = document.createElement('input')
+        f.style.display = 'none'
+        f.type = 'file'
+        f.name = 'file'
+        document.getElementById('dimmed-view').appendChild(f)
+        f.click()
+        f.addEventListener('change', () => {
+          if (f.files[0]) {
+            this.$bus.$emit(busType.FILE_UPLOADED_SEG, f.files[0])
+          }
+        })
+      },
       toggleShowTags (menu) {
         this.showTagsToggle({
           name: menu.name,
@@ -123,6 +159,9 @@
             break
           case 'AnalysisReport':
             this.$bus.$emit(busType.SHOW_ANALYSIS_REPORT_POPUP)
+            break
+          case 'OpenSegmentations':
+            this.openSegmentations()
             break
           case 'ShowTagsToggle':
             this.toggleShowTags(menu)
@@ -138,6 +177,18 @@
 
 <style lang="scss" scoped>
   @import "../../style/bh_style.scss";
+
+  .app-sidebar-dimmed-view {
+    position: fixed;
+    top: $header-height;
+    left: 0;
+    bottom: 0;
+    width: $sidebar-width;
+    height: 100%;
+    z-index: 1026;
+    background-color: $sidebar-menu-bg-color;
+    opacity: 0.9;
+  }
 
   .app-sidebar {
     position: fixed;

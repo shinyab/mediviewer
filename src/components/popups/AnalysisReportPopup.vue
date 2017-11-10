@@ -2,8 +2,8 @@
   <vue-draggable-resizable
     class="report-popup"
     :parent="true"
-    :x="0" :y="80" :z="2000"
-    :w="350" :h="400"
+    :x="247" :y="85" :z="2000"
+    :w="500" :h="600"
     :minw="350" :minh="400">
     <div class="report-popup-inner">
       <div class="report-header">
