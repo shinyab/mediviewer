@@ -64,6 +64,7 @@
     },
     methods: {
       fileUploaded () {
+        this.$bus.$emit(busType.FILE_UPLOADED_SEG, null)
         this.$bus.$emit(busType.FILE_UPLOADED, this.files[0])
       },
       loadSegmetation () {
