@@ -9,6 +9,7 @@ import annotations from './annotations'
 * - type :
 *    > action : 클릭후 바로적용
 *    > select : 다른 메뉴 그룹과 CheckBox 형태로 적용
+*    > toggle : Toggle
 *    > layout : Divide Display
 *    > expand : Sub Menu를 가짐
 * */
@@ -135,8 +136,9 @@ const state = {
     },
     Divider,
     {
-      name: 'HideTags',
-      type: 'action',
+      name: 'ShowTagsToggle',
+      type: 'toggle',
+      toggle: false,
       meta: {
         label: 'Hide Tags',
         icon: 'img-over-16-hide-tags.svg'
@@ -157,6 +159,14 @@ const mutations = {
       }
     } else if (menuItem.item && 'expanded' in menuItem.item.meta) {
       menuItem.item.meta.expanded = menuItem.expanded
+    }
+  },
+  [types.SHOW_TAGS_TOGGLE] (state, menuItem) {
+    for (let i = 0; i < state.items.length; i++) {
+      state.items[i].toggle = menuItem.toggle
+      if (state.items[i].name === menuItem.name) {
+        menuItem.toggle ? state.items[i].meta.label = 'Show Tags' : state.items[i].meta.label = 'Hide Tags'
+      }
     }
   }
 }

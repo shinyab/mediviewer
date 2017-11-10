@@ -7,6 +7,11 @@ export default {
       commit(mutationType.EXPAND_MENU, menuItem)
     }
   },
+  showTagsToggle: ({ commit }, menuItem) => {
+    if (menuItem) {
+      commit(mutationType.SHOW_TAGS_TOGGLE, menuItem)
+    }
+  },
   segmentationVisibleToggle: ({ commit }, segItem) => {
     if (segItem) {
       segItem.visible = segItem.visible || false

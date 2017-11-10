@@ -15,7 +15,7 @@
           </a>
         </template>
         <template v-else>
-          <a v-if="menu.type === 'action'"
+          <a v-if="menu.type === 'select'"
              :class="{ active: currentSelect.name == menu.name }"
              @click="menuClicked(menu)"
             >
@@ -24,10 +24,17 @@
               <span>{{ menu.meta.label }}</span>
             </div>
           </a>
-          <a v-else-if="menu.type === 'select'"
-             :class="{ active: currentSelect.name == menu.name }"
+          <a v-else-if="menu.type === 'action'"
              @click="menuClicked(menu)"
             >
+            <img v-if="menu.meta.icon" :src="`/static/images/icons/svg/${menu.meta.icon}`">
+            <div>
+              <span>{{ menu.meta.label }}</span>
+            </div>
+          </a>
+          <a v-else-if="menu.type === 'toggle'"
+             @click="menuClicked(menu)"
+          >
             <img v-if="menu.meta.icon" :src="`/static/images/icons/svg/${menu.meta.icon}`">
             <div>
               <span>{{ menu.meta.label }}</span>
@@ -91,7 +98,8 @@
     },
     methods: {
       ...mapActions([
-        'expandMenu'
+        'expandMenu',
+        'showTagsToggle'
       ]),
       isExpanded (menu) {
         return menu.meta.expanded
@@ -102,15 +110,27 @@
           expanded: !menu.meta.expanded
         })
       },
+      toggleShowTags (menu) {
+        this.showTagsToggle({
+          name: menu.name,
+          toggle: !menu.toggle
+        })
+      },
       menuClicked (menu) {
-        if (menu.name === 'SegmentationResultOveray') {
-          this.$bus.$emit(busType.SHOW_SEGMENTATION_POPUP)
-          return
-        } else if (menu.name === 'AnalysisReport') {
-          this.$bus.$emit(busType.SHOW_ANALYSIS_REPORT_POPUP)
-          return
+        switch (menu.name) {
+          case 'SegmentationResultOveray':
+            this.$bus.$emit(busType.SHOW_SEGMENTATION_POPUP)
+            break
+          case 'AnalysisReport':
+            this.$bus.$emit(busType.SHOW_ANALYSIS_REPORT_POPUP)
+            break
+          case 'ShowTagsToggle':
+            this.toggleShowTags(menu)
+            break
+          default :
+            this.$bus.$emit(busType.MENU_CLICKED, menu)
+            break
         }
-        this.$bus.$emit(busType.MENU_CLICKED, menu)
       }
     }
   }
