@@ -71,24 +71,6 @@
                @mouseleave="isMouseDown = false, mouseLastPosition = {}"
                @mouseout="isMouseDown = false, mouseLastPosition = {}"
           ></div>
-
-          <!--<div id="layout-1-2" ref="layout1By2" class="layouts" :style="layout_1_2.style"-->
-               <!--v-if="currentLayout === '2By2' || currentLayout === '3By'" @mouseover="mouseOver"></div>-->
-          <!--<div id="layout-2-1" ref="layout2By1" class="layouts" :style="layout_2_1.style"-->
-               <!--v-if="currentLayout === '2By2' || currentLayout === '3By'" @mouseover="mouseOver"></div>-->
-          <!--<div id="layout-2-2" ref="layout2By2" class="layouts" :style="layout_2_2.style"-->
-               <!--v-if="currentLayout === '2By2' || currentLayout === '3By'" @mouseover="mouseOver"></div>-->
-
-          <!--<div id="layout-1-3" ref="layout1By3" class="layouts" :style="layout_1_3.style"-->
-               <!--v-if="currentLayout === '3By'" @mouseover="mouseOver"></div>-->
-          <!--<div id="layout-2-3" ref="layout2By3" class="layouts" :style="layout_2_3.style"-->
-               <!--v-if="currentLayout === '3By'" @mouseover="mouseOver"></div>-->
-          <!--<div id="layout-3-1" ref="layout3By1" class="layouts" :style="layout_3_1.style"-->
-               <!--v-if="currentLayout === '3By'" @mouseover="mouseOver"></div>-->
-          <!--<div id="layout-3-2" ref="layout3By2" class="layouts" :style="layout_3_2.style"-->
-               <!--v-if="currentLayout === '3By'" @mouseover="mouseOver"></div>-->
-          <!--<div id="layout-3-3" ref="layout3By3" class="layouts" :style="layout_3_3.style"-->
-               <!--v-if="currentLayout === '3By'" @mouseover="mouseOver"></div>-->
         </div>
 
       </div>
@@ -124,10 +106,6 @@
         layout_1_2: {},
         layout_2_1: {},
         layout_2_2: {},
-//        layout_2_3: {},
-//        layout_3_1: {},
-//        layout_3_2: {},
-//        layout_3_3: {},
         mouseLastPosition: {},
         mouseTimer: null,
         mousemove_ok: true,
@@ -139,6 +117,7 @@
     created () {
       this.$bus.$on(busType.MENU_CLICKED, this.menuClicked)
       this.$bus.$on(busType.FILE_UPLOADED, this.setUploadedFile)
+      this.$bus.$on(busType.FILE_UPLOADED_SEG, this.loadSegmentation)
 
       this.mouseTimer = setInterval(() => {
         this.mousemove_ok = true
@@ -161,18 +140,6 @@
         // Todo : assign (slice, segmentation)
       },
       initLayouts () {
-//        this.layout_1_1 = {
-//          obj: this.$refs.layout1By1, // == document.getElementById('layout-1-1'),
-//          style: {
-//            top: 0,
-//            left: 0,
-//            right: 0,
-//            bottom: 0
-//          }
-//        }
-//        this.layout_1_2 = { obj: this.$refs.layout1By2 } // == document.getElementById('layout-1-2'),
-//        this.layout_2_1 = { obj: this.$refs.layout2By1 } // == document.getElementById('layout-2-1'),
-//        this.layout_2_2 = { obj: this.$refs.layout2By2 } // == document.getElementById('layout-2-2'),
         this.setLayoutsWithMenuName({name: '2By2'});
       },
       setLayoutsWithMenuName (layout) {
@@ -219,6 +186,9 @@
           this.setLayoutsWithMenuName(menu)
         } else if (menu.type === 'select') {
           this.$store.commit(mutationType.SELECT_MENU, menu)
+        } else if (menu.type === 'action') {
+          // case
+          // reference to /store/modules/menus/index.js가 전체 메뉴. menu.name.*** 형식으로 실제 선택/클릭 확인 가능
         }
         console.log('Focused CANVAS : ')
         console.log(this.focusedCanvas)
@@ -231,6 +201,8 @@
         console.log('scrolling')
       },
       onMouseMove (event) {
+        // Todo : prohibit event propagation
+        console.log('move mouse')
         if (this.isMouseDown && this.mousemove_ok) {
           this.mousemove_ok = false
           if (typeof (this.mouseLastPosition.x) !== 'undefined') {
