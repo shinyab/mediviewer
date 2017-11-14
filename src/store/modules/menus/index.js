@@ -167,10 +167,10 @@ const mutations = {
       if (state.items[i].name === menuItem.name) {
         if (menuItem.toggle) {
           state.items[i].meta.label = 'Show Tags'
-          state.items[i].meta.icon = 'img-over-16-hide-tags.svg'
+          state.items[i].meta.icon = 'img-over-16-1-show-tags.svg'
         } else {
           state.items[i].meta.label = 'Hide Tags'
-          state.items[i].meta.icon = 'img-over-16-1-show-tags.svg'
+          state.items[i].meta.icon = 'img-over-16-hide-tags.svg'
         }
       }
     }
