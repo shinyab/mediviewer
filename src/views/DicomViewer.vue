@@ -296,6 +296,7 @@
             console.log('#LoadAnnotation')
             break;
           case 'Invert':
+            Medic3D.Invert();
             console.log('#Invert')
             break;
           case 'BrightnessContrast':

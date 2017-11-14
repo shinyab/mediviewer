@@ -838,3 +838,17 @@ function getView (id) {
 
   return selected;
 }
+
+export function Invert () {
+  if (r1.stackHelper !== null && r1.stackHelper.slice !== null) {
+    let newVal;
+    if (r1.stackHelper.slice.invert) {
+      newVal = false;
+    } else {
+      newVal = true;
+    }
+    r1.stackHelper.slice.invert = newVal;
+    r2.stackHelper.slice.invert = newVal;
+    r3.stackHelper.slice.invert = newVal;
+  }
+}
