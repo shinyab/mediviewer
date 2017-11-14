@@ -165,7 +165,13 @@ const mutations = {
     for (let i = 0; i < state.items.length; i++) {
       state.items[i].toggle = menuItem.toggle
       if (state.items[i].name === menuItem.name) {
-        menuItem.toggle ? state.items[i].meta.label = 'Show Tags' : state.items[i].meta.label = 'Hide Tags'
+        if (menuItem.toggle) {
+          state.items[i].meta.label = 'Show Tags'
+          state.items[i].meta.icon = 'img-over-16-hide-tags.svg'
+        } else {
+          state.items[i].meta.label = 'Hide Tags'
+          state.items[i].meta.icon = 'img-over-16-1-show-tags.svg'
+        }
       }
     }
   }
