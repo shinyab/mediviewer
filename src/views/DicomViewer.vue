@@ -283,6 +283,7 @@
             Medic3D.Zoom(selectId, false);
             break;
           case 'Fit':
+            Medic3D.Fit(selectId);
             console.log('#Fit')
             break;
           case 'OneToOne':

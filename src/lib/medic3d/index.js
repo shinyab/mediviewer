@@ -786,12 +786,42 @@ function onClick (event) {
 
 /**
  * Zoom control
- * @param id  : div id
+ * @param id selected div's id
  * @param action : true - zoomin, false - zoomout
  * @constructor
  */
 export function Zoom (id, action) {
-  let selected;
+  let selected = getView(id);
+  if (selected === null) {
+    return;
+  }
+
+  let val;
+  if (action) {
+    val = -0.1;
+  } else {
+    val = 0.1;
+  }
+  selected.camera.zoom += val;
+  selected.camera.updateProjectionMatrix();
+}
+
+export function Fit (id) {
+  let selected = getView(id);
+  if (selected === null) {
+    return;
+  }
+
+  selected.camera.fitBox(2, 0.9);
+}
+
+/**
+ * To fit view
+ * @param id selected div's id
+ * @return {*}
+ */
+function getView (id) {
+  let selected = null;
   switch (id) {
     case r1.domId:
       selected = r1;
@@ -804,15 +834,7 @@ export function Zoom (id, action) {
       break;
     default:
       console.log('unselected or r1 is selected');
-      return;
   }
 
-  let val;
-  if (action) {
-    val = -0.1;
-  } else {
-    val = 0.1;
-  }
-  selected.camera.zoom += val;
-  selected.camera.updateProjectionMatrix();
+  return selected;
 }
