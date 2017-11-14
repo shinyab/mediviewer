@@ -101,7 +101,7 @@
   import * as mutationType from '@/store/mutation-types'
   import * as busType from '@/util/bus/bus-types'
 
-//  import {init, loadZip, loadSegmentation, getStack} from '@/lib/medic3d/'
+  import {init, loadZip, loadSegmentation, getStack} from '@/lib/medic3d/'
 
   import Sidebar from '@/components/layout/Sidebar'
 
@@ -151,13 +151,13 @@
     methods: {
       setUploadedFile (uploadedFile) {
         this.uploadedFile = uploadedFile
-//        loadZip(uploadedFile);
-//        init();
+        loadZip(uploadedFile);
+        init();
       },
       loadSegmentation (uploadFile) {
         console.log(uploadFile);
-//        loadSegmentation(uploadFile);
-//        console.log('Stack ' + getStack()._numberOfFrames);
+        loadSegmentation(uploadFile);
+        console.log('Stack ' + getStack()._numberOfFrames);
         // Todo : assign (slice, segmentation)
       },
       initLayouts () {
@@ -220,6 +220,8 @@
         } else if (menu.type === 'select') {
           this.$store.commit(mutationType.SELECT_MENU, menu)
         }
+        console.log('Focused CANVAS : ')
+        console.log(this.focusedCanvas)
       },
       mouseOver (e) {
         console.log(`MouseOver : `)
@@ -257,20 +259,20 @@
       mousedownLeft (e) {
         console.log('Left Mousedown')
         this.isMouseDown = true
-//        console.log(e.target)
-        this.$store.commit(mutationType.SELECT_CANVAS, e.target)
+//        console.log(e.target.parentElement)
+        this.$store.commit(mutationType.SELECT_CANVAS, e.target.parentElement)
       },
       mousedownMiddle (e) {
         console.log('Middle Mousedown')
         this.isMouseDown = true
 //        console.log(e.target)
-        this.$store.commit(mutationType.SELECT_CANVAS, e.target)
+        this.$store.commit(mutationType.SELECT_CANVAS, e.target.parentElement)
       },
       mousedownRight (e) {
         console.log('Right Mousedown')
         this.isMouseDown = true
 //        console.log(e.target)
-        this.$store.commit(mutationType.SELECT_CANVAS, e.target)
+        this.$store.commit(mutationType.SELECT_CANVAS, e.target.parentElement)
       }
     }
   }
@@ -302,7 +304,7 @@
 
         .layouts {
           position: absolute;
-          padding: 1em;
+          padding: 0;
           border: 3px solid #424242;
           background-color: $layouts-bg-color;
           overflow: hidden;
