@@ -783,3 +783,35 @@ function onClick (event) {
     }
   }
 }
+
+/**
+ * Zoom control
+ * @param id  : div id
+ * @param action : true - zoomin, false - zoomout
+ * @constructor
+ */
+export function Zoom (id, action) {
+  let selected;
+  switch (id) {
+    case r1.domId:
+      selected = r1;
+      break;
+    case r2.domId:
+      selected = r2;
+      break;
+    case r3.domId:
+      selected = r3;
+      break;
+    default:
+      console.log('unselected or r1 is selected');
+      return;
+  }
+
+  let val;
+  if (action) {
+    val = -0.1;
+  } else {
+    val = 0.1;
+  }
+  selected.camera.zoom += val;
+}
