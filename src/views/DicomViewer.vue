@@ -443,7 +443,7 @@
             height: 100%;
             background-color: black;
             opacity: 0.8;
-            z-index: 2000;
+            z-index: 1999;
 
             .v-spinner {
               position: absolute;
