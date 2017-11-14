@@ -21,7 +21,18 @@
                @mouseenter="isMouseDown = false, mouseLastPosition = {}"
                @mouseleave="isMouseDown = false, mouseLastPosition = {}"
                @mouseout="isMouseDown = false, mouseLastPosition = {}"
-          ></div>
+          >
+            <div class="loading-spinner-dimmed-view"
+                 v-if="loadingSpinner.loading"
+                 @mousedown="$event.stopPropagation()"
+            >
+              <clip-loader
+                :loading="loadingSpinner.loading"
+                :color="loadingSpinner.color"
+                :size="loadingSpinner.size"
+              ></clip-loader>
+            </div>
+          </div>
 
           <div id="layout-1-2" class="layouts"
                ref="layout1By2"
@@ -38,7 +49,15 @@
                @mouseenter="isMouseDown = false, mouseLastPosition = {}"
                @mouseleave="isMouseDown = false, mouseLastPosition = {}"
                @mouseout="isMouseDown = false, mouseLastPosition = {}"
-          ></div>
+          >
+            <div class="loading-spinner-dimmed-view"
+                 v-if="loadingSpinner.loading"
+                 @mousedown="$event.stopPropagation()"
+            >
+              <clip-loader :loading="loadingSpinner.loading" :color="loadingSpinner.color"
+                           :size="loadingSpinner.size"></clip-loader>
+            </div>
+          </div>
           <div id="layout-2-1" class="layouts"
                ref="layout2By1"
                v-show="currentLayout.name === '2By2' || currentLayout.name === '3By'"
@@ -54,7 +73,16 @@
                @mouseenter="isMouseDown = false, mouseLastPosition = {}"
                @mouseleave="isMouseDown = false, mouseLastPosition = {}"
                @mouseout="isMouseDown = false, mouseLastPosition = {}"
-          ></div>
+          >
+            <div class="loading-spinner-dimmed-view"
+                 v-if="loadingSpinner.loading"
+                 @mousedown="$event.stopPropagation()"
+            >
+              <clip-loader :loading="loadingSpinner.loading" :color="loadingSpinner.color"
+                           :size="loadingSpinner.size"></clip-loader>
+            </div>
+          </div>
+
           <div id="layout-2-2" class="layouts"
                ref="layout2By2"
                v-show="currentLayout.name === '2By2' || currentLayout.name === '3By'"
@@ -71,8 +99,14 @@
                @mouseleave="isMouseDown = false, mouseLastPosition = {}"
                @mouseout="isMouseDown = false, mouseLastPosition = {}"
           ></div>
+          <div class="loading-spinner-dimmed-view"
+               v-if="loadingSpinner.loading"
+               @mousedown="$event.stopPropagation()"
+          >
+            <clip-loader :loading="loadingSpinner.loading" :color="loadingSpinner.color"
+                         :size="loadingSpinner.size"></clip-loader>
+          </div>
         </div>
-
       </div>
     </section>
   </div>
@@ -87,11 +121,13 @@
   import * as Medic3D from '@/lib/medic3d/'
 
   import Sidebar from '@/components/layout/Sidebar'
+  import ClipLoader from 'vue-spinner/src/ClipLoader.vue'
 
   export default {
     name: 'DicomViewer',
     components: {
-      Sidebar
+      Sidebar,
+      ClipLoader
     },
     computed: {
       ...mapState({
@@ -113,7 +149,12 @@
         isMousedown: false,
         dicomfiles: null,
         r0: {},
-        mode: null
+        mode: null,
+        loadingSpinner: {
+          loading: true,
+          color: '#cfcfcf',
+          size: '50px'
+        }
       }
     },
     created () {
@@ -131,6 +172,7 @@
     },
     methods: {
       setUploadedFile (uploadedFile) {
+        this.loadingSpinner.loading = false
         this.uploadedFile = uploadedFile
         Medic3D.loadZip(uploadedFile)
           .then((state) => {
@@ -145,6 +187,10 @@
         Medic3D.CameraCtrl(false);
       },
       loadSegmentation (uploadFile) {
+        this.loadingSpinner.loading = true
+        window.setTimeout(() => {
+          this.loadingSpinner.loading = false
+        }, 5000)
         console.log(uploadFile);
         Medic3D.loadSegmentation(uploadFile);
 //        console.log('Stack ' + Medic3D.getStack()._numberOfFrames);
@@ -390,6 +436,23 @@
           border: 3px solid #424242;
           background-color: $layouts-bg-color;
           overflow: hidden;
+
+          .loading-spinner-dimmed-view {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-color: black;
+            opacity: 0.8;
+            z-index: 2000;
+
+            .v-spinner {
+              position: absolute;
+              left: 50%;
+              bottom: 50%;
+              margin-left: -25px;
+              margin-bottom: -30px;
+            }
+          }
         }
 
         .active {
