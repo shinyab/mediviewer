@@ -814,4 +814,5 @@ export function Zoom (id, action) {
     val = 0.1;
   }
   selected.camera.zoom += val;
+  selected.camera.updateProjectionMatrix();
 }

@@ -83,7 +83,8 @@
   import * as mutationType from '@/store/mutation-types'
   import * as busType from '@/util/bus/bus-types'
 
-  import {init, loadZip, loadSegmentation, getStack} from '@/lib/medic3d/'
+//  import {init, loadZip, loadSegmentation, getStack} from '@/lib/medic3d/'
+  import * as Medic3D from '@/lib/medic3d/'
 
   import Sidebar from '@/components/layout/Sidebar'
 
@@ -130,13 +131,13 @@
     methods: {
       setUploadedFile (uploadedFile) {
         this.uploadedFile = uploadedFile
-        loadZip(uploadedFile);
-        init();
+        Medic3D.loadZip(uploadedFile);
+        Medic3D.init();
       },
       loadSegmentation (uploadFile) {
         console.log(uploadFile);
-        loadSegmentation(uploadFile);
-        console.log('Stack ' + getStack()._numberOfFrames);
+        Medic3D.loadSegmentation(uploadFile);
+//        console.log('Stack ' + Medic3D.getStack()._numberOfFrames);
         // Todo : assign (slice, segmentation)
       },
       initLayouts () {
@@ -185,10 +186,12 @@
         if (menu.type === 'layout') {
           this.setLayoutsWithMenuName(menu)
         } else if (menu.type === 'select') {
-          this.$store.commit(mutationType.SELECT_MENU, menu)
+//          this.$store.commit(mutationType.SELECT_MENU, menu)
+          this.doSelect(menu);
         } else if (menu.type === 'action') {
           // case
           // reference to /store/modules/menus/index.js가 전체 메뉴. menu.name.*** 형식으로 실제 선택/클릭 확인 가능
+          this.doAction(menu);
         }
         console.log('Focused CANVAS : ')
         console.log(this.focusedCanvas)
@@ -245,6 +248,88 @@
         this.isMouseDown = true
 //        console.log(e.target)
         this.$store.commit(mutationType.SELECT_CANVAS, e.target.parentElement)
+      },
+      doAction (menu) {
+        let selectId;
+        if (this.focusedCanvas.id === null) {
+          // unselected
+          return;
+        } else {
+          selectId = this.focusedCanvas.id;
+        }
+//        console.log('Selected ' + this.focusedCanvas)
+        switch (menu.name) {
+          case 'BrainRoiSegmentation':
+            console.log('#BrainRoiSegmentation')
+            break;
+          case 'SegmentationResultOveray':
+            console.log('#SegmentationResultOveray')
+            break;
+          case 'AnalysisReport':
+            console.log('#AnalysisReport')
+            break;
+          case 'OpenSegmentations':
+            console.log('#OpenSegmentations')
+            break;
+          case 'SaveAsDerived':
+            console.log('#SaveAsDerived')
+            break;
+          case 'ZoomIn':
+            console.log('#ZoomIn')
+            Medic3D.Zoom(selectId, true);
+            break;
+          case 'ZoomOut':
+            console.log('#ZoomOut')
+            Medic3D.Zoom(selectId, false);
+            break;
+          case 'Fit':
+            console.log('#Fit')
+            break;
+          case 'OneToOne':
+            console.log('#OneToOne')
+            break;
+          case 'Reload':
+            console.log('#Reload')
+            break;
+          case 'LoadAnnotation':
+            console.log('#LoadAnnotation')
+            break;
+          case 'Invert':
+            console.log('#Invert')
+            break;
+          case 'BrightnessContrast':
+            console.log('#BrightnessContrast')
+            break;
+        }
+      },
+      doSelect (menu) {
+        switch (menu.name) {
+          case 'Pan':
+            console.log('#Pan')
+            break;
+          case 'Stack':
+            console.log('#Stack')
+            break;
+          case 'WindowLevel':
+            console.log('#WindowLevel')
+            break;
+          case 'Ruler':
+            console.log('#Ruler')
+            break;
+          case 'PolyRuler':
+            console.log('#PolyRuler')
+            break;
+          case 'Protractor':
+            console.log('#Protractor')
+            break;
+        }
+      },
+      doToggle (menu) {
+        switch (menu.name) {
+          case 'ShowTagsToggle':
+            console.log('#ShowTagsToggle')
+            break;
+        }
       }
     }
   }
