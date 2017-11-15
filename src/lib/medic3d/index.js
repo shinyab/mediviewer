@@ -87,6 +87,9 @@ let clipPlane1 = new THREE.Plane(new THREE.Vector3(0, 0, 0), 0);
 let clipPlane2 = new THREE.Plane(new THREE.Vector3(0, 0, 0), 0);
 let clipPlane3 = new THREE.Plane(new THREE.Vector3(0, 0, 0), 0);
 
+// Todo : event driven
+let eventListener = null;
+
 export function init () {
   /**
    * Called on each animation frame
@@ -252,7 +255,8 @@ function initRenderer2D (rendererObj) {
 
 var ctrlMprGuide = false;
 
-export function loadZip (uploadedFile) {
+export function loadZip (uploadedFile, cb) {
+  eventListener = cb;
   return new Promise((resolve, reject) => {
     JSZIP.loadAsync(uploadedFile)
       .then(function (zip) {
@@ -653,15 +657,23 @@ function onScroll (event) {
   console.log('# onScroll');
   const id = event.target.domElement.id;
   let stackHelper = null;
+
+  let msg = {
+    type: 'slice'
+  };
+
   switch (id) {
     case r1.domId:
       stackHelper = r1.stackHelper;
+      msg.view = 'r1';
       break;
     case r2.domId:
       stackHelper = r2.stackHelper;
+      msg.view = 'r2';
       break;
     case r3.domId:
       stackHelper = r3.stackHelper;
+      msg.view = 'r3';
       break;
     default:
       console.log('No matched ID');
@@ -683,6 +695,9 @@ function onScroll (event) {
   onGreenChanged();
   onRedChanged();
   onYellowChanged();
+  msg.slice = stackHelper.index;
+
+  eventListener(msg);
 }
 
 function onDown (event) {
