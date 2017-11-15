@@ -786,13 +786,25 @@ function onClick (event) {
   }
 }
 
+export function Zoom (id, action) {
+  if (id === r0.domId) {
+    let delta = 3;
+    if (action) {
+      delta = -3;
+    }
+    CameraCtrl3D(delta);
+  } else {
+    CameraCtrl2D(id, action);
+  }
+}
+
 /**
  * Zoom control
  * @param id selected div's id
  * @param action : true - zoomin, false - zoomout
  * @constructor
  */
-export function Zoom (id, action) {
+function CameraCtrl2D (id, action) {
   let selected = getView(id);
   if (selected === null) {
     return;
@@ -806,6 +818,10 @@ export function Zoom (id, action) {
   }
   selected.camera.zoom += val;
   selected.camera.updateProjectionMatrix();
+}
+
+function CameraCtrl3D (delta) {
+  r0.controls.zoomCtrl(delta);
 }
 
 export function Fit (id) {

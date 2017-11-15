@@ -286,11 +286,13 @@
             break;
           case 'ZoomIn':
             console.log('#ZoomIn')
-            Medic3D.Zoom(selectId, true);
+            Medic3D.Zoom(selectId, false);
+//            Medic3D.CameraCtrl3D(3);
             break;
           case 'ZoomOut':
             console.log('#ZoomOut')
-            Medic3D.Zoom(selectId, false);
+            Medic3D.Zoom(selectId, true);
+//            Medic3D.CameraCtrl3D(-3);
             break;
           case 'Fit':
             Medic3D.Fit(selectId);
