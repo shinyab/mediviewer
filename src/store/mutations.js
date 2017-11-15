@@ -10,5 +10,8 @@ export default {
   },
   SELECT_CANVAS (state, canvas) {
     state.focusedCanvas = canvas
+  },
+  SET_SHOW_TAGS (state, showTags) {
+    state.showTags = showTags
   }
 }

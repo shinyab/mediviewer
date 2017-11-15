@@ -91,6 +91,7 @@
 
 <script>
   import {mapGetters, mapState, mapActions} from 'vuex'
+  import * as mutationType from '@/store/mutation-types'
   import * as busType from '@/util/bus/bus-types'
 
   import Expanding from 'vue-bulma-expanding'
@@ -147,6 +148,7 @@
         })
       },
       toggleShowTags (menu) {
+        this.$store.commit(mutationType.SET_SHOW_TAGS, !menu.toggle)
         this.showTagsToggle({
           name: menu.name,
           toggle: !menu.toggle

@@ -138,7 +138,7 @@ const state = {
     {
       name: 'ShowTagsToggle',
       type: 'toggle',
-      toggle: false,
+      toggle: true,
       meta: {
         label: 'Hide Tags',
         icon: 'img-over-16-hide-tags.svg'
@@ -161,16 +161,16 @@ const mutations = {
       menuItem.item.meta.expanded = menuItem.expanded
     }
   },
-  [types.SHOW_TAGS_TOGGLE] (state, menuItem) {
+  [types.SHOW_TAGS_MENU_TOGGLE] (state, menuItem) {
     for (let i = 0; i < state.items.length; i++) {
       state.items[i].toggle = menuItem.toggle
       if (state.items[i].name === menuItem.name) {
         if (menuItem.toggle) {
-          state.items[i].meta.label = 'Show Tags'
-          state.items[i].meta.icon = 'img-over-16-1-show-tags.svg'
-        } else {
           state.items[i].meta.label = 'Hide Tags'
           state.items[i].meta.icon = 'img-over-16-hide-tags.svg'
+        } else {
+          state.items[i].meta.label = 'Show Tags'
+          state.items[i].meta.icon = 'img-over-16-1-show-tags.svg'
         }
       }
     }

@@ -16,7 +16,8 @@ const state = {
   },
   focusedCanvas: {},
   currentAction: {},
-  currentSelect: {}
+  currentSelect: {},
+  showTags: false
 }
 
 const store = new Vuex.Store({

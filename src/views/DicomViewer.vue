@@ -22,6 +22,30 @@
                @mouseleave="isMouseDown = false, mouseLastPosition = {}"
                @mouseout="isMouseDown = false, mouseLastPosition = {}"
           >
+            <template v-if="showTags">
+              <div class="tags-left-top">
+                1/4<br>
+                Acc# : 41238<br>
+                Study Date : 04/04/2016<br>
+                Study : KNEE, SUNRISE<br>
+                Series :<br>
+              </div>
+              <div class="tags-right-top">
+                Name :  SASSER^RONDA^S<br>
+                PID : 2372332<br>
+                Sex : F<br>
+                DOB : 06/12/1965<br>
+                Laterality :<br>
+              </div>
+              <div class="tags-left-bottom">
+                <div class="tags-left-bottom-inner">
+                  Se# : 1004<br>
+                  Instance : 1004<br>
+                  W : 1023  L : 511<br>
+                </div>
+              </div>
+            </template>
+
             <div class="loading-spinner-dimmed-view"
                  v-if="loadingSpinner.loading"
                  @mousedown="$event.stopPropagation()"
@@ -50,6 +74,30 @@
                @mouseleave="isMouseDown = false, mouseLastPosition = {}"
                @mouseout="isMouseDown = false, mouseLastPosition = {}"
           >
+            <template v-if="showTags">
+              <div class="tags-left-top">
+                1/4<br>
+                Acc# : 41238<br>
+                Study Date : 04/04/2016<br>
+                Study : KNEE, SUNRISE<br>
+                Series :<br>
+              </div>
+              <div class="tags-right-top">
+                Name :  SASSER^RONDA^S<br>
+                PID : 2372332<br>
+                Sex : F<br>
+                DOB : 06/12/1965<br>
+                Laterality :<br>
+              </div>
+              <div class="tags-left-bottom">
+                <div class="tags-left-bottom-inner">
+                  Se# : 1004<br>
+                  Instance : 1004<br>
+                  W : 1023  L : 511<br>
+                </div>
+              </div>
+            </template>
+
             <div class="loading-spinner-dimmed-view"
                  v-if="loadingSpinner.loading"
                  @mousedown="$event.stopPropagation()"
@@ -74,6 +122,30 @@
                @mouseleave="isMouseDown = false, mouseLastPosition = {}"
                @mouseout="isMouseDown = false, mouseLastPosition = {}"
           >
+            <template v-if="showTags">
+              <div class="tags-left-top">
+                1/4<br>
+                Acc# : 41238<br>
+                Study Date : 04/04/2016<br>
+                Study : KNEE, SUNRISE<br>
+                Series :<br>
+              </div>
+              <div class="tags-right-top">
+                Name :  SASSER^RONDA^S<br>
+                PID : 2372332<br>
+                Sex : F<br>
+                DOB : 06/12/1965<br>
+                Laterality :<br>
+              </div>
+              <div class="tags-left-bottom">
+                <div class="tags-left-bottom-inner">
+                  Se# : 1004<br>
+                  Instance : 1004<br>
+                  W : 1023  L : 511<br>
+                </div>
+              </div>
+            </template>
+
             <div class="loading-spinner-dimmed-view"
                  v-if="loadingSpinner.loading"
                  @mousedown="$event.stopPropagation()"
@@ -103,9 +175,39 @@
                v-if="loadingSpinner.loading"
                @mousedown="$event.stopPropagation()"
           >
-            <clip-loader :loading="loadingSpinner.loading" :color="loadingSpinner.color"
-                         :size="loadingSpinner.size"></clip-loader>
+            <template v-if="showTags">
+              <div class="tags-left-top">
+                1/4<br>
+                Acc# : 41238<br>
+                Study Date : 04/04/2016<br>
+                Study : KNEE, SUNRISE<br>
+                Series :<br>
+              </div>
+              <div class="tags-right-top">
+                Name :  SASSER^RONDA^S<br>
+                PID : 2372332<br>
+                Sex : F<br>
+                DOB : 06/12/1965<br>
+                Laterality :<br>
+              </div>
+              <div class="tags-left-bottom">
+                <div class="tags-left-bottom-inner">
+                  Se# : 1004<br>
+                  Instance : 1004<br>
+                  W : 1023  L : 511<br>
+                </div>
+              </div>
+            </template>
+
+            <div class="loading-spinner-dimmed-view"
+                 v-if="loadingSpinner.loading"
+                 @mousedown="$event.stopPropagation()"
+            >
+              <clip-loader :loading="loadingSpinner.loading" :color="loadingSpinner.color"
+                           :size="loadingSpinner.size"></clip-loader>
+            </div>
           </div>
+
         </div>
       </div>
     </section>
@@ -133,7 +235,8 @@
       ...mapState({
         currentLayout: 'currentLayout',
         currentMenu: 'currentMenu',
-        focusedCanvas: 'focusedCanvas'
+        focusedCanvas: 'focusedCanvas',
+        showTags: 'showTags'
       })
     },
     data () {
@@ -151,7 +254,7 @@
         r0: {},
         mode: null,
         loadingSpinner: {
-          loading: true,
+          loading: false,
           color: '#cfcfcf',
           size: '50px'
         }
@@ -172,7 +275,11 @@
     },
     methods: {
       setUploadedFile (uploadedFile) {
-        this.loadingSpinner.loading = false
+        this.loadingSpinner.loading = true
+        window.setTimeout(() => {
+          this.loadingSpinner.loading = false
+          this.$store.commit(mutationType.SET_SHOW_TAGS, true)
+        }, 5000)
         this.uploadedFile = uploadedFile
         Medic3D.loadZip(uploadedFile)
           .then((state) => {
@@ -436,6 +543,41 @@
           border: 3px solid #424242;
           background-color: $layouts-bg-color;
           overflow: hidden;
+
+          .tags-left-top {
+            position: absolute;
+            left: 30px;
+            top: 30px;
+            width: 40%;
+            height: 40%;
+            text-align: left;
+            color: white;
+          }
+
+          .tags-right-top {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            width: 40%;
+            height: 40%;
+            text-align: right;
+            color: white;
+          }
+
+          .tags-left-bottom {
+            position: absolute;
+            left: 30px;
+            bottom: 30px;
+            width: 40%;
+            height: 40%;
+            text-align: left;
+            color: white;
+
+            .tags-left-bottom-inner {
+              position: absolute;
+              bottom: 0;
+            }
+          }
 
           .loading-spinner-dimmed-view {
             position: absolute;
