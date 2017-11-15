@@ -71,24 +71,6 @@
                @mouseleave="isMouseDown = false, mouseLastPosition = {}"
                @mouseout="isMouseDown = false, mouseLastPosition = {}"
           ></div>
-
-          <!--<div id="layout-1-2" ref="layout1By2" class="layouts" :style="layout_1_2.style"-->
-               <!--v-if="currentLayout === '2By2' || currentLayout === '3By'" @mouseover="mouseOver"></div>-->
-          <!--<div id="layout-2-1" ref="layout2By1" class="layouts" :style="layout_2_1.style"-->
-               <!--v-if="currentLayout === '2By2' || currentLayout === '3By'" @mouseover="mouseOver"></div>-->
-          <!--<div id="layout-2-2" ref="layout2By2" class="layouts" :style="layout_2_2.style"-->
-               <!--v-if="currentLayout === '2By2' || currentLayout === '3By'" @mouseover="mouseOver"></div>-->
-
-          <!--<div id="layout-1-3" ref="layout1By3" class="layouts" :style="layout_1_3.style"-->
-               <!--v-if="currentLayout === '3By'" @mouseover="mouseOver"></div>-->
-          <!--<div id="layout-2-3" ref="layout2By3" class="layouts" :style="layout_2_3.style"-->
-               <!--v-if="currentLayout === '3By'" @mouseover="mouseOver"></div>-->
-          <!--<div id="layout-3-1" ref="layout3By1" class="layouts" :style="layout_3_1.style"-->
-               <!--v-if="currentLayout === '3By'" @mouseover="mouseOver"></div>-->
-          <!--<div id="layout-3-2" ref="layout3By2" class="layouts" :style="layout_3_2.style"-->
-               <!--v-if="currentLayout === '3By'" @mouseover="mouseOver"></div>-->
-          <!--<div id="layout-3-3" ref="layout3By3" class="layouts" :style="layout_3_3.style"-->
-               <!--v-if="currentLayout === '3By'" @mouseover="mouseOver"></div>-->
         </div>
 
       </div>
@@ -101,7 +83,8 @@
   import * as mutationType from '@/store/mutation-types'
   import * as busType from '@/util/bus/bus-types'
 
-  import {init, loadZip, loadSegmentation, getStack} from '@/lib/medic3d/'
+//  import {init, loadZip, loadSegmentation, getStack} from '@/lib/medic3d/'
+  import * as Medic3D from '@/lib/medic3d/'
 
   import Sidebar from '@/components/layout/Sidebar'
 
@@ -124,21 +107,19 @@
         layout_1_2: {},
         layout_2_1: {},
         layout_2_2: {},
-//        layout_2_3: {},
-//        layout_3_1: {},
-//        layout_3_2: {},
-//        layout_3_3: {},
         mouseLastPosition: {},
         mouseTimer: null,
         mousemove_ok: true,
         isMousedown: false,
         dicomfiles: null,
-        r0: {}
+        r0: {},
+        mode: null
       }
     },
     created () {
       this.$bus.$on(busType.MENU_CLICKED, this.menuClicked)
       this.$bus.$on(busType.FILE_UPLOADED, this.setUploadedFile)
+      this.$bus.$on(busType.FILE_UPLOADED_SEG, this.loadSegmentation)
 
       this.mouseTimer = setInterval(() => {
         this.mousemove_ok = true
@@ -151,28 +132,25 @@
     methods: {
       setUploadedFile (uploadedFile) {
         this.uploadedFile = uploadedFile
-        loadZip(uploadedFile);
-        init();
+        Medic3D.loadZip(uploadedFile)
+          .then((state) => {
+            // to need more time for rendering
+            console.log('Load completed~~~~~~`');
+          })
+          .catch((err) => {
+            console.log('An error : ' + err);
+          })
+        Medic3D.init();
+        // disable view control
+        Medic3D.CameraCtrl(false);
       },
       loadSegmentation (uploadFile) {
         console.log(uploadFile);
-        loadSegmentation(uploadFile);
-        console.log('Stack ' + getStack()._numberOfFrames);
+        Medic3D.loadSegmentation(uploadFile);
+//        console.log('Stack ' + Medic3D.getStack()._numberOfFrames);
         // Todo : assign (slice, segmentation)
       },
       initLayouts () {
-//        this.layout_1_1 = {
-//          obj: this.$refs.layout1By1, // == document.getElementById('layout-1-1'),
-//          style: {
-//            top: 0,
-//            left: 0,
-//            right: 0,
-//            bottom: 0
-//          }
-//        }
-//        this.layout_1_2 = { obj: this.$refs.layout1By2 } // == document.getElementById('layout-1-2'),
-//        this.layout_2_1 = { obj: this.$refs.layout2By1 } // == document.getElementById('layout-2-1'),
-//        this.layout_2_2 = { obj: this.$refs.layout2By2 } // == document.getElementById('layout-2-2'),
         this.setLayoutsWithMenuName({name: '2By2'});
       },
       setLayoutsWithMenuName (layout) {
@@ -218,7 +196,12 @@
         if (menu.type === 'layout') {
           this.setLayoutsWithMenuName(menu)
         } else if (menu.type === 'select') {
-          this.$store.commit(mutationType.SELECT_MENU, menu)
+//          this.$store.commit(mutationType.SELECT_MENU, menu)
+          this.doSelect(menu);
+        } else if (menu.type === 'action') {
+          // case
+          // reference to /store/modules/menus/index.js가 전체 메뉴. menu.name.*** 형식으로 실제 선택/클릭 확인 가능
+          this.doAction(menu);
         }
         console.log('Focused CANVAS : ')
         console.log(this.focusedCanvas)
@@ -231,6 +214,8 @@
         console.log('scrolling')
       },
       onMouseMove (event) {
+        // Todo : prohibit event propagation
+        console.log('move mouse')
         if (this.isMouseDown && this.mousemove_ok) {
           this.mousemove_ok = false
           if (typeof (this.mouseLastPosition.x) !== 'undefined') {
@@ -248,6 +233,11 @@
             } else if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY < 0) {
               // down
               console.log(`Down \ndeltaX : ${deltaX} / deltaY : ${deltaY}`)
+            }
+
+            if (this.mode === 'BrightnessContrast') {
+              console.log('adjust brightnesscontrast');
+              Medic3D.adjustBrightness(deltaX);
             }
           }
           this.mouseLastPosition = {
@@ -273,6 +263,98 @@
         this.isMouseDown = true
 //        console.log(e.target)
         this.$store.commit(mutationType.SELECT_CANVAS, e.target.parentElement)
+      },
+      doAction (menu) {
+        this.mode = null;
+        let selectId;
+        if (this.focusedCanvas.id === null) {
+          // unselected
+          return;
+        } else {
+          selectId = this.focusedCanvas.id;
+        }
+        Medic3D.CameraCtrl(false);
+        switch (menu.name) {
+          case 'BrainRoiSegmentation':
+            console.log('#BrainRoiSegmentation')
+            break;
+          case 'SegmentationResultOveray':
+            console.log('#SegmentationResultOveray')
+            break;
+          case 'AnalysisReport':
+            console.log('#AnalysisReport')
+            break;
+          case 'OpenSegmentations':
+            console.log('#OpenSegmentations')
+            break;
+          case 'SaveAsDerived':
+            console.log('#SaveAsDerived')
+            break;
+          case 'ZoomIn':
+            console.log('#ZoomIn')
+            Medic3D.Zoom(selectId, false);
+            break;
+          case 'ZoomOut':
+            console.log('#ZoomOut')
+            Medic3D.Zoom(selectId, true);
+            break;
+          case 'Fit':
+            Medic3D.Fit(selectId);
+            console.log('#Fit')
+            break;
+          case 'OneToOne':
+            console.log('#OneToOne')
+            break;
+          case 'Reload':
+            console.log('#Reload')
+            break;
+          case 'LoadAnnotation':
+            console.log('#LoadAnnotation')
+            break;
+          case 'Invert':
+            Medic3D.Invert();
+            console.log('#Invert')
+            break;
+          default:
+            console.log('#Unknow action menu')
+        }
+      },
+      doSelect (menu) {
+        this.mode = menu.name;
+        Medic3D.CameraCtrl(false);
+        switch (menu.name) {
+          case 'Pan':
+            console.log('#Pan')
+            Medic3D.CameraCtrl(true);
+            break;
+          case 'Stack':
+            console.log('#Stack')
+            break;
+          case 'WindowLevel':
+            console.log('#WindowLevel')
+            break;
+          case 'Ruler':
+            console.log('#Ruler')
+            break;
+          case 'PolyRuler':
+            console.log('#PolyRuler')
+            break;
+          case 'Protractor':
+            console.log('#Protractor')
+            break;
+          case 'BrightnessContrast':
+            console.log('#BrightnessContrast');
+            break;
+          default:
+            this.mode = null;
+        }
+      },
+      doToggle (menu) {
+        switch (menu.name) {
+          case 'ShowTagsToggle':
+            console.log('#ShowTagsToggle')
+            break;
+        }
       }
     }
   }
