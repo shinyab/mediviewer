@@ -253,82 +253,84 @@ function initRenderer2D (rendererObj) {
 var ctrlMprGuide = false;
 
 export function loadZip (uploadedFile) {
-  JSZIP.loadAsync(uploadedFile)
-    .then(function (zip) {
-      return extractZip(zip, 'uint8array');
-    })
-    .then(function (buffer) {
-      console.log('Extracted zip files is read');
-      let LoadersVolume = Medic3D.Loaders.Volume    // export default { Volume }
-      let loader = new LoadersVolume()
+  return new Promise((resolve, reject) => {
+    JSZIP.loadAsync(uploadedFile)
+      .then(function (zip) {
+        return extractZip(zip, 'uint8array');
+      })
+      .then(function (buffer) {
+        console.log('Extracted zip files is read');
+        let LoadersVolume = Medic3D.Loaders.Volume    // export default { Volume }
+        let loader = new LoadersVolume()
 
-      loader.loadZip(buffer)  //
-        .then(function () {
-          // {Array.<ModelsSeries>} Array of series properly merged.
-          let series = loader.data[0].mergeSeries(loader.data)[0] // loader.data = series
-          loader.free()
-          loader = null
+        loader.loadZip(buffer)  //
+          .then(function () {
+            // {Array.<ModelsSeries>} Array of series properly merged.
+            let series = loader.data[0].mergeSeries(loader.data)[0] // loader.data = series
+            loader.free()
+            loader = null
 
-          // get first stack from series
-          let stack = series.stack[0]
-          // Compute cosines
-          // Order frames
-          // computeSpacing
-          // snityCheck
-          // init some vars
-          // compute min/max
-          // compute transformation matrices
-          stack.prepare()
+            // get first stack from series
+            let stack = series.stack[0]
+            // Compute cosines
+            // Order frames
+            // computeSpacing
+            // snityCheck
+            // init some vars
+            // compute min/max
+            // compute transformation matrices
+            stack.prepare()
 
-          // To decide what type of split window(1*1, 2*2)
-          // Split is set as 1*1 if slice is one
-          // domIDs are already defined as layout-1-1, layout-1-2, layout-2-1, layout-2-2
-          // center 3d camera/control on the stack
-          let centerLPS = stack.worldCenter();
-          r0.camera.lookAt(centerLPS.x, centerLPS.y, centerLPS.z);
-          r0.camera.updateProjectionMatrix();
-          r0.controls.target.set(centerLPS.x, centerLPS.y, centerLPS.z);
+            // To decide what type of split window(1*1, 2*2)
+            // Split is set as 1*1 if slice is one
+            // domIDs are already defined as layout-1-1, layout-1-2, layout-2-1, layout-2-2
+            // center 3d camera/control on the stack
+            let centerLPS = stack.worldCenter();
+            r0.camera.lookAt(centerLPS.x, centerLPS.y, centerLPS.z);
+            r0.camera.updateProjectionMatrix();
+            r0.controls.target.set(centerLPS.x, centerLPS.y, centerLPS.z);
 
-          // bouding box
-          r0.scene.add(new Medic3D.Helpers.BoundingBox(stack));
+            // bouding box
+            r0.scene.add(new Medic3D.Helpers.BoundingBox(stack));
 
-          combineMpr(r0, r1, stack);
-          combineMpr(r0, r2, stack);
-          combineMpr(r0, r3, stack);
+            combineMpr(r0, r1, stack);
+            combineMpr(r0, r2, stack);
+            combineMpr(r0, r3, stack);
 
-          initHelpersLocalizerAll(stack);
+            initHelpersLocalizerAll(stack);
 
-          if (ctrlMprGuide) {
-            onGreenChanged();
-            onRedChanged();
-            onYellowChanged();
-          }
+            if (ctrlMprGuide) {
+              onGreenChanged();
+              onRedChanged();
+              onYellowChanged();
+            }
 
-          // event listeners
-          // r0.domElement.addEventListener('dblclick', onDoubleClick);
-          // r1.domElement.addEventListener('dblclick', onDoubleClick);
-          // r2.domElement.addEventListener('dblclick', onDoubleClick);
-          // r3.domElement.addEventListener('dblclick', onDoubleClick);
-          // add click event
-          r0.domElement.addEventListener('click', onClick);
-          r1.domElement.addEventListener('click', onClick);
-          r2.domElement.addEventListener('click', onClick);
-          r3.domElement.addEventListener('click', onClick);
-          // add scroll event
-          r1.controls.addEventListener('OnScroll', onScroll);
-          r2.controls.addEventListener('OnScroll', onScroll);
-          r3.controls.addEventListener('OnScroll', onScroll);
-          // add others event
-          r1.controls.addEventListener('mousedown', onDown);
-          r1.controls.addEventListener('mousemove', onMove);
-          r1.controls.addEventListener('mouseup', onUp);
+            // event listeners
+            // r0.domElement.addEventListener('dblclick', onDoubleClick);
+            // r1.domElement.addEventListener('dblclick', onDoubleClick);
+            // r2.domElement.addEventListener('dblclick', onDoubleClick);
+            // r3.domElement.addEventListener('dblclick', onDoubleClick);
+            // add click event
+            r0.domElement.addEventListener('click', onClick);
+            r1.domElement.addEventListener('click', onClick);
+            r2.domElement.addEventListener('click', onClick);
+            r3.domElement.addEventListener('click', onClick);
+            // add scroll event
+            r1.controls.addEventListener('OnScroll', onScroll);
+            r2.controls.addEventListener('OnScroll', onScroll);
+            r3.controls.addEventListener('OnScroll', onScroll);
+            // add others event
+            r1.controls.addEventListener('mousedown', onDown);
+            r1.controls.addEventListener('mousemove', onMove);
+            r1.controls.addEventListener('mouseup', onUp);
 
-          window.addEventListener('resize', onWindowResize, false);
-          ready = true;
-
-          gStack = stack;
-        })
-    })
+            window.addEventListener('resize', onWindowResize, false);
+            ready = true;
+            gStack = stack;
+            resolve(true);
+          })
+      })
+  });
 }
 
 /**
@@ -851,4 +853,17 @@ export function Invert () {
     r2.stackHelper.slice.invert = newVal;
     r3.stackHelper.slice.invert = newVal;
   }
+}
+
+export function CameraCtrl (enable) {
+  console.log('#cam ctrl ' + enable)
+  let bi = r1.controls.enable;
+  if (bi) {
+    bi = false;
+  } else {
+    bi = true;
+  }
+  r1.controls.enable = bi;
+  r2.controls.enable = bi;
+  r3.controls.enable = bi;
 }

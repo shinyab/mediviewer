@@ -112,7 +112,8 @@
         mousemove_ok: true,
         isMousedown: false,
         dicomfiles: null,
-        r0: {}
+        r0: {},
+        mode: null
       }
     },
     created () {
@@ -131,7 +132,14 @@
     methods: {
       setUploadedFile (uploadedFile) {
         this.uploadedFile = uploadedFile
-        Medic3D.loadZip(uploadedFile);
+        Medic3D.loadZip(uploadedFile)
+          .then((state) => {
+            // to need more time for rendering
+            console.log('Load completed~~~~~~`');
+          })
+          .catch((err) => {
+            console.log('An error : ' + err);
+          })
         Medic3D.init();
       },
       loadSegmentation (uploadFile) {
@@ -257,7 +265,6 @@
         } else {
           selectId = this.focusedCanvas.id;
         }
-//        console.log('Selected ' + this.focusedCanvas)
         switch (menu.name) {
           case 'BrainRoiSegmentation':
             console.log('#BrainRoiSegmentation')
@@ -294,17 +301,18 @@
             break;
           case 'LoadAnnotation':
             console.log('#LoadAnnotation')
+            Medic3D.CameraCtrl(false);
             break;
           case 'Invert':
             Medic3D.Invert();
             console.log('#Invert')
             break;
-          case 'BrightnessContrast':
-            console.log('#BrightnessContrast')
-            break;
+          default:
+            console.log('#Unknow action menu')
         }
       },
       doSelect (menu) {
+        this.mode = menu.name;
         switch (menu.name) {
           case 'Pan':
             console.log('#Pan')
@@ -324,6 +332,11 @@
           case 'Protractor':
             console.log('#Protractor')
             break;
+          case 'BrightnessContrast':
+            console.log('#BrightnessContrast');
+            break;
+          default:
+            this.mode = null;
         }
       },
       doToggle (menu) {

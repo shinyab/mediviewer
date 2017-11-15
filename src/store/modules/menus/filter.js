@@ -17,7 +17,7 @@ export default {
     },
     {
       name: 'BrightnessContrast',
-      type: 'action',
+      type: 'select',
       meta: {
         label: 'Brightness Contrast',
         icon: 'img-over-12-2-btightness-contrast.svg'
