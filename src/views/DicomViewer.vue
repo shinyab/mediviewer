@@ -170,10 +170,6 @@
                @mouseenter="isMouseDown = false, mouseLastPosition = {}"
                @mouseleave="isMouseDown = false, mouseLastPosition = {}"
                @mouseout="isMouseDown = false, mouseLastPosition = {}"
-          ></div>
-          <div class="loading-spinner-dimmed-view"
-               v-if="loadingSpinner.loading"
-               @mousedown="$event.stopPropagation()"
           >
             <template v-if="showTags">
               <div class="tags-left-top">
@@ -207,7 +203,6 @@
                            :size="loadingSpinner.size"></clip-loader>
             </div>
           </div>
-
         </div>
       </div>
     </section>
