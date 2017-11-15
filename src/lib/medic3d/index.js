@@ -857,13 +857,7 @@ export function Invert () {
 
 export function CameraCtrl (enable) {
   console.log('#cam ctrl ' + enable)
-  let bi = r1.controls.enable;
-  if (bi) {
-    bi = false;
-  } else {
-    bi = true;
-  }
-  r1.controls.enable = bi;
-  r2.controls.enable = bi;
-  r3.controls.enable = bi;
+  r1.controls.viewcontrol = enable;
+  r2.controls.viewcontrol = enable;
+  r3.controls.viewcontrol = enable;
 }

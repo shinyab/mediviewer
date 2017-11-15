@@ -141,6 +141,8 @@
             console.log('An error : ' + err);
           })
         Medic3D.init();
+        // disable view control
+        Medic3D.CameraCtrl(false);
       },
       loadSegmentation (uploadFile) {
         console.log(uploadFile);
@@ -265,6 +267,7 @@
         } else {
           selectId = this.focusedCanvas.id;
         }
+        Medic3D.CameraCtrl(false);
         switch (menu.name) {
           case 'BrainRoiSegmentation':
             console.log('#BrainRoiSegmentation')
@@ -301,7 +304,6 @@
             break;
           case 'LoadAnnotation':
             console.log('#LoadAnnotation')
-            Medic3D.CameraCtrl(false);
             break;
           case 'Invert':
             Medic3D.Invert();
@@ -313,9 +315,11 @@
       },
       doSelect (menu) {
         this.mode = menu.name;
+        Medic3D.CameraCtrl(false);
         switch (menu.name) {
           case 'Pan':
             console.log('#Pan')
+            Medic3D.CameraCtrl(true);
             break;
           case 'Stack':
             console.log('#Stack')
