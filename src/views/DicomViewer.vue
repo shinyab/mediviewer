@@ -234,6 +234,11 @@
               // down
               console.log(`Down \ndeltaX : ${deltaX} / deltaY : ${deltaY}`)
             }
+
+            if (this.mode === 'BrightnessContrast') {
+              console.log('adjust brightnesscontrast');
+              Medic3D.adjustBrightness(deltaX);
+            }
           }
           this.mouseLastPosition = {
             x: event.clientX,
@@ -260,6 +265,7 @@
         this.$store.commit(mutationType.SELECT_CANVAS, e.target.parentElement)
       },
       doAction (menu) {
+        this.mode = null;
         let selectId;
         if (this.focusedCanvas.id === null) {
           // unselected
@@ -287,12 +293,10 @@
           case 'ZoomIn':
             console.log('#ZoomIn')
             Medic3D.Zoom(selectId, false);
-//            Medic3D.CameraCtrl3D(3);
             break;
           case 'ZoomOut':
             console.log('#ZoomOut')
             Medic3D.Zoom(selectId, true);
-//            Medic3D.CameraCtrl3D(-3);
             break;
           case 'Fit':
             Medic3D.Fit(selectId);

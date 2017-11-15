@@ -877,3 +877,12 @@ export function CameraCtrl (enable) {
   r2.controls.viewcontrol = enable;
   r3.controls.viewcontrol = enable;
 }
+
+export function adjustBrightness (delta) {
+  if (r1.stackHelper !== null) {
+    let val = delta / 5;
+    r1.stackHelper.slice.windowCenter += val;
+    r2.stackHelper.slice.windowCenter += val;
+    r3.stackHelper.slice.windowCenter += val;
+  }
+}
