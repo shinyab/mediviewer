@@ -9,7 +9,7 @@ export default {
   },
   showTagsToggle: ({ commit }, menuItem) => {
     if (menuItem) {
-      commit(mutationType.SHOW_TAGS_TOGGLE, menuItem)
+      commit(mutationType.SHOW_TAGS_MENU_TOGGLE, menuItem)
     }
   },
   segmentationVisibleToggle: ({ commit }, segItem) => {
