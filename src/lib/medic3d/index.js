@@ -1,6 +1,9 @@
-import JSZIP from 'jszip'
+import JSZIP from 'jszip';
 import * as THREE from 'three';
 import Medic3D from '../../../../Medic3D/dist/medic3d'
+// import http from 'http';
+// import url from 'url';
+import Request from 'request';
 var PNG = require('pngjs').PNG;
 
 // standard global variables
@@ -446,6 +449,57 @@ export function loadSegmentation (uploadedFile) {
         combineMpr(r0, r3, getStack());
       }
     });
+}
+
+export function loadSegmentationLocal (segUrl) {
+  Request({
+    method: 'GET',
+    url: 'https://s3.amazonaws.com/vuno-rsna2017/4-vuno-seg.zip',
+    encoding: null // <- this one is important !
+  }, function (error, response, body) {
+    if (error || response.statusCode !== 200) {
+      // handle error
+      return;
+    }
+    JSZIP.loadAsync(body)
+      .then(function (zip) {
+        return extractZip(zip, 'arraybuffer');
+      })
+      .then(function (buffer) {
+        return loadZipPngs(buffer)
+      })
+      .then(function (data) {
+        console.log('Loaded seg. ' + data.length);
+
+        var stack = getStack();
+        if (stack !== null) {
+          console.log('rawdata size ' + stack.rawData.length);
+          console.log('stack._frame.length ' + stack._frame.length);
+          console.log('stack.rawData.length ' + stack.rawData.length);
+
+          for (var fr = 0; fr < stack._frame.length; fr++) {
+            for (var y = 0; y < 256; y++) {
+              for (var x = 0; x < 256; x++) {
+                var po = (y * 255 + x) * 4;
+                if (data[fr].data[po] !== 0 ||
+                  data[fr].data[po + 1] !== 0 ||
+                  data[fr].data[po + 2] !== 0) {
+                  stack._frame[fr]._pixelData[y * 255 + x] = 450;
+                }
+              }
+            }
+          }
+
+          removeSceneByName(r1);
+          removeSceneByName(r2);
+          removeSceneByName(r3);
+
+          combineMpr(r0, r1, getStack());
+          combineMpr(r0, r2, getStack());
+          combineMpr(r0, r3, getStack());
+        }
+      });
+  });
 }
 
 function removeSceneByName (render) {
@@ -924,8 +978,9 @@ export function adjustBrightness (delta) {
   if (r1.stackHelper !== null) {
     let val = delta / 5;
     r1.stackHelper.slice.windowCenter += val;
-    r2.stackHelper.slice.windowCenter += val;
-    r3.stackHelper.slice.windowCenter += val;
+    // bug fixed : Apply same windowCenter for every stack
+    r2.stackHelper.slice.windowCenter = r1.stackHelper.slice.windowCenter;
+    r3.stackHelper.slice.windowCenter = r1.stackHelper.slice.windowCenter;
   }
 }
 
