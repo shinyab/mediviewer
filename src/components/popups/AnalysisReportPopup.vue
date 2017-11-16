@@ -3,8 +3,8 @@
     class="report-popup"
     :parent="true"
     :x="247" :y="85" :z="2000"
-    :w="500" :h="600"
-    :minw="350" :minh="400">
+    :w="700" :h="900"
+    :minw="700" :minh="900">
     <div class="report-popup-inner">
       <div class="report-header">
         <span>Analysis Report</span>
