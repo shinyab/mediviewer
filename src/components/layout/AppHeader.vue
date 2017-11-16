@@ -30,7 +30,7 @@
 
       <nav class="nav">
         <div class="nav-left">
-          <router-link to="/viewer" class="nav-item hero-brand">
+          <router-link @click.native="logoClicked" to="/" class="nav-item hero-brand">
             <a style="height: 40px">
               <img src="/static/images/logos/img-logo.svg">
             </a>
@@ -63,6 +63,9 @@
       this.$bus.$on(busType.FILE_UPLOADED_SEG, this.segmentationFileUploaded)
     },
     methods: {
+      logoClicked () {
+        this.$router.go('/viewer')
+      },
       fileUploaded () {
         this.$bus.$emit(busType.FILE_UPLOADED_SEG, null)
         this.$bus.$emit(busType.FILE_UPLOADED, this.files[0])
