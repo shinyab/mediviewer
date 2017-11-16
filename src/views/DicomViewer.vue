@@ -546,7 +546,7 @@
             width: 40%;
             height: 40%;
             text-align: left;
-            color: white;
+            color: #cfcfcf;
           }
 
           .tags-right-top {
@@ -556,7 +556,7 @@
             width: 40%;
             height: 40%;
             text-align: right;
-            color: white;
+            color: #cfcfcf;
           }
 
           .tags-left-bottom {
@@ -566,7 +566,7 @@
             width: 40%;
             height: 40%;
             text-align: left;
-            color: white;
+            color: #cfcfcf;
 
             .tags-left-bottom-inner {
               position: absolute;
