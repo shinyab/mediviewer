@@ -218,7 +218,7 @@
   import * as Medic3D from '@/lib/medic3d/'
 
   import Sidebar from '@/components/layout/Sidebar'
-  import ClipLoader from 'vue-spinner/src/ClipLoader.vue'
+  import ClipLoader from '@/components/lib/ClipLoader'
 
   export default {
     name: 'DicomViewer',
