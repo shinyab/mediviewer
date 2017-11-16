@@ -15,7 +15,7 @@
                @mousedown.left="mousedownLeft"
                @mousedown.middle="mousedownMiddle"
                @mousedown.right="mousedownRight"
-               @mouseup.left="isMouseDown = false, mouseLastPosition = {}"
+               @mouseup.left="mouseupLeft"
                @mouseup.middle="isMouseDown = false, mouseLastPosition = {}"
                @mouseup.right="isMouseDown = false, mouseLastPosition = {}"
                @mouseenter="isMouseDown = false, mouseLastPosition = {}"
@@ -24,7 +24,6 @@
           >
             <template v-if="showTags">
               <div class="tags-left-top">
-                1/4<br>
                 Acc# : 41238<br>
                 Study Date : 04/04/2016<br>
                 Study : KNEE, SUNRISE<br>
@@ -67,7 +66,7 @@
                @mousedown.left="mousedownLeft"
                @mousedown.middle="mousedownMiddle"
                @mousedown.right="mousedownRight"
-               @mouseup.left="isMouseDown = false, mouseLastPosition = {}"
+               @mouseup.left="mouseupLeft"
                @mouseup.middle="isMouseDown = false, mouseLastPosition = {}"
                @mouseup.right="isMouseDown = false, mouseLastPosition = {}"
                @mouseenter="isMouseDown = false, mouseLastPosition = {}"
@@ -76,7 +75,7 @@
           >
             <template v-if="showTags">
               <div class="tags-left-top">
-                1/4<br>
+                {{slice_r1}}/256<br>
                 Acc# : 41238<br>
                 Study Date : 04/04/2016<br>
                 Study : KNEE, SUNRISE<br>
@@ -115,7 +114,7 @@
                @mousedown.left="mousedownLeft"
                @mousedown.middle="mousedownMiddle"
                @mousedown.right="mousedownRight"
-               @mouseup.left="isMouseDown = false, mouseLastPosition = {}"
+               @mouseup.left="mouseupLeft"
                @mouseup.middle="isMouseDown = false, mouseLastPosition = {}"
                @mouseup.right="isMouseDown = false, mouseLastPosition = {}"
                @mouseenter="isMouseDown = false, mouseLastPosition = {}"
@@ -124,7 +123,7 @@
           >
             <template v-if="showTags">
               <div class="tags-left-top">
-                1/4<br>
+                {{slice_r2}}/256<br>
                 Acc# : 41238<br>
                 Study Date : 04/04/2016<br>
                 Study : KNEE, SUNRISE<br>
@@ -164,7 +163,7 @@
                @mousedown.left="mousedownLeft"
                @mousedown.middle="mousedownMiddle"
                @mousedown.right="mousedownRight"
-               @mouseup.left="isMouseDown = false, mouseLastPosition = {}"
+               @mouseup.left="mouseupLeft"
                @mouseup.middle="isMouseDown = false, mouseLastPosition = {}"
                @mouseup.right="isMouseDown = false, mouseLastPosition = {}"
                @mouseenter="isMouseDown = false, mouseLastPosition = {}"
@@ -173,7 +172,7 @@
           >
             <template v-if="showTags">
               <div class="tags-left-top">
-                1/4<br>
+                {{slice_r3}}/256<br>
                 Acc# : 41238<br>
                 Study Date : 04/04/2016<br>
                 Study : KNEE, SUNRISE<br>
@@ -214,7 +213,6 @@
   import * as mutationType from '@/store/mutation-types'
   import * as busType from '@/util/bus/bus-types'
 
-//  import {init, loadZip, loadSegmentation, getStack} from '@/lib/medic3d/'
   import * as Medic3D from '@/lib/medic3d/'
 
   import Sidebar from '@/components/layout/Sidebar'
@@ -252,7 +250,11 @@
           loading: false,
           color: '#cfcfcf',
           size: '50px'
-        }
+        },
+        widgets: [],
+        slice_r1: 122,
+        slice_r2: 122,
+        slice_r3: 122
       }
     },
     created () {
@@ -270,19 +272,20 @@
     },
     methods: {
       setUploadedFile (uploadedFile) {
+        this.$store.commit(mutationType.SET_SHOW_TAGS, false)
         this.loadingSpinner.loading = true
-        window.setTimeout(() => {
-          this.loadingSpinner.loading = false
-          this.$store.commit(mutationType.SET_SHOW_TAGS, true)
-        }, 5000)
         this.uploadedFile = uploadedFile
-        Medic3D.loadZip(uploadedFile)
+        Medic3D.loadZip(uploadedFile, this.eventDispatcher)
           .then((state) => {
             // to need more time for rendering
             console.log('Load completed~~~~~~`');
+            this.loadingSpinner.loading = false
+            this.$store.commit(mutationType.SET_SHOW_TAGS, true)
+            // todo : showing dicom's tags
           })
           .catch((err) => {
             console.log('An error : ' + err);
+            this.loadingSpinner.loading = false
           })
         Medic3D.init();
         // disable view control
@@ -363,7 +366,7 @@
       },
       onMouseMove (event) {
         // Todo : prohibit event propagation
-        console.log('move mouse')
+        this.doAnnotation(event);
         if (this.isMouseDown && this.mousemove_ok) {
           this.mousemove_ok = false
           if (typeof (this.mouseLastPosition.x) !== 'undefined') {
@@ -397,19 +400,17 @@
       mousedownLeft (e) {
         console.log('Left Mousedown')
         this.isMouseDown = true
-//        console.log(e.target.parentElement)
         this.$store.commit(mutationType.SELECT_CANVAS, e.target.parentElement)
+        this.doAnnotation(event);
       },
       mousedownMiddle (e) {
         console.log('Middle Mousedown')
         this.isMouseDown = true
-//        console.log(e.target)
         this.$store.commit(mutationType.SELECT_CANVAS, e.target.parentElement)
       },
       mousedownRight (e) {
         console.log('Right Mousedown')
         this.isMouseDown = true
-//        console.log(e.target)
         this.$store.commit(mutationType.SELECT_CANVAS, e.target.parentElement)
       },
       doAction (menu) {
@@ -502,6 +503,49 @@
           case 'ShowTagsToggle':
             console.log('#ShowTagsToggle')
             break;
+        }
+      },
+      eventDispatcher (event) {
+        console.log(JSON.stringify(event, null, 2))
+        switch (event.type) {
+          case 'slice':
+            this.updateSliceNo(event)
+            break;
+        }
+      },
+      updateSliceNo (event) {
+        switch (event.view) {
+          case 'r1':
+            this.slice_r1 = event.slice
+            break;
+          case 'r2':
+            this.slice_r2 = event.slice
+            break;
+          case 'r3':
+            this.slice_r3 = event.slice
+            break;
+        }
+      },
+      mouseupLeft (event) {
+        this.isMouseDown = false;
+        this.mouseLastPosition = {}
+        this.doAnnotation(event);
+      },
+      doAnnotation (event) {
+        let selectId;
+        if (this.focusedCanvas.id === null) {
+          // unselected
+        } else {
+          selectId = this.focusedCanvas.id;
+        }
+        switch (this.mode) {
+          case 'Ruler':
+          case 'PolyRuler':
+          case 'Protractor':
+            Medic3D.doAnnotation(selectId, this.mode, event);
+            break;
+          default:
+            console.log('Not Annotation mode');
         }
       }
     }

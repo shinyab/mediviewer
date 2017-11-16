@@ -16,7 +16,8 @@ const r0 = {
   camera: null,
   controls: null,
   scene: null,
-  light: null
+  light: null,
+  offset: null
 };
 
 // 2d axial renderer
@@ -35,7 +36,8 @@ const r1 = {
   stackHelper: null,
   localizerHelper: null,
   localizerScene: null,
-  name: 'r1'
+  name: 'r1',
+  offset: null
 };
 
 // 2d sagittal renderer
@@ -54,7 +56,8 @@ const r2 = {
   stackHelper: null,
   localizerHelper: null,
   localizerScene: null,
-  name: 'r2'
+  name: 'r2',
+  offset: null
 };
 
 // 2d coronal renderer
@@ -73,7 +76,8 @@ const r3 = {
   stackHelper: null,
   localizerHelper: null,
   localizerScene: null,
-  name: 'r3'
+  name: 'r3',
+  offset: null
 };
 
 let gStack = null;
@@ -86,6 +90,9 @@ let sceneClip = new THREE.Scene();
 let clipPlane1 = new THREE.Plane(new THREE.Vector3(0, 0, 0), 0);
 let clipPlane2 = new THREE.Plane(new THREE.Vector3(0, 0, 0), 0);
 let clipPlane3 = new THREE.Plane(new THREE.Vector3(0, 0, 0), 0);
+
+// Todo : event driven
+let eventListener = null;
 
 export function init () {
   /**
@@ -108,16 +115,6 @@ export function init () {
       renderDo(r1);
       renderDo(r2);
       renderDo(r3);
-
-      // if (r1.stackHelper !== null) {
-      //   r1.stackHelper.slice.windowCenter = sl;
-      //   r2.stackHelper.slice.windowCenter = sl;
-      //   r3.stackHelper.slice.windowCenter = sl;
-      //   sl++;
-      //   if (sl > 300) {
-      //     sl = 0;
-      //   }
-      // }
     }
     // request new frame
     requestAnimationFrame(function () {
@@ -212,6 +209,8 @@ function initRenderer3D (renderObj) {
     renderObj.light.position.copy(renderObj.camera.position);
     renderObj.scene.add(renderObj.light);
   }
+
+  computeOffset(renderObj);
 }
 
 function initRenderer2D (rendererObj) {
@@ -248,11 +247,14 @@ function initRenderer2D (rendererObj) {
 
   // scene
   rendererObj.scene = new THREE.Scene();
+
+  computeOffset(rendererObj);
 }
 
 var ctrlMprGuide = false;
 
-export function loadZip (uploadedFile) {
+export function loadZip (uploadedFile, cb) {
+  eventListener = cb;
   return new Promise((resolve, reject) => {
     JSZIP.loadAsync(uploadedFile)
       .then(function (zip) {
@@ -653,15 +655,23 @@ function onScroll (event) {
   console.log('# onScroll');
   const id = event.target.domElement.id;
   let stackHelper = null;
+
+  let msg = {
+    type: 'slice'
+  };
+
   switch (id) {
     case r1.domId:
       stackHelper = r1.stackHelper;
+      msg.view = 'r1';
       break;
     case r2.domId:
       stackHelper = r2.stackHelper;
+      msg.view = 'r2';
       break;
     case r3.domId:
       stackHelper = r3.stackHelper;
+      msg.view = 'r3';
       break;
     default:
       console.log('No matched ID');
@@ -683,6 +693,9 @@ function onScroll (event) {
   onGreenChanged();
   onRedChanged();
   onYellowChanged();
+  msg.slice = stackHelper.index;
+
+  eventListener(msg);
 }
 
 function onDown (event) {
@@ -710,6 +723,7 @@ function windowResize2D (rendererObj) {
   rendererObj.stackHelper.slice.canvasHeight = rendererObj.domElement.clientHeight;
   rendererObj.localizerHelper.canvasWidth = rendererObj.domElement.clientWidth;
   rendererObj.localizerHelper.canvasHeight = rendererObj.domElement.clientHeight;
+  computeOffset(rendererObj);
 }
 
 function onWindowResize () {
@@ -722,68 +736,96 @@ function onWindowResize () {
   windowResize2D(r1);
   windowResize2D(r2);
   windowResize2D(r3);
+
+  computeOffset(r0);
+}
+
+function computeOffset (renderObj) {
+  let box = renderObj.domElement.getBoundingClientRect();
+  const body = document.body;
+  const docEl = document.documentElement;
+
+  const scrollTop = window.pageYOffset || docEl.scrollTop || body.scrollTop;
+  const scrollLeft =
+    window.pageXOffset || docEl.scrollLeft || body.scrollLeft;
+
+  const clientTop = docEl.clientTop || body.clientTop || 0;
+  const clientLeft = docEl.clientLeft || body.clientLeft || 0;
+
+  const top = box.top + scrollTop - clientTop;
+  const left = box.left + scrollLeft - clientLeft;
+
+  renderObj.offset = {
+    top: Math.round(top),
+    left: Math.round(left)
+  };
+
+  // repaint all widgets
+  for (let widget of widgets) {
+    widget.update();
+  }
 }
 
 function onClick (event) {
   console.log('#onClick');
-  const canvas = event.target.parentElement;
-  const id = event.target.id;
-  const mouse = {
-    x: ((event.clientX - canvas.offsetLeft) / canvas.clientWidth) * 2 - 1,
-    y: -((event.clientY - canvas.offsetTop) / canvas.clientHeight) * 2 + 1
-  };
+  // const canvas = event.target.parentElement;
+  // const id = event.target.id;
+  // const mouse = {
+  //   x: ((event.clientX - canvas.offsetLeft) / canvas.clientWidth) * 2 - 1,
+  //   y: -((event.clientY - canvas.offsetTop) / canvas.clientHeight) * 2 + 1
+  // };
+  // //
+  // let camera = null;
+  // let stackHelper = null;
+  // let scene = null;
+  // switch (id) {
+  //   case '0':
+  //     camera = r0.camera;
+  //     stackHelper = r0.stackHelper;
+  //     scene = r0.scene;
+  //     break;
+  //   case '1':
+  //     camera = r1.camera;
+  //     stackHelper = r1.stackHelper;
+  //     scene = r1.scene;
+  //     r1.stackHelper.slice.windowCenter += 2;
+  //     break;
+  //   case '2':
+  //     camera = r2.camera;
+  //     stackHelper = r2.stackHelper;
+  //     scene = r2.scene;
+  //     r2.stackHelper.slice.windowCenter += 2;
+  //     break;
+  //   case '3':
+  //     camera = r3.camera;
+  //     stackHelper = r3.stackHelper;
+  //     scene = r3.scene;
+  //     r3.stackHelper.slice.windowCenter += 2;
+  //     break;
+  // }
   //
-  let camera = null;
-  let stackHelper = null;
-  let scene = null;
-  switch (id) {
-    case '0':
-      camera = r0.camera;
-      stackHelper = r1.stackHelper;
-      scene = r0.scene;
-      break;
-    case '1':
-      camera = r1.camera;
-      stackHelper = r1.stackHelper;
-      scene = r1.scene;
-      r1.stackHelper.slice.windowCenter += 2;
-      break;
-    case '2':
-      camera = r2.camera;
-      stackHelper = r2.stackHelper;
-      scene = r2.scene;
-      r2.stackHelper.slice.windowCenter += 2;
-      break;
-    case '3':
-      camera = r3.camera;
-      stackHelper = r3.stackHelper;
-      scene = r3.scene;
-      r3.stackHelper.slice.windowCenter += 2;
-      break;
-  }
-
-  console.log(stackHelper);
-
-  const raycaster = new THREE.Raycaster();
-  raycaster.setFromCamera(mouse, camera);
-
-  const intersects = raycaster.intersectObjects(scene.children, true);
-  if (intersects.length > 0) {
-    if (intersects[0].object && intersects[0].object.objRef) {
-      const refObject = intersects[0].object.objRef;
-      refObject.selected = !refObject.selected;
-
-      let color = refObject.color;
-      if (refObject.selected) {
-        color = 0xCCFF00;
-      }
-
-      // update materials colors
-      refObject.material.color.setHex(color);
-      refObject.materialFront.color.setHex(color);
-      refObject.materialBack.color.setHex(color);
-    }
-  }
+  // // console.log(stackHelper);
+  //
+  // const raycaster = new THREE.Raycaster();
+  // raycaster.setFromCamera(mouse, camera);
+  //
+  // const intersects = raycaster.intersectObjects(scene.children, true);
+  // if (intersects.length > 0) {
+  //   if (intersects[0].object && intersects[0].object.objRef) {
+  //     const refObject = intersects[0].object.objRef;
+  //     refObject.selected = !refObject.selected;
+  //
+  //     let color = refObject.color;
+  //     if (refObject.selected) {
+  //       color = 0xCCFF00;
+  //     }
+  //
+  //     // update materials colors
+  //     refObject.material.color.setHex(color);
+  //     refObject.materialFront.color.setHex(color);
+  //     refObject.materialBack.color.setHex(color);
+  //   }
+  // }
 }
 
 export function Zoom (id, action) {
@@ -884,5 +926,131 @@ export function adjustBrightness (delta) {
     r1.stackHelper.slice.windowCenter += val;
     r2.stackHelper.slice.windowCenter += val;
     r3.stackHelper.slice.windowCenter += val;
+  }
+}
+
+/**
+ * To do something for annotation
+ * @param action : mouse type
+ * @param event : mouse event
+ */
+export function doAnnotation (id, action, event) {
+  let selected = getView(id);
+  if (selected === null) {
+    return;
+  }
+
+  switch (event.type) {
+    case 'mousedown':
+      downAnnotation(action, event, selected);
+      break;
+    case 'mousemove':
+      moveAnnotation(action, event, selected);
+      break;
+    case 'mouseup':
+      upAnnotation(action, event, selected);
+      break;
+  }
+}
+
+let widgets = [];
+function downAnnotation (action, evt, element) {
+  var threeD = element.domElement;
+  if (threeD === null) {
+    return;
+  }
+
+  var camera = element.camera;
+  var stackHelper = element.stackHelper;
+
+  // if something hovered, exit
+  for (let widget of widgets) {
+    if (widget.hovered) {
+      widget.onStart(evt);
+      return;
+    }
+  }
+
+  threeD.style.cursor = 'default';
+
+  // mouse position
+  let mouse = {
+    x: (evt.clientX - element.offset.left) / threeD.offsetWidth * 2 - 1,
+    y: -((evt.clientY - element.offset.top) / threeD.offsetHeight) * 2 + 1
+  };
+
+  if (camera && camera.isOrthographicCamera) {
+    console.log('###Orthogonal view');
+  } else if (camera && camera.isPerspectiveCamera) {
+    console.log('###Perspective view');
+  }
+
+  let raycaster = new THREE.Raycaster();
+  raycaster.setFromCamera(mouse, camera);
+  // update the raycaster
+  let intersects = raycaster.intersectObject(stackHelper.slice.mesh);
+  if (intersects.length <= 0) {
+    console.log('## no raycasting');
+    // return;
+  } else {
+    console.log('## raycasting count is ' + intersects.length);
+  }
+
+  var controls = element.controls;
+  var scene = element.scene;
+  let widget = null;
+  switch (action) {
+    case 'Ruler':
+      widget =
+        new Medic3D.Widgets.Ruler(stackHelper.slice.mesh, controls, camera, threeD);
+      widget.worldPosition = intersects[0].point;
+      break;
+    case 'Annotation':
+      widget =
+        new Medic3D.Widgets.Annotation(stackHelper.slice.mesh, controls, camera, threeD);
+      widget.worldPosition = intersects[0].point;
+      break;
+    case 'Biruler':
+    case 'Protractor':
+      widget =
+        new Medic3D.Widgets.BiRuler(stackHelper.slice.mesh, controls, camera, threeD);
+      widget.worldPosition = intersects[0].point;
+      break;
+    default:
+      widget =
+        new Medic3D.Widgets.Handle(stackHelper.slice.mesh, controls, camera, threeD);
+      widget.worldPosition = intersects[0].point;
+      break;
+  }
+
+  widgets.push(widget);
+  scene.add(widget);
+}
+
+function moveAnnotation (action, evt, element) {
+  var threeD = element.domElement;
+  if (threeD === null) {
+    return;
+  }
+
+  // if something hovered, exit
+  let cursor = 'default';
+  for (let widget of widgets) {
+    widget.onMove(evt);
+    if (widget.hovered) {
+      cursor = 'pointer';
+    }
+  }
+
+  threeD.style.cursor = cursor;
+}
+
+function upAnnotation (action, evt, element) {
+  // if something hovered, exit
+  for (let widget of widgets) {
+    if (widget.active) {
+      widget.onEnd(evt);
+      return;
+    }
   }
 }
