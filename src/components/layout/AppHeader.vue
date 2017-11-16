@@ -32,7 +32,7 @@
         <div class="nav-left">
           <router-link @click.native="logoClicked" to="/" class="nav-item hero-brand">
             <a style="height: 40px">
-              <img src="/static/images/logos/img-logo.svg">
+              <img src="/static/images/logos/img-logo-vuno.svg">
             </a>
           </router-link>
         </div>
