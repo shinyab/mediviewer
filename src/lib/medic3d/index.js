@@ -1011,6 +1011,7 @@ function downAnnotation (action, evt, element) {
       widget.worldPosition = intersects[0].point;
       break;
     case 'Biruler':
+    case 'Protractor':
       widget =
         new Medic3D.Widgets.BiRuler(stackHelper.slice.mesh, controls, camera, threeD);
       widget.worldPosition = intersects[0].point;

@@ -366,14 +366,7 @@
       },
       onMouseMove (event) {
         // Todo : prohibit event propagation
-        console.log('move mouse')
-        let selectId;
-        if (this.focusedCanvas.id === null) {
-          // unselected
-        } else {
-          selectId = this.focusedCanvas.id;
-        }
-        Medic3D.doAnnotation(selectId, 'Ruler', event);
+        this.doAnnotation(event);
         if (this.isMouseDown && this.mousemove_ok) {
           this.mousemove_ok = false
           if (typeof (this.mouseLastPosition.x) !== 'undefined') {
@@ -405,17 +398,10 @@
         }
       },
       mousedownLeft (e) {
-        let selectId;
-        if (this.focusedCanvas.id === null) {
-          // unselected
-          return;
-        } else {
-          selectId = this.focusedCanvas.id;
-        }
         console.log('Left Mousedown')
         this.isMouseDown = true
         this.$store.commit(mutationType.SELECT_CANVAS, e.target.parentElement)
-        Medic3D.doAnnotation(selectId, 'Ruler', e);
+        this.doAnnotation(event);
       },
       mousedownMiddle (e) {
         console.log('Middle Mousedown')
@@ -498,15 +484,12 @@
             break;
           case 'Ruler':
             console.log('#Ruler')
-            this.doAnnotation(menu.name);
             break;
           case 'PolyRuler':
             console.log('#PolyRuler')
-            this.doAnnotation(menu.name);
             break;
           case 'Protractor':
             console.log('#Protractor')
-            this.doAnnotation(menu.name);
             break;
           case 'BrightnessContrast':
             console.log('#BrightnessContrast');
@@ -543,26 +526,27 @@
             break;
         }
       },
-      doAnnotation (tool) {
-        switch (tool) {
-          case 'Ruler':
-            break;
-          case 'PolyRuler':
-            break;
-          case 'Protractor':
-            break;
-        }
-      },
       mouseupLeft (event) {
         this.isMouseDown = false;
         this.mouseLastPosition = {}
+        this.doAnnotation(event);
+      },
+      doAnnotation (event) {
         let selectId;
         if (this.focusedCanvas.id === null) {
           // unselected
         } else {
           selectId = this.focusedCanvas.id;
         }
-        Medic3D.doAnnotation(selectId, 'Ruler', event);
+        switch (this.mode) {
+          case 'Ruler':
+          case 'PolyRuler':
+          case 'Protractor':
+            Medic3D.doAnnotation(selectId, this.mode, event);
+            break;
+          default:
+            console.log('Not Annotation mode');
+        }
       }
     }
   }
