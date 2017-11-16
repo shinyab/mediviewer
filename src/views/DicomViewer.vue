@@ -218,7 +218,7 @@
   import * as Medic3D from '@/lib/medic3d/'
 
   import Sidebar from '@/components/layout/Sidebar'
-  import ClipLoader from 'vue-spinner/src/ClipLoader.vue'
+  import ClipLoader from '@/components/lib/ClipLoader'
 
   export default {
     name: 'DicomViewer',
@@ -344,7 +344,7 @@
         if (menu.type === 'layout') {
           this.setLayoutsWithMenuName(menu)
         } else if (menu.type === 'select') {
-//          this.$store.commit(mutationType.SELECT_MENU, menu)
+          this.$store.commit(mutationType.SELECT_MENU, menu)
           this.doSelect(menu);
         } else if (menu.type === 'action') {
           // case
@@ -546,7 +546,7 @@
             width: 40%;
             height: 40%;
             text-align: left;
-            color: white;
+            color: #cfcfcf;
           }
 
           .tags-right-top {
@@ -556,7 +556,7 @@
             width: 40%;
             height: 40%;
             text-align: right;
-            color: white;
+            color: #cfcfcf;
           }
 
           .tags-left-bottom {
@@ -566,7 +566,7 @@
             width: 40%;
             height: 40%;
             text-align: left;
-            color: white;
+            color: #cfcfcf;
 
             .tags-left-bottom-inner {
               position: absolute;
