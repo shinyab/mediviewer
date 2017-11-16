@@ -182,9 +182,10 @@
           size: '50px'
         },
         widgets: [],
-        slice_r1: 122,
-        slice_r2: 122,
-        slice_r3: 122
+        slice_r1: 122,    // temporary
+        slice_r2: 122,    // temporary
+        slice_r3: 122,    // temporary
+        dicom_name: null
       }
     },
     created () {
@@ -229,7 +230,6 @@
         }, 5000)
         console.log(uploadFile);
         Medic3D.loadSegmentation(uploadFile);
-//        console.log('Stack ' + Medic3D.getStack()._numberOfFrames);
         // Todo : assign (slice, segmentation)
       },
       initLayouts () {
@@ -356,7 +356,8 @@
         Medic3D.CameraCtrl(false);
         switch (menu.name) {
           case 'BrainRoiSegmentation':
-            console.log('#BrainRoiSegmentation')
+            console.log('#BrainRoiSegmentation');
+            Medic3D.loadSegmentationLocal('https://s3.amazonaws.com/vuno-rsna2017/4-vuno-seg.zip')
             break;
           case 'SegmentationResultOveray':
             console.log('#SegmentationResultOveray')
