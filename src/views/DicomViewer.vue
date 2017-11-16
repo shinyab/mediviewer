@@ -591,6 +591,7 @@
             height: 40%;
             text-align: left;
             color: #cfcfcf;
+            pointer-events: none;
           }
 
           .tags-right-top {
@@ -601,6 +602,7 @@
             height: 40%;
             text-align: right;
             color: #cfcfcf;
+            pointer-events: none;
           }
 
           .tags-left-bottom {
@@ -611,6 +613,7 @@
             height: 40%;
             text-align: left;
             color: #cfcfcf;
+            pointer-events: none;
 
             .tags-left-bottom-inner {
               position: absolute;
