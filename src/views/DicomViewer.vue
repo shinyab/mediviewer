@@ -344,7 +344,7 @@
         if (menu.type === 'layout') {
           this.setLayoutsWithMenuName(menu)
         } else if (menu.type === 'select') {
-//          this.$store.commit(mutationType.SELECT_MENU, menu)
+          this.$store.commit(mutationType.SELECT_MENU, menu)
           this.doSelect(menu);
         } else if (menu.type === 'action') {
           // case
