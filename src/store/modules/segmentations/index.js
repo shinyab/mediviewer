@@ -6,81 +6,162 @@ const state = {
       visible: false,
       selected: false,
       meta: {
-        label: 'Segmentation 01',
+        label: 'Left-Hippocampus',
         icon: 'btn-uncheck-checkbox.svg',
-        color: '#f5a623'
+        color: 'rgb(201, 84, 27)'
       }
     },
     {
       visible: false,
       selected: false,
       meta: {
-        label: 'Segmentation 02',
+        label: 'Right-Hippocampus',
         icon: 'btn-uncheck-checkbox.svg',
-        color: '#f55e23'
+        color: 'rgb(201, 84, 27)'
       }
     },
     {
       visible: false,
       selected: false,
       meta: {
-        label: 'Segmentation 03',
+        label: 'ctx-lh-parahippocampal',
         icon: 'btn-uncheck-checkbox.svg',
-        color: '#f5235d'
+        color: 'rgb(113, 61, 50)'
       }
     },
     {
       visible: false,
       selected: false,
       meta: {
-        label: 'Segmentation 04',
+        label: 'ctx-rh-parahippocampal',
         icon: 'btn-uncheck-checkbox.svg',
-        color: '#e323f5'
+        color: 'rgb(113, 61, 50)'
       }
     },
     {
       visible: false,
       selected: false,
       meta: {
-        label: 'Segmentation 05',
+        label: 'ctx-lh-entorhinal',
         icon: 'btn-uncheck-checkbox.svg',
-        color: '#8d23f5'
+        color: 'rgb(190, 248, 136)'
       }
     },
     {
       visible: false,
       selected: false,
       meta: {
-        label: 'Segmentation 06',
+        label: 'ctx-rh-entorhinal',
         icon: 'btn-uncheck-checkbox.svg',
-        color: '#234cf5'
+        color: 'rgb(190, 248, 136)'
       }
     },
     {
       visible: false,
       selected: false,
       meta: {
-        label: 'Segmentation 07',
+        label: 'ctx-lh-isthmuscingulate',
         icon: 'btn-uncheck-checkbox.svg',
-        color: '#23d0f5'
+        color: 'rgb(199, 156, 83)'
       }
     },
     {
       visible: false,
       selected: false,
       meta: {
-        label: 'Segmentation 08',
+        label: 'ctx-rh-isthmuscingulate',
         icon: 'btn-uncheck-checkbox.svg',
-        color: '#23f53d'
+        color: 'rgb(199, 156, 83)'
       }
     },
     {
       visible: false,
       selected: false,
       meta: {
-        label: 'Segmentation 09',
+        label: 'ctx-lh-posteriorcingulate',
         icon: 'btn-uncheck-checkbox.svg',
-        color: '#6b801e'
+        color: 'rgb(236, 36, 69)'
+      }
+    },
+    {
+      visible: false,
+      selected: false,
+      meta: {
+        label: 'ctx-rh-posteriorcingulate',
+        icon: 'btn-uncheck-checkbox.svg',
+        color: 'rgb(236, 36, 69)'
+      }
+    },
+    {
+      visible: false,
+      selected: false,
+      meta: {
+        label: 'ctx-lh-fusiform',
+        icon: 'btn-uncheck-checkbox.svg',
+        color: 'rgb(247, 213, 135)'
+      }
+    },
+    {
+      visible: false,
+      selected: false,
+      meta: {
+        label: 'ctx-rh-fusiform',
+        icon: 'btn-uncheck-checkbox.svg',
+        color: 'rgb(247, 213, 135)'
+      }
+    },
+    {
+      visible: false,
+      selected: false,
+      meta: {
+        label: 'ctx-lh-superiortemporal',
+        icon: 'btn-uncheck-checkbox.svg',
+        color: 'rgb(205, 73, 34)'
+      }
+    },
+    {
+      visible: false,
+      selected: false,
+      meta: {
+        label: 'ctx-rh-superiortemporal',
+        icon: 'btn-uncheck-checkbox.svg',
+        color: 'rgb(205, 73, 34)'
+      }
+    },
+    {
+      visible: false,
+      selected: false,
+      meta: {
+        label: 'ctx-lh-supramarginal',
+        icon: 'btn-uncheck-checkbox.svg',
+        color: 'rgb(109, 111, 171)'
+      }
+    },
+    {
+      visible: false,
+      selected: false,
+      meta: {
+        label: 'ctx-rh-supramarginal',
+        icon: 'btn-uncheck-checkbox.svg',
+        color: 'rgb(109, 111, 171)'
+      }
+    },
+    {
+      visible: false,
+      selected: false,
+      meta: {
+        label: 'ctx-lh-precuneus',
+        icon: 'btn-uncheck-checkbox.svg',
+        color: 'rgb(22, 215, 204)'
+      }
+    },
+    {
+      visible: false,
+      selected: false,
+      meta: {
+        label: 'ctx-rh-precuneus',
+        icon: 'btn-uncheck-checkbox.svg',
+        color: 'rgb(22, 215, 204)'
       }
     }
   ]
