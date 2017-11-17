@@ -442,9 +442,7 @@ export function loadSegmentation (uploadedFile) {
               data[fr].data[po + 1] !== 0 ||
               data[fr].data[po + 2] !== 0) {
                 newVal = (data[fr].data[po] + data[fr].data[po + 1] + data[fr].data[po + 2]) / 3
-                // stack._frame[fr]._pixelData[y * 255 + x] = 450;
                 stack._frame[fr]._pixelData[y * 255 + x] = newVal;
-                // console.log('val : ' + newVal);
               }
             }
           }
@@ -464,11 +462,13 @@ export function loadSegmentation (uploadedFile) {
 export function loadSegmentationLocal (segUrl) {
   Request({
     method: 'GET',
-    url: 'https://s3.amazonaws.com/vuno-rsna2017/4-vuno-seg.zip',
+    // url: 'http://' + location.host + '/static/seg/4-vuno-seg.zip',
+    url: segUrl,
     encoding: null // <- this one is important !
   }, function (error, response, body) {
     if (error || response.statusCode !== 200) {
       // handle error
+      console.log('#loadSegmentationLocal : ' + error);
       return;
     }
     JSZIP.loadAsync(body)
@@ -495,11 +495,8 @@ export function loadSegmentationLocal (segUrl) {
                 if (data[fr].data[po] !== 0 ||
                   data[fr].data[po + 1] !== 0 ||
                   data[fr].data[po + 2] !== 0) {
-                  stack._frame[fr]._pixelData[y * 255 + x] = 450;
-                  // stack._frame[fr]._pixelData[y * 255 + x] =
-                  //   (data[fr].data[po] + data[fr].data[po + 1] + data[fr].data[po + 2]) / 3;
                   newVal = (data[fr].data[po] + data[fr].data[po + 1] + data[fr].data[po + 2]) / 3
-                  console.log('val : ' + newVal);
+                  stack._frame[fr]._pixelData[y * 255 + x] = newVal;
                 }
               }
             }

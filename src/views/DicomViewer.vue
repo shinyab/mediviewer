@@ -426,6 +426,7 @@
         switch (menu.name) {
           case 'BrainRoiSegmentation':
             console.log('#BrainRoiSegmentation');
+//            url: 'http://' + location.host + '/static/seg/4-vuno-seg.zip',
             Medic3D.loadSegmentationLocal('https://s3.amazonaws.com/vuno-rsna2017/4-vuno-seg.zip')
             break;
           case 'SegmentationResultOveray':
