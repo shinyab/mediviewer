@@ -1,6 +1,9 @@
-import JSZIP from 'jszip'
+import JSZIP from 'jszip';
 import * as THREE from 'three';
 import Medic3D from '../../../../Medic3D/dist/medic3d'
+// import http from 'http';
+// import url from 'url';
+import Request from 'request';
 var PNG = require('pngjs').PNG;
 
 // standard global variables
@@ -258,13 +261,13 @@ export function loadZip (uploadedFile, cb) {
   return new Promise((resolve, reject) => {
     JSZIP.loadAsync(uploadedFile)
       .then(function (zip) {
+        clearWidgets();
         return extractZip(zip, 'uint8array');
       })
       .then(function (buffer) {
         console.log('Extracted zip files is read');
         let LoadersVolume = Medic3D.Loaders.Volume    // export default { Volume }
         let loader = new LoadersVolume()
-
         loader.loadZip(buffer)  //
           .then(function () {
             // {Array.<ModelsSeries>} Array of series properly merged.
@@ -306,12 +309,6 @@ export function loadZip (uploadedFile, cb) {
               onRedChanged();
               onYellowChanged();
             }
-
-            // event listeners
-            // r0.domElement.addEventListener('dblclick', onDoubleClick);
-            // r1.domElement.addEventListener('dblclick', onDoubleClick);
-            // r2.domElement.addEventListener('dblclick', onDoubleClick);
-            // r3.domElement.addEventListener('dblclick', onDoubleClick);
             // add click event
             r0.domElement.addEventListener('click', onClick);
             r1.domElement.addEventListener('click', onClick);
@@ -392,11 +389,23 @@ function initHelpersLocalizerAll (stack) {
     ]);
 }
 
-function extractZip (zip, type) {
+function extractZip (zip, type, sort) {
   var files = Object.keys(zip.files)
-  var loadData = []
+  var loadData;
+  if (sort) {
+    loadData = [256];
+  } else {
+    loadData = [];
+  }
+
   files.forEach(function (filename) {
-    loadData.push(zip.files[filename].async(type))  // file data
+    // for sorting
+    if (sort) {
+      var temp = filename.split('.');
+      loadData[parseInt(temp[0])] = zip.files[filename].async(type);
+    } else {
+      loadData.push(zip.files[filename].async(type))  // file data
+    }
   })
 
   return Promise.all(loadData)
@@ -410,7 +419,7 @@ function extractZip (zip, type) {
 export function loadSegmentation (uploadedFile) {
   JSZIP.loadAsync(uploadedFile)
     .then(function (zip) {
-      return extractZip(zip, 'arraybuffer');
+      return extractZip(zip, 'arraybuffer', true);
     })
     .then(function (buffer) {
       return loadZipPngs(buffer)
@@ -424,6 +433,7 @@ export function loadSegmentation (uploadedFile) {
         console.log('stack._frame.length ' + stack._frame.length);
         console.log('stack.rawData.length ' + stack.rawData.length);
 
+        var newVal;
         for (var fr = 0; fr < stack._frame.length; fr++) {
           for (var y = 0; y < 256; y++) {
             for (var x = 0; x < 256; x++) {
@@ -431,7 +441,8 @@ export function loadSegmentation (uploadedFile) {
               if (data[fr].data[po] !== 0 ||
               data[fr].data[po + 1] !== 0 ||
               data[fr].data[po + 2] !== 0) {
-                stack._frame[fr]._pixelData[y * 255 + x] = 450;
+                newVal = (data[fr].data[po] + data[fr].data[po + 1] + data[fr].data[po + 2]) / 3
+                stack._frame[fr]._pixelData[y * 255 + x] = newVal;
               }
             }
           }
@@ -446,6 +457,65 @@ export function loadSegmentation (uploadedFile) {
         combineMpr(r0, r3, getStack());
       }
     });
+}
+
+export function loadSegmentationLocal (segUrl) {
+  return new Promise((resolve, reject) => {
+    Request({
+      method: 'GET',
+      // url: 'http://' + location.host + '/static/seg/4-vuno-seg.zip',
+      url: segUrl,
+      encoding: null // <- this one is important !
+    }, function (error, response, body) {
+      if (error || response.statusCode !== 200) {
+        // handle error
+        console.log('#loadSegmentationLocal : ' + error);
+        return;
+      }
+      JSZIP.loadAsync(body)
+        .then(function (zip) {
+          return extractZip(zip, 'arraybuffer', true);
+        })
+        .then(function (buffer) {
+          return loadZipPngs(buffer)
+        })
+        .then(function (data) {
+          console.log('Loaded seg. ' + data.length);
+
+          var stack = getStack();
+          if (stack !== null) {
+            console.log('rawdata size ' + stack.rawData.length);
+            console.log('stack._frame.length ' + stack._frame.length);
+            console.log('stack.rawData.length ' + stack.rawData.length);
+
+            var newVal;
+            for (var fr = 0; fr < stack._frame.length; fr++) {
+              for (var y = 0; y < 256; y++) {
+                for (var x = 0; x < 256; x++) {
+                  var po = (y * 255 + x) * 4;
+                  if (data[fr].data[po] !== 0 ||
+                    data[fr].data[po + 1] !== 0 ||
+                    data[fr].data[po + 2] !== 0) {
+                    newVal = (data[fr].data[po] + data[fr].data[po + 1] + data[fr].data[po + 2]) / 3
+                    stack._frame[fr]._pixelData[y * 255 + x] = newVal;
+                  }
+                }
+              }
+            }
+
+            removeSceneByName(r1);
+            removeSceneByName(r2);
+            removeSceneByName(r3);
+
+            combineMpr(r0, r1, getStack());
+            combineMpr(r0, r2, getStack());
+            combineMpr(r0, r3, getStack());
+
+            resolve(true);
+          }
+        });
+    });
+  });
 }
 
 function removeSceneByName (render) {
@@ -598,59 +668,6 @@ function onGreenChanged () {
   updateClipPlane(r3, clipPlane3);
 }
 
-// function onDoubleClick (event) {
-//   const canvas = event.target.parentElement;
-//   const id = event.target.id;
-//   const mouse = {
-//     x: ((event.clientX - canvas.offsetLeft) / canvas.clientWidth) * 2 - 1,
-//     y: -((event.clientY - canvas.offsetTop) / canvas.clientHeight) * 2 + 1
-//   };
-//   //
-//   let camera = null;
-//   let stackHelper = null;
-//   let scene = null;
-//   switch (id) {
-//     case '0':
-//       camera = r0.camera;
-//       stackHelper = r1.stackHelper;
-//       scene = r0.scene;
-//       break;
-//     case '1':
-//       camera = r1.camera;
-//       stackHelper = r1.stackHelper;
-//       scene = r1.scene;
-//       break;
-//     case '2':
-//       camera = r2.camera;
-//       stackHelper = r2.stackHelper;
-//       scene = r2.scene;
-//       break;
-//     case '3':
-//       camera = r3.camera;
-//       stackHelper = r3.stackHelper;
-//       scene = r3.scene;
-//       break;
-//   }
-//
-//   const raycaster = new THREE.Raycaster();
-//   raycaster.setFromCamera(mouse, camera);
-//
-//   const intersects = raycaster.intersectObjects(scene.children, true);
-//   if (intersects.length > 0) {
-//     let ijk =
-//       // CoreUtils.worldToData(stackHelper.stack.lps2IJK, intersects[0].point);
-//       Medic3D.Core.Utils.worldToData(stackHelper.stack.lps2IJK, intersects[0].point);
-//
-//     r1.stackHelper.index = ijk.getComponent((r1.stackHelper.orientation + 2) % 3);
-//     r2.stackHelper.index = ijk.getComponent((r2.stackHelper.orientation + 2) % 3);
-//     r3.stackHelper.index = ijk.getComponent((r3.stackHelper.orientation + 2) % 3);
-//
-//     onGreenChanged();
-//     onRedChanged();
-//     onYellowChanged();
-//   }
-// }
-
 function onScroll (event) {
   console.log('# onScroll');
   const id = event.target.domElement.id;
@@ -767,65 +784,7 @@ function computeOffset (renderObj) {
 }
 
 function onClick (event) {
-  console.log('#onClick');
-  // const canvas = event.target.parentElement;
-  // const id = event.target.id;
-  // const mouse = {
-  //   x: ((event.clientX - canvas.offsetLeft) / canvas.clientWidth) * 2 - 1,
-  //   y: -((event.clientY - canvas.offsetTop) / canvas.clientHeight) * 2 + 1
-  // };
-  // //
-  // let camera = null;
-  // let stackHelper = null;
-  // let scene = null;
-  // switch (id) {
-  //   case '0':
-  //     camera = r0.camera;
-  //     stackHelper = r0.stackHelper;
-  //     scene = r0.scene;
-  //     break;
-  //   case '1':
-  //     camera = r1.camera;
-  //     stackHelper = r1.stackHelper;
-  //     scene = r1.scene;
-  //     r1.stackHelper.slice.windowCenter += 2;
-  //     break;
-  //   case '2':
-  //     camera = r2.camera;
-  //     stackHelper = r2.stackHelper;
-  //     scene = r2.scene;
-  //     r2.stackHelper.slice.windowCenter += 2;
-  //     break;
-  //   case '3':
-  //     camera = r3.camera;
-  //     stackHelper = r3.stackHelper;
-  //     scene = r3.scene;
-  //     r3.stackHelper.slice.windowCenter += 2;
-  //     break;
-  // }
-  //
-  // // console.log(stackHelper);
-  //
-  // const raycaster = new THREE.Raycaster();
-  // raycaster.setFromCamera(mouse, camera);
-  //
-  // const intersects = raycaster.intersectObjects(scene.children, true);
-  // if (intersects.length > 0) {
-  //   if (intersects[0].object && intersects[0].object.objRef) {
-  //     const refObject = intersects[0].object.objRef;
-  //     refObject.selected = !refObject.selected;
-  //
-  //     let color = refObject.color;
-  //     if (refObject.selected) {
-  //       color = 0xCCFF00;
-  //     }
-  //
-  //     // update materials colors
-  //     refObject.material.color.setHex(color);
-  //     refObject.materialFront.color.setHex(color);
-  //     refObject.materialBack.color.setHex(color);
-  //   }
-  // }
+  console.log('#onClick' + event);
 }
 
 export function Zoom (id, action) {
@@ -924,8 +883,9 @@ export function adjustBrightness (delta) {
   if (r1.stackHelper !== null) {
     let val = delta / 5;
     r1.stackHelper.slice.windowCenter += val;
-    r2.stackHelper.slice.windowCenter += val;
-    r3.stackHelper.slice.windowCenter += val;
+    // bug fixed : Apply same windowCenter for every stack
+    r2.stackHelper.slice.windowCenter = r1.stackHelper.slice.windowCenter;
+    r3.stackHelper.slice.windowCenter = r1.stackHelper.slice.windowCenter;
   }
 }
 
@@ -954,6 +914,7 @@ export function doAnnotation (id, action, event) {
 }
 
 let widgets = [];
+let widgetIndex = 0;
 function downAnnotation (action, evt, element) {
   var threeD = element.domElement;
   if (threeD === null) {
@@ -997,34 +958,33 @@ function downAnnotation (action, evt, element) {
   }
 
   var controls = element.controls;
-  var scene = element.scene;
   let widget = null;
   switch (action) {
     case 'Ruler':
-      widget =
-        new Medic3D.Widgets.Ruler(stackHelper.slice.mesh, controls, camera, threeD);
+      widget = new Medic3D.Widgets.Ruler(stackHelper.slice.mesh, controls, camera, threeD);
       widget.worldPosition = intersects[0].point;
+      widget.name = 'Ruler-' + widgetIndex;
       break;
     case 'Annotation':
-      widget =
-        new Medic3D.Widgets.Annotation(stackHelper.slice.mesh, controls, camera, threeD);
+      widget = new Medic3D.Widgets.Annotation(stackHelper.slice.mesh, controls, camera, threeD);
       widget.worldPosition = intersects[0].point;
+      widget.name = 'Annotation-' + widgetIndex;
       break;
     case 'Biruler':
     case 'Protractor':
-      widget =
-        new Medic3D.Widgets.BiRuler(stackHelper.slice.mesh, controls, camera, threeD);
+      widget = new Medic3D.Widgets.BiRuler(stackHelper.slice.mesh, controls, camera, threeD);
       widget.worldPosition = intersects[0].point;
+      widget.name = 'Biruler-' + widgetIndex;
       break;
     default:
-      widget =
-        new Medic3D.Widgets.Handle(stackHelper.slice.mesh, controls, camera, threeD);
+      widget = new Medic3D.Widgets.Handle(stackHelper.slice.mesh, controls, camera, threeD);
       widget.worldPosition = intersects[0].point;
+      widget.name = 'Unknown-' + widgetIndex;
       break;
   }
+  widgetIndex++;
 
   widgets.push(widget);
-  scene.add(widget);
 }
 
 function moveAnnotation (action, evt, element) {
@@ -1052,5 +1012,11 @@ function upAnnotation (action, evt, element) {
       widget.onEnd(evt);
       return;
     }
+  }
+}
+
+function clearWidgets () {
+  for (let widget of widgets) {
+    widget.hide();
   }
 }

@@ -182,9 +182,10 @@
           size: '50px'
         },
         widgets: [],
-        slice_r1: 122,
-        slice_r2: 122,
-        slice_r3: 122
+        slice_r1: 122,    // temporary
+        slice_r2: 122,    // temporary
+        slice_r3: 122,    // temporary
+        dicom_name: null
       }
     },
     created () {
@@ -203,6 +204,8 @@
     methods: {
       setUploadedFile (uploadedFile) {
         console.log('setUploadedFile')
+        var temp = uploadedFile.name.split('.');
+        this.dicom_name = temp[0];
         this.$store.commit(mutationType.SET_SHOW_TAGS, false)
         this.loadingSpinner.loading = true
         this.uploadedFile = uploadedFile
@@ -228,8 +231,7 @@
           this.loadingSpinner.loading = false
         }, 5000)
         console.log(uploadFile);
-        Medic3D.loadSegmentation(uploadFile);
-//        console.log('Stack ' + Medic3D.getStack()._numberOfFrames);
+        Medic3D.loadSegmentation(uploadFile, true);
         // Todo : assign (slice, segmentation)
       },
       initLayouts () {
@@ -356,7 +358,8 @@
         Medic3D.CameraCtrl(false);
         switch (menu.name) {
           case 'BrainRoiSegmentation':
-            console.log('#BrainRoiSegmentation')
+            console.log('#BrainRoiSegmentation');
+            this.loadAutoSegmentation();
             break;
           case 'SegmentationResultOveray':
             console.log('#SegmentationResultOveray')
@@ -478,6 +481,13 @@
           default:
             console.log('Not Annotation mode');
         }
+      },
+      loadAutoSegmentation () {
+        this.loadingSpinner.loading = true
+        Medic3D.loadSegmentationLocal('http://' + location.host + '/static/seg/' + this.dicom_name + '-seg.zip', true)
+          .then(() => {
+            this.loadingSpinner.loading = false;
+          });
       }
     }
   }
