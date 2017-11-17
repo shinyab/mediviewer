@@ -460,57 +460,61 @@ export function loadSegmentation (uploadedFile) {
 }
 
 export function loadSegmentationLocal (segUrl) {
-  Request({
-    method: 'GET',
-    // url: 'http://' + location.host + '/static/seg/4-vuno-seg.zip',
-    url: segUrl,
-    encoding: null // <- this one is important !
-  }, function (error, response, body) {
-    if (error || response.statusCode !== 200) {
-      // handle error
-      console.log('#loadSegmentationLocal : ' + error);
-      return;
-    }
-    JSZIP.loadAsync(body)
-      .then(function (zip) {
-        return extractZip(zip, 'arraybuffer');
-      })
-      .then(function (buffer) {
-        return loadZipPngs(buffer)
-      })
-      .then(function (data) {
-        console.log('Loaded seg. ' + data.length);
+  return new Promise((resolve, reject) => {
+    Request({
+      method: 'GET',
+      // url: 'http://' + location.host + '/static/seg/4-vuno-seg.zip',
+      url: segUrl,
+      encoding: null // <- this one is important !
+    }, function (error, response, body) {
+      if (error || response.statusCode !== 200) {
+        // handle error
+        console.log('#loadSegmentationLocal : ' + error);
+        return;
+      }
+      JSZIP.loadAsync(body)
+        .then(function (zip) {
+          return extractZip(zip, 'arraybuffer', true);
+        })
+        .then(function (buffer) {
+          return loadZipPngs(buffer)
+        })
+        .then(function (data) {
+          console.log('Loaded seg. ' + data.length);
 
-        var stack = getStack();
-        if (stack !== null) {
-          console.log('rawdata size ' + stack.rawData.length);
-          console.log('stack._frame.length ' + stack._frame.length);
-          console.log('stack.rawData.length ' + stack.rawData.length);
+          var stack = getStack();
+          if (stack !== null) {
+            console.log('rawdata size ' + stack.rawData.length);
+            console.log('stack._frame.length ' + stack._frame.length);
+            console.log('stack.rawData.length ' + stack.rawData.length);
 
-          var newVal;
-          for (var fr = 0; fr < stack._frame.length; fr++) {
-            for (var y = 0; y < 256; y++) {
-              for (var x = 0; x < 256; x++) {
-                var po = (y * 255 + x) * 4;
-                if (data[fr].data[po] !== 0 ||
-                  data[fr].data[po + 1] !== 0 ||
-                  data[fr].data[po + 2] !== 0) {
-                  newVal = (data[fr].data[po] + data[fr].data[po + 1] + data[fr].data[po + 2]) / 3
-                  stack._frame[fr]._pixelData[y * 255 + x] = newVal;
+            var newVal;
+            for (var fr = 0; fr < stack._frame.length; fr++) {
+              for (var y = 0; y < 256; y++) {
+                for (var x = 0; x < 256; x++) {
+                  var po = (y * 255 + x) * 4;
+                  if (data[fr].data[po] !== 0 ||
+                    data[fr].data[po + 1] !== 0 ||
+                    data[fr].data[po + 2] !== 0) {
+                    newVal = (data[fr].data[po] + data[fr].data[po + 1] + data[fr].data[po + 2]) / 3
+                    stack._frame[fr]._pixelData[y * 255 + x] = newVal;
+                  }
                 }
               }
             }
+
+            removeSceneByName(r1);
+            removeSceneByName(r2);
+            removeSceneByName(r3);
+
+            combineMpr(r0, r1, getStack());
+            combineMpr(r0, r2, getStack());
+            combineMpr(r0, r3, getStack());
+
+            resolve(true);
           }
-
-          removeSceneByName(r1);
-          removeSceneByName(r2);
-          removeSceneByName(r3);
-
-          combineMpr(r0, r1, getStack());
-          combineMpr(r0, r2, getStack());
-          combineMpr(r0, r3, getStack());
-        }
-      });
+        });
+    });
   });
 }
 

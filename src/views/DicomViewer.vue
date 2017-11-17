@@ -204,6 +204,8 @@
     methods: {
       setUploadedFile (uploadedFile) {
         console.log('setUploadedFile')
+        var temp = uploadedFile.name.split('.');
+        this.dicom_name = temp[0];
         this.$store.commit(mutationType.SET_SHOW_TAGS, false)
         this.loadingSpinner.loading = true
         this.uploadedFile = uploadedFile
@@ -229,7 +231,7 @@
           this.loadingSpinner.loading = false
         }, 5000)
         console.log(uploadFile);
-        Medic3D.loadSegmentation(uploadFile);
+        Medic3D.loadSegmentation(uploadFile, true);
         // Todo : assign (slice, segmentation)
       },
       initLayouts () {
@@ -358,7 +360,8 @@
           case 'BrainRoiSegmentation':
             console.log('#BrainRoiSegmentation');
 //            url: 'http://' + location.host + '/static/seg/4-vuno-seg.zip',
-            Medic3D.loadSegmentationLocal('https://s3.amazonaws.com/vuno-rsna2017/4-vuno-seg.zip')
+//            Medic3D.loadSegmentationLocal('https://s3.amazonaws.com/vuno-rsna2017/4-vuno-seg.zip')
+            this.loadAutoSegmentation();
             break;
           case 'SegmentationResultOveray':
             console.log('#SegmentationResultOveray')
@@ -480,6 +483,13 @@
           default:
             console.log('Not Annotation mode');
         }
+      },
+      loadAutoSegmentation () {
+        this.loadingSpinner.loading = true
+        Medic3D.loadSegmentationLocal('http://' + location.host + '/static/seg/' + this.dicom_name + '-seg.zip', true)
+          .then(() => {
+            this.loadingSpinner.loading = false;
+          });
       }
     }
   }
