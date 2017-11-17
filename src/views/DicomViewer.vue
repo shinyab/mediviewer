@@ -22,28 +22,10 @@
                @mouseleave="isMouseDown = false, mouseLastPosition = {}"
                @mouseout="isMouseDown = false, mouseLastPosition = {}"
           >
-            <template v-if="showTags">
-              <div class="tags-left-top">
-                Acc# : 41238<br>
-                Study Date : 04/04/2016<br>
-                Study : KNEE, SUNRISE<br>
-                Series :<br>
-              </div>
-              <div class="tags-right-top">
-                Name :  SASSER^RONDA^S<br>
-                PID : 2372332<br>
-                Sex : F<br>
-                DOB : 06/12/1965<br>
-                Laterality :<br>
-              </div>
-              <div class="tags-left-bottom">
-                <div class="tags-left-bottom-inner">
-                  Se# : 1004<br>
-                  Instance : 1004<br>
-                  W : 1023  L : 511<br>
-                </div>
-              </div>
-            </template>
+            <tag-info
+              class="tags-info-view"
+              v-show="showTags"
+            ></tag-info>
 
             <div class="loading-spinner-dimmed-view"
                  v-if="loadingSpinner.loading"
@@ -73,29 +55,11 @@
                @mouseleave="isMouseDown = false, mouseLastPosition = {}"
                @mouseout="isMouseDown = false, mouseLastPosition = {}"
           >
-            <template v-if="showTags">
-              <div class="tags-left-top">
-                {{slice_r1}}/256<br>
-                Acc# : 41238<br>
-                Study Date : 04/04/2016<br>
-                Study : KNEE, SUNRISE<br>
-                Series :<br>
-              </div>
-              <div class="tags-right-top">
-                Name :  SASSER^RONDA^S<br>
-                PID : 2372332<br>
-                Sex : F<br>
-                DOB : 06/12/1965<br>
-                Laterality :<br>
-              </div>
-              <div class="tags-left-bottom">
-                <div class="tags-left-bottom-inner">
-                  Se# : 1004<br>
-                  Instance : 1004<br>
-                  W : 1023  L : 511<br>
-                </div>
-              </div>
-            </template>
+            <tag-info
+              class="tags-info-view"
+              v-show="showTags"
+              :sliceNum="slice_r1"
+            ></tag-info>
 
             <div class="loading-spinner-dimmed-view"
                  v-if="loadingSpinner.loading"
@@ -121,29 +85,11 @@
                @mouseleave="isMouseDown = false, mouseLastPosition = {}"
                @mouseout="isMouseDown = false, mouseLastPosition = {}"
           >
-            <template v-if="showTags">
-              <div class="tags-left-top">
-                {{slice_r2}}/256<br>
-                Acc# : 41238<br>
-                Study Date : 04/04/2016<br>
-                Study : KNEE, SUNRISE<br>
-                Series :<br>
-              </div>
-              <div class="tags-right-top">
-                Name :  SASSER^RONDA^S<br>
-                PID : 2372332<br>
-                Sex : F<br>
-                DOB : 06/12/1965<br>
-                Laterality :<br>
-              </div>
-              <div class="tags-left-bottom">
-                <div class="tags-left-bottom-inner">
-                  Se# : 1004<br>
-                  Instance : 1004<br>
-                  W : 1023  L : 511<br>
-                </div>
-              </div>
-            </template>
+            <tag-info
+              class="tags-info-view"
+              v-show="showTags"
+              :sliceNum="slice_r2"
+            ></tag-info>
 
             <div class="loading-spinner-dimmed-view"
                  v-if="loadingSpinner.loading"
@@ -170,29 +116,11 @@
                @mouseleave="isMouseDown = false, mouseLastPosition = {}"
                @mouseout="isMouseDown = false, mouseLastPosition = {}"
           >
-            <template v-if="showTags">
-              <div class="tags-left-top">
-                {{slice_r3}}/256<br>
-                Acc# : 41238<br>
-                Study Date : 04/04/2016<br>
-                Study : KNEE, SUNRISE<br>
-                Series :<br>
-              </div>
-              <div class="tags-right-top">
-                Name :  SASSER^RONDA^S<br>
-                PID : 2372332<br>
-                Sex : F<br>
-                DOB : 06/12/1965<br>
-                Laterality :<br>
-              </div>
-              <div class="tags-left-bottom">
-                <div class="tags-left-bottom-inner">
-                  Se# : 1004<br>
-                  Instance : 1004<br>
-                  W : 1023  L : 511<br>
-                </div>
-              </div>
-            </template>
+            <tag-info
+              class="tags-info-view"
+              v-show="showTags"
+              :sliceNum="slice_r3"
+            ></tag-info>
 
             <div class="loading-spinner-dimmed-view"
                  v-if="loadingSpinner.loading"
@@ -217,12 +145,14 @@
 
   import Sidebar from '@/components/layout/Sidebar'
   import ClipLoader from '@/components/lib/ClipLoader'
+  import TagInfo from '@/components/TagInfo'
 
   export default {
     name: 'DicomViewer',
     components: {
       Sidebar,
-      ClipLoader
+      ClipLoader,
+      TagInfo
     },
     computed: {
       ...mapState({
@@ -272,6 +202,7 @@
     },
     methods: {
       setUploadedFile (uploadedFile) {
+        console.log('setUploadedFile')
         this.$store.commit(mutationType.SET_SHOW_TAGS, false)
         this.loadingSpinner.loading = true
         this.uploadedFile = uploadedFile
@@ -583,42 +514,18 @@
           background-color: $layouts-bg-color;
           overflow: hidden;
 
-          .tags-left-top {
+          .tags-info-view {
             position: absolute;
-            left: 30px;
-            top: 30px;
-            width: 40%;
-            height: 40%;
-            text-align: left;
-            color: #cfcfcf;
-            pointer-events: none;
-          }
-
-          .tags-right-top {
-            position: absolute;
-            top: 30px;
-            right: 30px;
-            width: 40%;
-            height: 40%;
-            text-align: right;
-            color: #cfcfcf;
-            pointer-events: none;
-          }
-
-          .tags-left-bottom {
-            position: absolute;
-            left: 30px;
-            bottom: 30px;
-            width: 40%;
-            height: 40%;
-            text-align: left;
-            color: #cfcfcf;
+            width: 100%;
+            height: 100%;
             pointer-events: none;
 
-            .tags-left-bottom-inner {
-              position: absolute;
-              bottom: 0;
-            }
+            -webkit-touch-callout: none;
+            -webkit-user-select: none;
+            -khtml-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
           }
 
           .loading-spinner-dimmed-view {
