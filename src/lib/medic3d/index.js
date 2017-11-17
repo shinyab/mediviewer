@@ -389,11 +389,23 @@ function initHelpersLocalizerAll (stack) {
     ]);
 }
 
-function extractZip (zip, type) {
+function extractZip (zip, type, sort) {
   var files = Object.keys(zip.files)
-  var loadData = []
+  var loadData;
+  if (sort) {
+    loadData = [256];
+  } else {
+    loadData = [];
+  }
+
   files.forEach(function (filename) {
-    loadData.push(zip.files[filename].async(type))  // file data
+    // for sorting
+    if (sort) {
+      var temp = filename.split('.');
+      loadData[parseInt(temp[0])] = zip.files[filename].async(type);
+    } else {
+      loadData.push(zip.files[filename].async(type))  // file data
+    }
   })
 
   return Promise.all(loadData)
@@ -407,7 +419,7 @@ function extractZip (zip, type) {
 export function loadSegmentation (uploadedFile) {
   JSZIP.loadAsync(uploadedFile)
     .then(function (zip) {
-      return extractZip(zip, 'arraybuffer');
+      return extractZip(zip, 'arraybuffer', true);
     })
     .then(function (buffer) {
       return loadZipPngs(buffer)
@@ -421,6 +433,7 @@ export function loadSegmentation (uploadedFile) {
         console.log('stack._frame.length ' + stack._frame.length);
         console.log('stack.rawData.length ' + stack.rawData.length);
 
+        var newVal;
         for (var fr = 0; fr < stack._frame.length; fr++) {
           for (var y = 0; y < 256; y++) {
             for (var x = 0; x < 256; x++) {
@@ -428,7 +441,10 @@ export function loadSegmentation (uploadedFile) {
               if (data[fr].data[po] !== 0 ||
               data[fr].data[po + 1] !== 0 ||
               data[fr].data[po + 2] !== 0) {
-                stack._frame[fr]._pixelData[y * 255 + x] = 450;
+                newVal = (data[fr].data[po] + data[fr].data[po + 1] + data[fr].data[po + 2]) / 3
+                // stack._frame[fr]._pixelData[y * 255 + x] = 450;
+                stack._frame[fr]._pixelData[y * 255 + x] = newVal;
+                // console.log('val : ' + newVal);
               }
             }
           }
@@ -471,6 +487,7 @@ export function loadSegmentationLocal (segUrl) {
           console.log('stack._frame.length ' + stack._frame.length);
           console.log('stack.rawData.length ' + stack.rawData.length);
 
+          var newVal;
           for (var fr = 0; fr < stack._frame.length; fr++) {
             for (var y = 0; y < 256; y++) {
               for (var x = 0; x < 256; x++) {
@@ -479,6 +496,10 @@ export function loadSegmentationLocal (segUrl) {
                   data[fr].data[po + 1] !== 0 ||
                   data[fr].data[po + 2] !== 0) {
                   stack._frame[fr]._pixelData[y * 255 + x] = 450;
+                  // stack._frame[fr]._pixelData[y * 255 + x] =
+                  //   (data[fr].data[po] + data[fr].data[po + 1] + data[fr].data[po + 2]) / 3;
+                  newVal = (data[fr].data[po] + data[fr].data[po + 1] + data[fr].data[po + 2]) / 3
+                  console.log('val : ' + newVal);
                 }
               }
             }
