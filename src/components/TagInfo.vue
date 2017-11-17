@@ -11,11 +11,11 @@
     <div class="tags-right-top">
       Field strength : {{ tagData.fieldStrength }}<br>
       Scanning sequence : {{ tagData.scanningSequence }}<br>
-      Repetition time : {{ tagData.repetitionTime }}<br>
-      Echo time : {{ tagData.echoTime }}<br>
+      TR : {{ tagData.repetitionTime }}<br>
+      TE : {{ tagData.echoTime }}<br>
       Flip angle : {{ tagData.flipAngle }}<br>
-      Image dimensions (Y, Z, X) : {{ tagData.imageDimensions }}<br>
-      Voxel dimensions (Y, Z, X) : {{ tagData.voxelDimensions }}<br>
+      Image dimensions (Y, Z, X) : <br>{{ tagData.imageDimensions }}<br>
+      Voxel dimensions (Y, Z, X) : <br>{{ tagData.voxelDimensions }}<br>
     </div>
     <div class="tags-left-bottom">
       <div class="tags-left-bottom-inner"
