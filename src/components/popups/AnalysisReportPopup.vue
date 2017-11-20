@@ -2,9 +2,9 @@
   <vue-draggable-resizable
     class="report-popup"
     :parent="true"
+    :resizable="false"
     :x="247" :y="85" :z="2000"
-    :w="700" :h="900"
-    :minw="700" :minh="900">
+    :w="700" :h="800">
     <div class="report-popup-inner">
       <div class="report-header">
         <span>Analysis Report</span>
@@ -13,6 +13,9 @@
              @mousedown="stopMovable">
       </div>
       <div class="report-body">
+        <img
+          v-if="reportImg"
+          :src="reportImg" alt="Please wait ...">
       </div>
     </div>
   </vue-draggable-resizable>
@@ -23,7 +26,39 @@
 
   export default {
     name: 'AnalysisReportPopup',
+    data () {
+      return {
+        reportImg: null
+      }
+    },
+    created () {
+      this.$bus.$on(busType.FILE_UPLOADED, this.dicomFileUploaded)
+    },
     methods: {
+      dicomFileUploaded (dicomFile) {
+        this.resetReportImageWithFileName(dicomFile.name)
+      },
+      resetReportImageWithFileName (fileName) {
+        switch (fileName) {
+          case 'dicom-001-02.zip':
+            this.reportImg = '/static/reports/report-001.png'
+            break
+          case 'dicom-002-02.zip':
+            this.reportImg = '/static/reports/report-002.png'
+            break
+          case 'dicom-003-02.zip':
+            this.reportImg = '/static/reports/report-003.png'
+            break
+          case 'dicom-004-02.zip':
+            this.reportImg = '/static/reports/report-004.png'
+            break
+          case 'dicom-005-02.zip':
+            this.reportImg = '/static/reports/report-005.png'
+            break
+          default:
+            break
+        }
+      },
       closePopup (e) {
         this.$bus.$emit(busType.SHOW_ANALYSIS_REPORT_POPUP, false)
         e.stopPropagation()
@@ -80,11 +115,21 @@
         width: 100%;
         top: 48px;
         bottom: 0;
-        background-color: white;
+        padding: 0;
+        background-color: rgb(32, 31, 36);
         overflow-y: auto;
         overflow-x: hidden;
         border-bottom-left-radius: 5px;
         border-bottom-right-radius: 5px;
+
+        img {
+          width: 700px;
+          height: 850px;
+          top: 0;
+          bottom: 0;
+          margin: 0;
+          pointer-events: none;
+        }
       }
 
       -webkit-touch-callout: none;
