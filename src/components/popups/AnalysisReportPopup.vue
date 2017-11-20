@@ -13,7 +13,9 @@
              @mousedown="stopMovable">
       </div>
       <div class="report-body">
-        <img :src="reportImg" alt="Please wait ...">
+        <img
+          v-if="reportImg"
+          :src="reportImg" alt="Please wait ...">
       </div>
     </div>
   </vue-draggable-resizable>
@@ -30,9 +32,33 @@
       }
     },
     created () {
-      this.reportImg = '/static/reports/Dementia_report_sample.png'
+      this.$bus.$on(busType.FILE_UPLOADED, this.dicomFileUploaded)
     },
     methods: {
+      dicomFileUploaded (dicomFile) {
+        this.resetReportImageWithFileName(dicomFile.name)
+      },
+      resetReportImageWithFileName (fileName) {
+        switch (fileName) {
+          case 'dicom-001-02.zip':
+            this.reportImg = '/static/reports/report-001.png'
+            break
+          case 'dicom-002-02.zip':
+            this.reportImg = '/static/reports/report-002.png'
+            break
+          case 'dicom-003-02.zip':
+            this.reportImg = '/static/reports/report-003.png'
+            break
+          case 'dicom-004-02.zip':
+            this.reportImg = '/static/reports/report-004.png'
+            break
+          case 'dicom-005-02.zip':
+            this.reportImg = '/static/reports/report-005.png'
+            break
+          default:
+            break
+        }
+      },
       closePopup (e) {
         this.$bus.$emit(busType.SHOW_ANALYSIS_REPORT_POPUP, false)
         e.stopPropagation()
