@@ -1,6 +1,7 @@
 import JSZIP from 'jszip';
 import * as THREE from 'three';
-import Medic3D from '../../../../Medic3D/dist/medic3d'
+// import Medic3D from '../../../../Medic3D/dist/medic3d'
+import Medic3D from '../../../static/lib/Medic3D/medic3d'
 // import http from 'http';
 // import url from 'url';
 import Request from 'request';
