@@ -124,7 +124,7 @@
 
         img {
           width: 700px;
-          height: 850px;
+          /*height: 850px;*/
           top: 0;
           bottom: 0;
           margin: 0;

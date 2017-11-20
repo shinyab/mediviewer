@@ -30,11 +30,12 @@
 
       <nav class="nav">
         <div class="nav-left">
-          <router-link @click.native="logoClicked" to="/" class="nav-item hero-brand">
-            <a style="height: 40px">
-              <img src="/static/images/logos/img-logo-vuno.svg">
-            </a>
-          </router-link>
+          <img src="/static/images/logos/img-logo-vuno.svg">
+          <!--<router-link @click.native="logoClicked" to="/" class="nav-item hero-brand" style="cursor: none">-->
+            <!--<a style="height: 40px">-->
+              <!--<img src="/static/images/logos/img-logo-vuno.svg">-->
+            <!--</a>-->
+          <!--</router-link>-->
         </div>
 
         <!--<div class="nav-right">-->
@@ -64,7 +65,7 @@
     },
     methods: {
       logoClicked () {
-        this.$router.go('/viewer')
+        this.$router.go('/')
       },
       fileUploaded () {
         this.$bus.$emit(busType.FILE_UPLOADED_SEG, null)
@@ -102,6 +103,20 @@
 
   .nav-item img {
     max-height: 100%;
+  }
+
+  .nav-left {
+    img {
+      margin-left: 14px;
+      pointer-events: none;
+
+      -webkit-touch-callout: none;
+      -webkit-user-select: none;
+      -khtml-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
   }
 
   .nav-load-file-area {
