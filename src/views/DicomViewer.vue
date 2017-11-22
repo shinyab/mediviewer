@@ -198,24 +198,20 @@
       }, 100)
     },
     mounted () {
-//      console.log('### Mounted');
       this.initLayouts()
     },
     methods: {
       setUploadedFile (uploadedFile) {
-//        console.log('setUploadedFile')
         var temp = uploadedFile.name.split('.');
         this.dicom_name = temp[0];
         this.$store.commit(mutationType.SET_SHOW_TAGS, false)
         this.loadingSpinner.loading = true
         this.uploadedFile = uploadedFile
-        Medic3D.loadZip(uploadedFile, this.eventDispatcher)
+        Medic3D.loadDicomsAsZip(uploadedFile, this.eventDispatcher)
           .then((state) => {
-            // to need more time for rendering
-//            console.log('Load completed~~~~~~`');
+            // Need more time for rendering
             this.loadingSpinner.loading = false
             this.$store.commit(mutationType.SET_SHOW_TAGS, true)
-            // todo : showing dicom's tags
           })
           .catch((err) => {
             console.log('An error : ' + err);
@@ -230,7 +226,6 @@
         window.setTimeout(() => {
           this.loadingSpinner.loading = false
         }, 5000)
-//        console.log(uploadFile);
         Medic3D.loadSegmentation(uploadFile, true);
         // Todo : assign (slice, segmentation)
       },
