@@ -88,6 +88,11 @@ function getDicomStack () {
   return gDicomStack;
 };
 
+let gSegmentationStack = null;
+function getSegmentationStack () {
+  return gSegmentationStack;
+}
+
 // extra variables to show mesh plane intersections in 2D renderers
 let sceneClip = new THREE.Scene();
 let eventListener = null;
@@ -265,7 +270,13 @@ function initRenderer2D (rendererObj) {
   computeOffset(rendererObj);
 }
 
-export function loadZip (uploadedFile, cb) {
+/**
+ * Parsing DICOMs and Initialize View
+ * @param uploadedFile
+ * @param cb
+ * @return {Promise}
+ */
+export function loadDicomsAsZip (uploadedFile, cb) {
   eventListener = cb;
   return new Promise((resolve, reject) => {
     JSZIP.loadAsync(uploadedFile)
@@ -275,58 +286,73 @@ export function loadZip (uploadedFile, cb) {
       })
       .then(function (buffer) {
         // console.log('Extracted zip files is read');
-        let LoadersVolume = Medic3D.Loaders.Volume    // export default { Volume }
-        let loader = new LoadersVolume()
-        loader.loadZip(buffer)  //
-          .then(function () {
-            // {Array.<ModelsSeries>} Array of series properly merged.
-            let series = loader.data[0].mergeSeries(loader.data)[0] // loader.data = series
-            loader.free()
+        let LoadersVolume = Medic3D.Loaders.Volume;
+        let loader = new LoadersVolume();
+        loader.loadZip(buffer)
+          .then(() => {
+            let series = loader.data[0].mergeSeries(loader.data)[0]
+            loader.free();
             loader = null
 
-            // get first stack from series
-            let stack = series.stack[0]
-            stack.prepare()
+            gDicomStack = series.stack[0];
 
-            // To decide what type of split window(1*1, 2*2)
-            // Split is set as 1*1 if slice is one
-            // domIDs are already defined as layout-1-1, layout-1-2, layout-2-1, layout-2-2
-            // center 3d camera/control on the stack
-            let centerLPS = stack.worldCenter();
-            r0.camera.lookAt(centerLPS.x, centerLPS.y, centerLPS.z);
-            r0.camera.updateProjectionMatrix();
-            r0.controls.target.set(centerLPS.x, centerLPS.y, centerLPS.z);
-
-            // bouding box
-            r0.scene.add(new Medic3D.Helpers.BoundingBox(stack));
-
-            combineMpr(r0, r1, stack);
-            combineMpr(r0, r2, stack);
-            combineMpr(r0, r3, stack);
-
-            initHelpersLocalizerAll(stack);
-
-            // add click event
-            r0.domElement.addEventListener('click', onClick);
-            r1.domElement.addEventListener('click', onClick);
-            r2.domElement.addEventListener('click', onClick);
-            r3.domElement.addEventListener('click', onClick);
-            // add scroll event
-            r1.controls.addEventListener('OnScroll', onScroll);
-            r2.controls.addEventListener('OnScroll', onScroll);
-            r3.controls.addEventListener('OnScroll', onScroll);
-            // add others event
-            r1.controls.addEventListener('mousedown', onDown);
-            r1.controls.addEventListener('mousemove', onMove);
-            r1.controls.addEventListener('mouseup', onUp);
-
-            window.addEventListener('resize', onWindowResize, false);
-            ready = true;
-            gDicomStack = stack;
-            resolve(true);
-          })
+            adjust3DScene(gDicomStack)
+              .then((result) => {
+                if (result) {
+                  console.log('Init 3D View Control');
+                }
+                resolve(result);
+              })
+          });
       })
   });
+}
+
+let UiEvent = false;
+
+function adjust3DScene (stack) {
+  return new Promise((resolve, reject) => {
+    stack.prepare();
+
+    let centerLPS = stack.worldCenter();
+    r0.camera.lookAt(centerLPS.x, centerLPS.y, centerLPS.z);
+    r0.camera.updateProjectionMatrix();
+    r0.controls.target.set(centerLPS.x, centerLPS.y, centerLPS.z);
+
+    // bouding box
+    r0.scene.add(new Medic3D.Helpers.BoundingBox(stack));
+
+    combineMpr(r0, r1, stack);
+    combineMpr(r0, r2, stack);
+    combineMpr(r0, r3, stack);
+
+    initHelpersLocalizerAll(stack);
+
+    if (!UiEvent) {
+      UiEvent = true;
+      setUiEvent();
+    }
+    ready = true;
+    resolve(true);
+  });
+}
+
+function setUiEvent () {
+  // add click event
+  r0.domElement.addEventListener('click', onClick);
+  r1.domElement.addEventListener('click', onClick);
+  r2.domElement.addEventListener('click', onClick);
+  r3.domElement.addEventListener('click', onClick);
+  // add scroll event
+  r1.controls.addEventListener('OnScroll', onScroll);
+  r2.controls.addEventListener('OnScroll', onScroll);
+  r3.controls.addEventListener('OnScroll', onScroll);
+  // add others event
+  r1.controls.addEventListener('mousedown', onDown);
+  r1.controls.addEventListener('mousemove', onMove);
+  r1.controls.addEventListener('mouseup', onUp);
+
+  window.addEventListener('resize', onWindowResize, false);
 }
 
 /**
