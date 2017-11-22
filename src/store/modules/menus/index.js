@@ -27,7 +27,7 @@ const state = {
       name: 'SegmentationResultOveray',
       type: 'action',
       meta: {
-        label: 'Segmentation Result\nOveray',
+        label: 'Segmentation Result\nOverlay',
         icon: 'img-over-02-segmentation-result-overay.svg'
       }
     },

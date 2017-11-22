@@ -285,6 +285,7 @@
         } else if (menu.type === 'action') {
           // case
           // reference to /store/modules/menus/index.js가 전체 메뉴. menu.name.*** 형식으로 실제 선택/클릭 확인 가능
+          this.$store.commit(mutationType.SELECT_MENU, menu)
           this.doAction(menu);
         }
 //        console.log('Focused CANVAS : ')
