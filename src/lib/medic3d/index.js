@@ -1,9 +1,7 @@
 import JSZIP from 'jszip';
 import * as THREE from 'three';
-// import Medic3D from '../../../../Medic3D/dist/medic3d'
-import Medic3D from '../../../static/lib/Medic3D/medic3d'
-// import http from 'http';
-// import url from 'url';
+import Medic3D from '../../../../Medic3D/dist/medic3d'
+// import Medic3D from '../../../static/lib/Medic3D/medic3d'
 import Request from 'request';
 var PNG = require('pngjs').PNG;
 
@@ -84,20 +82,18 @@ const r3 = {
   offset: null
 };
 
-let gStack = null;
-export function getStack () {
-  return gStack;
+let gDicomStack = null;
+function getDicomStack () {
+  return gDicomStack;
 };
 
 // extra variables to show mesh plane intersections in 2D renderers
 let sceneClip = new THREE.Scene();
-let clipPlane1 = new THREE.Plane(new THREE.Vector3(0, 0, 0), 0);
-let clipPlane2 = new THREE.Plane(new THREE.Vector3(0, 0, 0), 0);
-let clipPlane3 = new THREE.Plane(new THREE.Vector3(0, 0, 0), 0);
-
-// Todo : event driven
 let eventListener = null;
 
+/**
+ * Initialize Render and run animation loop
+ */
 export function init () {
   /**
    * Called on each animation frame
@@ -106,9 +102,8 @@ export function init () {
   function animate () {
     // we are ready when both meshes have been loaded
     if (ready) {
-      // console.log('#animate');
-      // render
-      r0.controls.update(); // trackball.update
+      // update each cameras
+      r0.controls.update();
       r1.controls.update();
       r2.controls.update();
       r3.controls.update();
@@ -116,6 +111,7 @@ export function init () {
       r0.light.position.copy(r0.camera.position);
       r0.renderer.render(r0.scene, r0.camera);
 
+      // render for each orthogonal views
       renderDo(r1);
       renderDo(r2);
       renderDo(r3);
@@ -138,13 +134,13 @@ export function init () {
   }
 
   if (ready) {
-    console.log('Already setup');
+    // console.log('Already setup');
     clearThree(r0.scene);
     clearThree(r1.scene);
     clearThree(r2.scene);
     clearThree(r3.scene);
   } else {
-    console.log('First time');
+    // console.log('First time');
   }
   initRenderer3D(r0);
   initRenderer2D(r3);
@@ -155,12 +151,20 @@ export function init () {
   animate();
 }
 
+/**
+ * Clean all sceen
+ * @param scene To clean scene
+ */
 function clearThree (scene) {
   while (scene.children.length > 0) {
     scene.remove(scene.children[0]);
   }
 }
 
+/**
+ * Initialize perspective camera, light, view control in 3D
+ * @param renderObj
+ */
 function initRenderer3D (renderObj) {
   // renderer
   if (renderObj.domElement === null) {
@@ -217,6 +221,11 @@ function initRenderer3D (renderObj) {
   computeOffset(renderObj);
 }
 
+/**
+ * Initialize orthogonal camera, light, view control in 2D
+ * Disable rotate
+ * @param renderObj
+ */
 function initRenderer2D (rendererObj) {
   // renderer
   if (rendererObj.domElement === null) {
@@ -255,8 +264,6 @@ function initRenderer2D (rendererObj) {
   computeOffset(rendererObj);
 }
 
-var ctrlMprGuide = false;
-
 export function loadZip (uploadedFile, cb) {
   eventListener = cb;
   return new Promise((resolve, reject) => {
@@ -266,7 +273,7 @@ export function loadZip (uploadedFile, cb) {
         return extractZip(zip, 'uint8array');
       })
       .then(function (buffer) {
-        console.log('Extracted zip files is read');
+        // console.log('Extracted zip files is read');
         let LoadersVolume = Medic3D.Loaders.Volume    // export default { Volume }
         let loader = new LoadersVolume()
         loader.loadZip(buffer)  //
@@ -278,13 +285,6 @@ export function loadZip (uploadedFile, cb) {
 
             // get first stack from series
             let stack = series.stack[0]
-            // Compute cosines
-            // Order frames
-            // computeSpacing
-            // snityCheck
-            // init some vars
-            // compute min/max
-            // compute transformation matrices
             stack.prepare()
 
             // To decide what type of split window(1*1, 2*2)
@@ -305,11 +305,6 @@ export function loadZip (uploadedFile, cb) {
 
             initHelpersLocalizerAll(stack);
 
-            if (ctrlMprGuide) {
-              onGreenChanged();
-              onRedChanged();
-              onYellowChanged();
-            }
             // add click event
             r0.domElement.addEventListener('click', onClick);
             r1.domElement.addEventListener('click', onClick);
@@ -326,7 +321,7 @@ export function loadZip (uploadedFile, cb) {
 
             window.addEventListener('resize', onWindowResize, false);
             ready = true;
-            gStack = stack;
+            gDicomStack = stack;
             resolve(true);
           })
       })
@@ -426,13 +421,13 @@ export function loadSegmentation (uploadedFile) {
       return loadZipPngs(buffer)
     })
     .then(function (data) {
-      console.log('Loaded seg. ' + data.length);
+      // console.log('Loaded seg. ' + data.length);
 
-      var stack = getStack();
+      var stack = getDicomStack();
       if (stack !== null) {
-        console.log('rawdata size ' + stack.rawData.length);
-        console.log('stack._frame.length ' + stack._frame.length);
-        console.log('stack.rawData.length ' + stack.rawData.length);
+        // console.log('rawdata size ' + stack.rawData.length);
+        // console.log('stack._frame.length ' + stack._frame.length);
+        // console.log('stack.rawData.length ' + stack.rawData.length);
 
         var newVal;
         for (var fr = 0; fr < stack._frame.length; fr++) {
@@ -453,9 +448,9 @@ export function loadSegmentation (uploadedFile) {
         removeSceneByName(r2);
         removeSceneByName(r3);
 
-        combineMpr(r0, r1, getStack());
-        combineMpr(r0, r2, getStack());
-        combineMpr(r0, r3, getStack());
+        combineMpr(r0, r1, getDicomStack());
+        combineMpr(r0, r2, getDicomStack());
+        combineMpr(r0, r3, getDicomStack());
       }
     });
 }
@@ -470,7 +465,7 @@ export function loadSegmentationLocal (segUrl) {
     }, function (error, response, body) {
       if (error || response.statusCode !== 200) {
         // handle error
-        console.log('#loadSegmentationLocal : ' + error);
+        // console.log('#loadSegmentationLocal : ' + error);
         return;
       }
       JSZIP.loadAsync(body)
@@ -481,13 +476,12 @@ export function loadSegmentationLocal (segUrl) {
           return loadZipPngs(buffer)
         })
         .then(function (data) {
-          console.log('Loaded seg. ' + data.length);
-
-          var stack = getStack();
+          // console.log('Loaded seg. ' + data.length);
+          var stack = getDicomStack();
           if (stack !== null) {
-            console.log('rawdata size ' + stack.rawData.length);
-            console.log('stack._frame.length ' + stack._frame.length);
-            console.log('stack.rawData.length ' + stack.rawData.length);
+            // console.log('rawdata size ' + stack.rawData.length);
+            // console.log('stack._frame.length ' + stack._frame.length);
+            // console.log('stack.rawData.length ' + stack.rawData.length);
 
             var newVal;
             for (var fr = 0; fr < stack._frame.length; fr++) {
@@ -508,9 +502,9 @@ export function loadSegmentationLocal (segUrl) {
             removeSceneByName(r2);
             removeSceneByName(r3);
 
-            combineMpr(r0, r1, getStack());
-            combineMpr(r0, r2, getStack());
-            combineMpr(r0, r3, getStack());
+            combineMpr(r0, r1, getDicomStack());
+            combineMpr(r0, r2, getDicomStack());
+            combineMpr(r0, r3, getDicomStack());
 
             resolve(true);
           }
@@ -522,10 +516,10 @@ export function loadSegmentationLocal (segUrl) {
 function removeSceneByName (render) {
   var selectedObj = r0.scene.getObjectByName(render.name);
   if (selectedObj === null) {
-    console.log('Not found Object3D ' + render.name);
+    // console.log('Not found Object3D ' + render.name);
     return;
   } else {
-    console.log('Found Object3D ' + render.name);
+    // console.log('Found Object3D ' + render.name);
   }
   r0.scene.remove(r0.scene.getObjectByName(render.name));
   render.scene.remove(render.scene.getObjectByName(render.name));
@@ -547,9 +541,9 @@ function loadSegmentationRawdata (rawdata) {
   return new Promise((resolve, reject) => {
     new PNG({filterType: 4}).parse(rawdata, function (error, data) {
       if (error) {
-        console.log('Error : ' + error);
+        // console.log('Error : ' + error);
       }
-      console.log('loaded png' + data);
+      // console.log('loaded png' + data);
       resolve(data);
     });
   });
@@ -611,66 +605,8 @@ function initHelpersLocalizer (rendererObj, stack, referencePlane, localizers) {
   rendererObj.localizerScene.add(rendererObj.localizerHelper);
 }
 
-/**
- * Update Layer Mix. Guide line control
- */
-function updateLocalizer (refObj, targetLocalizersHelpers) {
-  let refHelper = refObj.stackHelper;
-  let localizerHelper = refObj.localizerHelper;
-  let plane = refHelper.slice.cartesianEquation();
-  localizerHelper.referencePlane = plane;
-
-  // bit of a hack... works fine for this application
-  for (let i = 0; i < targetLocalizersHelpers.length; i++) {
-    for (let j = 0; j < 3; j++) {
-      let targetPlane = targetLocalizersHelpers[i]['plane' + (j + 1)];
-      if (targetPlane &&
-        plane.x.toFixed(6) === targetPlane.x.toFixed(6) &&
-        plane.y.toFixed(6) === targetPlane.y.toFixed(6) &&
-        plane.z.toFixed(6) === targetPlane.z.toFixed(6)) {
-        targetLocalizersHelpers[i]['plane' + (j + 1)] = plane;
-      }
-    }
-  }
-  // update the geometry will create a new mesh
-  localizerHelper.geometry = refHelper.slice.geometry;
-}
-
-function updateClipPlane (refObj, clipPlane) {
-  const stackHelper = refObj.stackHelper;
-  const camera = refObj.camera;
-  let vertices = stackHelper.slice.geometry.vertices;
-  let p1 = new THREE.Vector3(vertices[0].x, vertices[0].y, vertices[0].z).applyMatrix4(stackHelper._stack.ijk2LPS);
-  let p2 = new THREE.Vector3(vertices[1].x, vertices[1].y, vertices[1].z).applyMatrix4(stackHelper._stack.ijk2LPS);
-  let p3 = new THREE.Vector3(vertices[2].x, vertices[2].y, vertices[2].z).applyMatrix4(stackHelper._stack.ijk2LPS);
-
-  clipPlane.setFromCoplanarPoints(p1, p2, p3);
-
-  let cameraDirection = new THREE.Vector3(1, 1, 1);
-  cameraDirection.applyQuaternion(camera.quaternion);
-
-  if (cameraDirection.dot(clipPlane.normal) > 0) {
-    clipPlane.negate();
-  }
-}
-
-function onYellowChanged () {
-  updateLocalizer(r2, [r1.localizerHelper, r3.localizerHelper]);
-  updateClipPlane(r2, clipPlane2);
-}
-
-function onRedChanged () {
-  updateLocalizer(r1, [r2.localizerHelper, r3.localizerHelper]);
-  updateClipPlane(r1, clipPlane1);
-}
-
-function onGreenChanged () {
-  updateLocalizer(r3, [r1.localizerHelper, r2.localizerHelper]);
-  updateClipPlane(r3, clipPlane3);
-}
-
 function onScroll (event) {
-  console.log('# onScroll');
+  // console.log('# onScroll');
   const id = event.target.domElement.id;
   let stackHelper = null;
 
@@ -692,7 +628,7 @@ function onScroll (event) {
       msg.view = 'r3';
       break;
     default:
-      console.log('No matched ID');
+      // console.log('No matched ID');
       return;
   }
 
@@ -707,25 +643,25 @@ function onScroll (event) {
     }
     stackHelper.index -= 1;
   }
-  console.log('stackHelper ' + stackHelper.index);
-  onGreenChanged();
-  onRedChanged();
-  onYellowChanged();
+  // console.log('stackHelper ' + stackHelper.index);
+  // onGreenChanged();
+  // onRedChanged();
+  // onYellowChanged();
   msg.slice = stackHelper.index;
 
   eventListener(msg);
 }
 
 function onDown (event) {
-  console.log('#down');
+  // console.log('#down');
 }
 
 function onMove (event) {
-  console.log('#move');
+  // console.log('#move');
 }
 
 function onUp (event) {
-  console.log('#up');
+  // console.log('#up');
 }
 
 function windowResize2D (rendererObj) {
@@ -785,7 +721,7 @@ function computeOffset (renderObj) {
 }
 
 function onClick (event) {
-  console.log('#onClick' + event);
+  // console.log('#onClick' + event);
 }
 
 export function Zoom (id, action) {
@@ -853,7 +789,7 @@ function getView (id) {
       selected = r3;
       break;
     default:
-      console.log('unselected or r1 is selected');
+      // console.log('unselected or r1 is selected');
   }
 
   return selected;
@@ -874,7 +810,7 @@ export function Invert () {
 }
 
 export function CameraCtrl (enable) {
-  console.log('#cam ctrl ' + enable)
+  // console.log('#cam ctrl ' + enable)
   r1.controls.viewcontrol = enable;
   r2.controls.viewcontrol = enable;
   r3.controls.viewcontrol = enable;
@@ -917,6 +853,25 @@ export function doAnnotation (id, action, event) {
 let widgets = [];
 let widgetIndex = 0;
 function downAnnotation (action, evt, element) {
+  // if something hovered, exit
+  // console.log('## widget  ##');
+  for (let widget of widgets) {
+    if (widget.hovered) {
+      widget.onStart(evt);
+      // console.log('## widget : hovered');
+      if (action === 'PolyRuler') {
+      //   polyEvent = evt;
+        // console.log('## create ruler');
+        let w = createWidget(action, evt, element);
+        w.hovered = true;
+      }
+      return;
+    }
+  }
+  createWidget(action, evt, element);
+}
+
+function createWidget (action, evt, element) {
   var threeD = element.domElement;
   if (threeD === null) {
     return;
@@ -924,14 +879,6 @@ function downAnnotation (action, evt, element) {
 
   var camera = element.camera;
   var stackHelper = element.stackHelper;
-
-  // if something hovered, exit
-  for (let widget of widgets) {
-    if (widget.hovered) {
-      widget.onStart(evt);
-      return;
-    }
-  }
 
   threeD.style.cursor = 'default';
 
@@ -942,9 +889,9 @@ function downAnnotation (action, evt, element) {
   };
 
   if (camera && camera.isOrthographicCamera) {
-    console.log('###Orthogonal view');
+    // console.log('###Orthogonal view');
   } else if (camera && camera.isPerspectiveCamera) {
-    console.log('###Perspective view');
+    // console.log('###Perspective view');
   }
 
   let raycaster = new THREE.Raycaster();
@@ -952,16 +899,18 @@ function downAnnotation (action, evt, element) {
   // update the raycaster
   let intersects = raycaster.intersectObject(stackHelper.slice.mesh);
   if (intersects.length <= 0) {
-    console.log('## no raycasting');
+    // console.log('## no raycasting');
     // return;
   } else {
-    console.log('## raycasting count is ' + intersects.length);
+    // console.log('## raycasting count is ' + intersects.length);
   }
 
   var controls = element.controls;
   let widget = null;
   switch (action) {
     case 'Ruler':
+    case 'PolyRuler':
+      // console.log('## create ruler widget');
       widget = new Medic3D.Widgets.Ruler(stackHelper.slice.mesh, controls, camera, threeD);
       widget.worldPosition = intersects[0].point;
       widget.name = 'Ruler-' + widgetIndex;
@@ -986,6 +935,8 @@ function downAnnotation (action, evt, element) {
   widgetIndex++;
 
   widgets.push(widget);
+
+  return widget;
 }
 
 function moveAnnotation (action, evt, element) {

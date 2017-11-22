@@ -198,12 +198,12 @@
       }, 100)
     },
     mounted () {
-      console.log('### Mounted');
+//      console.log('### Mounted');
       this.initLayouts()
     },
     methods: {
       setUploadedFile (uploadedFile) {
-        console.log('setUploadedFile')
+//        console.log('setUploadedFile')
         var temp = uploadedFile.name.split('.');
         this.dicom_name = temp[0];
         this.$store.commit(mutationType.SET_SHOW_TAGS, false)
@@ -212,7 +212,7 @@
         Medic3D.loadZip(uploadedFile, this.eventDispatcher)
           .then((state) => {
             // to need more time for rendering
-            console.log('Load completed~~~~~~`');
+//            console.log('Load completed~~~~~~`');
             this.loadingSpinner.loading = false
             this.$store.commit(mutationType.SET_SHOW_TAGS, true)
             // todo : showing dicom's tags
@@ -230,7 +230,7 @@
         window.setTimeout(() => {
           this.loadingSpinner.loading = false
         }, 5000)
-        console.log(uploadFile);
+//        console.log(uploadFile);
         Medic3D.loadSegmentation(uploadFile, true);
         // Todo : assign (slice, segmentation)
       },
@@ -287,15 +287,15 @@
           // reference to /store/modules/menus/index.js가 전체 메뉴. menu.name.*** 형식으로 실제 선택/클릭 확인 가능
           this.doAction(menu);
         }
-        console.log('Focused CANVAS : ')
-        console.log(this.focusedCanvas)
+//        console.log('Focused CANVAS : ')
+//        console.log(this.focusedCanvas)
       },
       mouseOver (e) {
-        console.log(`MouseOver : `)
-        console.log(e.target)
+//        console.log(`MouseOver : `)
+//        console.log(e.target)
       },
       onScroll (e) {
-        console.log('scrolling')
+//        console.log('scrolling')
       },
       onMouseMove (event) {
         // Todo : prohibit event propagation
@@ -307,20 +307,20 @@
             var deltaY = this.mouseLastPosition.y - event.clientY
             if (Math.abs(deltaX) > Math.abs(deltaY) && deltaX > 0) {
               // left
-              console.log(`Left \ndeltaX : ${deltaX} / deltaY : ${deltaY}`)
+//              console.log(`Left \ndeltaX : ${deltaX} / deltaY : ${deltaY}`)
             } else if (Math.abs(deltaX) > Math.abs(deltaY) && deltaX < 0) {
               // right
-              console.log(`Right \ndeltaX : ${deltaX} / deltaY : ${deltaY}`)
+//              console.log(`Right \ndeltaX : ${deltaX} / deltaY : ${deltaY}`)
             } else if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY > 0) {
               // up
-              console.log(`Up \ndeltaX : ${deltaX} / deltaY : ${deltaY}`)
+//              console.log(`Up \ndeltaX : ${deltaX} / deltaY : ${deltaY}`)
             } else if (Math.abs(deltaY) > Math.abs(deltaX) && deltaY < 0) {
               // down
-              console.log(`Down \ndeltaX : ${deltaX} / deltaY : ${deltaY}`)
+//              console.log(`Down \ndeltaX : ${deltaX} / deltaY : ${deltaY}`)
             }
 
             if (this.mode === 'BrightnessContrast') {
-              console.log('adjust brightnesscontrast');
+//              console.log('adjust brightnesscontrast');
               Medic3D.adjustBrightness(deltaX);
             }
           }
@@ -331,18 +331,18 @@
         }
       },
       mousedownLeft (e) {
-        console.log('Left Mousedown')
+//        console.log('Left Mousedown')
         this.isMouseDown = true
         this.$store.commit(mutationType.SELECT_CANVAS, e.target.parentElement)
         this.doAnnotation(event);
       },
       mousedownMiddle (e) {
-        console.log('Middle Mousedown')
+//        console.log('Middle Mousedown')
         this.isMouseDown = true
         this.$store.commit(mutationType.SELECT_CANVAS, e.target.parentElement)
       },
       mousedownRight (e) {
-        console.log('Right Mousedown')
+//        console.log('Right Mousedown')
         this.isMouseDown = true
         this.$store.commit(mutationType.SELECT_CANVAS, e.target.parentElement)
       },
@@ -358,48 +358,48 @@
         Medic3D.CameraCtrl(false);
         switch (menu.name) {
           case 'BrainRoiSegmentation':
-            console.log('#BrainRoiSegmentation');
+//            console.log('#BrainRoiSegmentation');
             this.loadAutoSegmentation();
             break;
           case 'SegmentationResultOveray':
-            console.log('#SegmentationResultOveray')
+//            console.log('#SegmentationResultOveray')
             break;
           case 'AnalysisReport':
-            console.log('#AnalysisReport')
+//            console.log('#AnalysisReport')
             break;
           case 'OpenSegmentations':
-            console.log('#OpenSegmentations')
+//            console.log('#OpenSegmentations')
             break;
           case 'SaveAsDerived':
-            console.log('#SaveAsDerived')
+//            console.log('#SaveAsDerived')
             break;
           case 'ZoomIn':
-            console.log('#ZoomIn')
+//            console.log('#ZoomIn')
             Medic3D.Zoom(selectId, false);
             break;
           case 'ZoomOut':
-            console.log('#ZoomOut')
+//            console.log('#ZoomOut')
             Medic3D.Zoom(selectId, true);
             break;
           case 'Fit':
             Medic3D.Fit(selectId);
-            console.log('#Fit')
+//            console.log('#Fit')
             break;
           case 'OneToOne':
-            console.log('#OneToOne')
+//            console.log('#OneToOne')
             break;
           case 'Reload':
-            console.log('#Reload')
+//            console.log('#Reload')
             break;
           case 'LoadAnnotation':
-            console.log('#LoadAnnotation')
+//            console.log('#LoadAnnotation')
             break;
           case 'Invert':
             Medic3D.Invert();
-            console.log('#Invert')
+//            console.log('#Invert')
             break;
           default:
-            console.log('#Unknow action menu')
+//            console.log('#Unknow action menu')
         }
       },
       doSelect (menu) {
@@ -407,26 +407,26 @@
         Medic3D.CameraCtrl(false);
         switch (menu.name) {
           case 'Pan':
-            console.log('#Pan')
+//            console.log('#Pan')
             Medic3D.CameraCtrl(true);
             break;
           case 'Stack':
-            console.log('#Stack')
+//            console.log('#Stack')
             break;
           case 'WindowLevel':
-            console.log('#WindowLevel')
+//            console.log('#WindowLevel')
             break;
           case 'Ruler':
-            console.log('#Ruler')
+//            console.log('#Ruler')
             break;
           case 'PolyRuler':
-            console.log('#PolyRuler')
+//            console.log('#PolyRuler')
             break;
           case 'Protractor':
-            console.log('#Protractor')
+//            console.log('#Protractor')
             break;
           case 'BrightnessContrast':
-            console.log('#BrightnessContrast');
+//            console.log('#BrightnessContrast');
             break;
           default:
             this.mode = null;
@@ -435,7 +435,7 @@
       doToggle (menu) {
         switch (menu.name) {
           case 'ShowTagsToggle':
-            console.log('#ShowTagsToggle')
+//            console.log('#ShowTagsToggle')
             break;
         }
       },
@@ -479,7 +479,7 @@
             Medic3D.doAnnotation(selectId, this.mode, event);
             break;
           default:
-            console.log('Not Annotation mode');
+//            console.log('Not Annotation mode');
         }
       },
       loadAutoSegmentation () {
