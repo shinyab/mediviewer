@@ -437,49 +437,52 @@ function extractZip (zip, type, sort) {
     })
 }
 
-// Todo : to create slice mesh for display segmentation.
-// Slice has to be transference
+/**
+ * load pngs which have segmentation info.
+ * @param uploadedFile
+ */
 export function loadSegmentation (uploadedFile) {
-  JSZIP.loadAsync(uploadedFile)
-    .then(function (zip) {
-      return extractZip(zip, 'arraybuffer', true);
-    })
-    .then(function (buffer) {
-      return loadZipPngs(buffer)
-    })
-    .then(function (data) {
-      // console.log('Loaded seg. ' + data.length);
-
-      var stack = getDicomStack();
-      if (stack !== null) {
-        // console.log('rawdata size ' + stack.rawData.length);
-        // console.log('stack._frame.length ' + stack._frame.length);
-        // console.log('stack.rawData.length ' + stack.rawData.length);
-
-        var newVal;
-        for (var fr = 0; fr < stack._frame.length; fr++) {
-          for (var y = 0; y < 256; y++) {
-            for (var x = 0; x < 256; x++) {
-              var po = (y * 255 + x) * 4;
-              if (data[fr].data[po] !== 0 ||
-              data[fr].data[po + 1] !== 0 ||
-              data[fr].data[po + 2] !== 0) {
-                newVal = (data[fr].data[po] + data[fr].data[po + 1] + data[fr].data[po + 2]) / 3
-                stack._frame[fr]._pixelData[y * 255 + x] = newVal;
+  return new Promise((resolve, reject) => {
+    JSZIP.loadAsync(uploadedFile)
+      .then(function (zip) {
+        // zip : zip files
+        return extractZip(zip, 'arraybuffer', true);
+      })
+      .then(function (buffer) {
+        // buffer : extracted files
+        return loadZipPngs(buffer)
+      })
+      .then(function (data) {
+        // data : Pixel data in png
+        var stack = getDicomStack();
+        if (stack !== null) {
+          var newVal;
+          for (var fr = 0; fr < stack._frame.length; fr++) {
+            for (var y = 0; y < 256; y++) {
+              for (var x = 0; x < 256; x++) {
+                var po = (y * 255 + x) * 4;
+                if (data[fr].data[po] !== 0 ||
+                  data[fr].data[po + 1] !== 0 ||
+                  data[fr].data[po + 2] !== 0) {
+                  newVal = (data[fr].data[po] + data[fr].data[po + 1] + data[fr].data[po + 2]) / 3
+                  stack._frame[fr]._pixelData[y * 255 + x] = newVal;
+                }
               }
             }
           }
+
+          removeSceneByName(r1);
+          removeSceneByName(r2);
+          removeSceneByName(r3);
+
+          combineMpr(r0, r1, getDicomStack());
+          combineMpr(r0, r2, getDicomStack());
+          combineMpr(r0, r3, getDicomStack());
         }
 
-        removeSceneByName(r1);
-        removeSceneByName(r2);
-        removeSceneByName(r3);
-
-        combineMpr(r0, r1, getDicomStack());
-        combineMpr(r0, r2, getDicomStack());
-        combineMpr(r0, r3, getDicomStack());
-      }
-    });
+        resolve(true);
+      });
+  })
 }
 
 export function loadSegmentationLocal (segUrl) {
@@ -495,46 +498,9 @@ export function loadSegmentationLocal (segUrl) {
         // console.log('#loadSegmentationLocal : ' + error);
         return;
       }
-      JSZIP.loadAsync(body)
-        .then(function (zip) {
-          return extractZip(zip, 'arraybuffer', true);
-        })
-        .then(function (buffer) {
-          return loadZipPngs(buffer)
-        })
-        .then(function (data) {
-          // console.log('Loaded seg. ' + data.length);
-          var stack = getDicomStack();
-          if (stack !== null) {
-            // console.log('rawdata size ' + stack.rawData.length);
-            // console.log('stack._frame.length ' + stack._frame.length);
-            // console.log('stack.rawData.length ' + stack.rawData.length);
-
-            var newVal;
-            for (var fr = 0; fr < stack._frame.length; fr++) {
-              for (var y = 0; y < 256; y++) {
-                for (var x = 0; x < 256; x++) {
-                  var po = (y * 255 + x) * 4;
-                  if (data[fr].data[po] !== 0 ||
-                    data[fr].data[po + 1] !== 0 ||
-                    data[fr].data[po + 2] !== 0) {
-                    newVal = (data[fr].data[po] + data[fr].data[po + 1] + data[fr].data[po + 2]) / 3
-                    stack._frame[fr]._pixelData[y * 255 + x] = newVal;
-                  }
-                }
-              }
-            }
-
-            removeSceneByName(r1);
-            removeSceneByName(r2);
-            removeSceneByName(r3);
-
-            combineMpr(r0, r1, getDicomStack());
-            combineMpr(r0, r2, getDicomStack());
-            combineMpr(r0, r3, getDicomStack());
-
-            resolve(true);
-          }
+      loadSegmentation(body)
+        .then((result) => {
+          resolve(result);
         });
     });
   });
