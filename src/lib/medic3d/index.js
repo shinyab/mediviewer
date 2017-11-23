@@ -34,13 +34,18 @@ const r1 = {
   targetID: 1,
   camera: null,
   controls: null,
-  scene: null,
+  scene: null,            // dicom
+  scene4Seg: null,        // segmentation
+  sceneMix: null,         // canvas
   light: null,
   stackHelper: null,
+  stackHelper4Seg: null,
   localizerHelper: null,
   localizerScene: null,
   name: 'r1',
-  offset: null
+  offset: null,
+  renderTarget0: null,    // buffer
+  renderTarget1: null     // buffer
 };
 
 // 2d sagittal renderer
@@ -55,12 +60,17 @@ const r2 = {
   camera: null,
   controls: null,
   scene: null,
+  scene4Seg: null,
+  sceneMix: null,
   light: null,
   stackHelper: null,
+  stackHelper4Seg: null,
   localizerHelper: null,
   localizerScene: null,
   name: 'r2',
-  offset: null
+  offset: null,
+  renderTarget0: null,    // buffer
+  renderTarget1: null     // buffer
 };
 
 // 2d coronal renderer
@@ -75,12 +85,17 @@ const r3 = {
   camera: null,
   controls: null,
   scene: null,
+  scene4Seg: null,
+  sceneMix: null,
   light: null,
   stackHelper: null,
+  stackHelper4Seg: null,
   localizerHelper: null,
   localizerScene: null,
   name: 'r3',
-  offset: null
+  offset: null,
+  renderTarget0: null,    // buffer
+  renderTarget1: null     // buffer
 };
 
 let gDicomStack = null;
@@ -96,6 +111,13 @@ function getSegmentationStack () {
 // extra variables to show mesh plane intersections in 2D renderers
 let sceneClip = new THREE.Scene();
 let eventListener = null;
+
+var uniformsLayer1;
+var materialLayer1;
+var meshLayer1;
+var uniformsLayerMix;
+var materialLayerMix;
+var meshLayerMix;
 
 /**
  * Initialize Render and run animation loop
@@ -137,6 +159,12 @@ export function init () {
     // localizer
     render.renderer.clearDepth();
     render.renderer.render(render.localizerScene, render.camera);
+
+    render.renderer.clearDepth();
+    render.renderer.render(render.scene4Seg, render.camera);
+    //
+    render.renderer.clearDepth();
+    render.renderer.render(render.sceneMix, render.camera);
   }
 
   if (ready) {
@@ -241,7 +269,8 @@ function initRenderer2D (rendererObj) {
   }
 
   rendererObj.renderer = new THREE.WebGLRenderer({
-    antialias: true
+    antialias: true,
+    alpha: true,
   });
   rendererObj.renderer.autoClear = false;
   rendererObj.renderer.localClippingEnabled = true;
@@ -265,7 +294,27 @@ function initRenderer2D (rendererObj) {
   rendererObj.camera.controls = rendererObj.controls;
 
   // scene
-  rendererObj.scene = new THREE.Scene();
+  if (rendererObj.scene === null) {
+    rendererObj.scene = new THREE.Scene();
+    rendererObj.scene4Seg = new THREE.Scene();
+    rendererObj.sceneMix = new THREE.Scene();
+  }
+
+  rendererObj.renderTarget0 = new THREE.WebGLRenderTarget(
+    rendererObj.domElement.clientWidth,
+    rendererObj.domElement.clientHeight, {
+    minFilter: THREE.LinearFilter,
+    magFilter: THREE.NearestFilter,
+    format: THREE.RGBAFormat,
+  });
+
+  rendererObj.renderTarget1 = new THREE.WebGLRenderTarget(
+    rendererObj.domElement.clientWidth,
+    rendererObj.domElement.clientHeight, {
+    minFilter: THREE.LinearFilter,
+    magFilter: THREE.NearestFilter,
+    format: THREE.RGBAFormat,
+  });
 
   computeOffset(rendererObj);
 }
@@ -306,6 +355,143 @@ export function loadDicomsAsZip (uploadedFile, cb) {
           });
       })
   });
+}
+
+let uniformsLayer = Medic3D.Shaders.DataUniform.uniforms();
+
+export function loadSegmentation2 (segUrl) {
+  console.log('#load as seg : ' + segUrl);
+  return new Promise((resolve, reject) => {
+    Request({
+      method: 'GET',
+      url: segUrl,
+      encoding: null // <- this one is important !
+    }, function (error, response, body) {
+      if (error || response.statusCode !== 200) {
+        return;
+      }
+
+      JSZIP.loadAsync(body)
+        .then(function (zip) {
+          return extractZip(zip, 'uint8array');
+        })
+        .then(function (buffer) {
+          // console.log('Extracted zip files is read');
+          let LoadersVolume = Medic3D.Loaders.Volume;
+          let loader = new LoadersVolume();
+          loader.loadZip(buffer)
+            .then(() => {
+              let series = loader.data[0].mergeSeries(loader.data)[0]
+              loader.free();
+              loader = null
+
+              r1.stackHelper.bbox.visible = false;
+              r1.stackHelper.border.visible = false;
+              r1.stackHelper.index = 10;
+              gSegmentationStack = series.stack[0];
+              var stack2 = gSegmentationStack;
+              stack2.prepare();
+              // pixels packing for the fragment shaders now happens there
+              stack2.pack();
+              var textures2 = [];
+              for (var m = 0; m < stack2._rawData.length; m++) {
+                var tex = new THREE.DataTexture(
+                  stack2.rawData[m],
+                  stack2.textureSize,
+                  stack2.textureSize,
+                  stack2.textureType,
+                  THREE.UnsignedByteType,
+                  THREE.UVMapping,
+                  THREE.ClampToEdgeWrapping,
+                  THREE.ClampToEdgeWrapping,
+                  THREE.NearestFilter,
+                  THREE.NearestFilter
+                );
+                tex.needsUpdate = true;
+                tex.flipY = true;
+                textures2.push(tex);
+              }
+
+              uniformsLayer1 = Medic3D.Shaders.DataUniform.uniforms();
+              uniformsLayer1.uTextureSize.value = stack2.textureSize;
+              uniformsLayer1.uTextureContainer.value = textures2;
+              uniformsLayer1.uWorldToData.value = stack2.lps2IJK;
+              uniformsLayer1.uNumberOfChannels.value = stack2.numberOfChannels;
+              uniformsLayer1.uPixelType.value = stack2.pixelType;
+              uniformsLayer1.uBitsAllocated.value = stack2.bitsAllocated;
+              uniformsLayer1.uWindowCenterWidth.value = [stack2.windowCenter, stack2.windowWidth];
+              uniformsLayer1.uRescaleSlopeIntercept.value = [stack2.rescaleSlope, stack2.rescaleIntercept];
+              uniformsLayer1.uDataDimensions.value = [stack2.dimensionsIJK.x, stack2.dimensionsIJK.y, stack2.dimensionsIJK.z];
+              uniformsLayer1.uInterpolation.value = 0;
+
+              // generate shaders on-demand!
+              var fs = new Medic3D.Shaders.DataFragment(uniformsLayer1);
+              var vs = new Medic3D.Shaders.DataVertex();
+              materialLayer1 = new THREE.ShaderMaterial({
+                side: THREE.DoubleSide,
+                uniforms: uniformsLayer1,
+                vertexShader: vs.compute(),
+                fragmentShader: fs.compute(),
+              });
+              //
+              meshLayer1 = new THREE.Mesh(r1.stackHelper.slice.geometry, materialLayer1);
+              // go the LPS space
+              meshLayer1.applyMatrix(gSegmentationStack._ijk2LPS);
+              r1.scene4Seg.add(meshLayer1);
+
+              // Create the Mix layer
+              uniformsLayerMix = Medic3D.Shaders.LayerUniform.uniforms();
+              uniformsLayerMix.uTextureBackTest0.value = r1.renderTarget0.texture;
+              uniformsLayerMix.uTextureBackTest1.value = r1.renderTarget1.texture;
+
+              let fls = new Medic3D.Shaders.LayerFragment(uniformsLayerMix);
+              let vls = new Medic3D.Shaders.LayerVertex();
+              materialLayerMix = new THREE.ShaderMaterial({
+                side: THREE.DoubleSide,
+                uniforms: uniformsLayerMix,
+                vertexShader: vls.compute(),
+                fragmentShader: fls.compute(),
+                transparent: true,
+              });
+
+              // add mesh in this scene with right shaders...
+              meshLayerMix = new THREE.Mesh(r1.stackHelper.slice.geometry, materialLayer1);
+              // go the LPS space
+              meshLayerMix.applyMatrix(gSegmentationStack._ijk2LPS);
+              r1.sceneMix.add(meshLayerMix);
+              // r2.sceneMix.add(meshLayerMix);
+              // r3.sceneMix.add(meshLayerMix);
+
+              console.log('parsed dicom-seg');
+              resolve(gSegmentationStack);
+            });
+        })
+    });
+  });
+}
+
+function setUniforms (stack, stackHelper) {
+  uniformsLayer.uTextureSize.value = stack.textureSize;
+  uniformsLayer.uTextureContainer.value = stackHelper.slice.textures;
+  uniformsLayer.uWorldToData.value = stack.lps2IJK;
+  uniformsLayer.uNumberOfChannels.value = stack.numberOfChannels;
+  uniformsLayer.uPixelType.value = stack.pixelType;
+  uniformsLayer.uBitsAllocated.value = stack.bitsAllocated;
+  uniformsLayer.uWindowCenterWidth.value = [stack.windowCenter, stack.windowWidth];
+  uniformsLayer.uRescaleSlopeIntercept.value = [stack.rescaleSlope, stack.rescaleIntercept];
+  uniformsLayer.uDataDimensions.value = [stack.dimensionsIJK.x, stack.dimensionsIJK.y, stack.dimensionsIJK.z];
+  uniformsLayer.uInterpolation.value = 0;
+}
+
+function initHelpersStack4Seg (stack, renderObj) {
+  var stackHelper = new Medic3D.Helpers.Stack(stack);
+  stackHelper.bbox.visible = false;
+  stackHelper.border.visible = false;
+  stackHelper.index = 10;
+
+  // renderObj.scene.add(stackHelper);
+  renderObj.scene4Seg.add(stackHelper);   // sceneLayer0
+  renderObj.stackHelper4Seg = stackHelper;
 }
 
 let UiEvent = false;
@@ -636,13 +822,12 @@ function onScroll (event) {
     }
     stackHelper.index -= 1;
   }
-  // console.log('stackHelper ' + stackHelper.index);
-  // onGreenChanged();
-  // onRedChanged();
-  // onYellowChanged();
   msg.slice = stackHelper.index;
 
   eventListener(msg);
+
+  updateLayer1();
+  updateLayerMix();
 }
 
 function onDown (event) {
@@ -963,5 +1148,40 @@ function upAnnotation (action, evt, element) {
 function clearWidgets () {
   for (let widget of widgets) {
     widget.hide();
+  }
+}
+
+
+/**
+ * Update Layer 1
+ */
+function updateLayer1() {
+  // update layer1 geometry...
+  if (meshLayer1) {
+    // dispose geometry first
+    meshLayer1.geometry.dispose();
+    meshLayer1.geometry = r1.stackHelper.slice.geometry;
+    meshLayer1.geometry.verticesNeedUpdate = true;
+  }
+}
+
+/**
+ * Update layer mix
+ */
+function updateLayerMix() {
+  // update layer1 geometry...
+  if (meshLayerMix) {
+    r1.sceneMix.remove(meshLayerMix);
+    meshLayerMix.material.dispose();
+    meshLayerMix.material = null;
+    meshLayerMix.geometry.dispose();
+    meshLayerMix.geometry = null;
+
+    // add mesh in this scene with right shaders...
+    meshLayerMix = new THREE.Mesh(r1.stackHelper.slice.geometry, materialLayerMix);
+    // go the LPS space
+    meshLayerMix.applyMatrix(r1.stackHelper.stack._ijk2LPS);
+
+    r1.sceneMix.add(meshLayerMix);
   }
 }

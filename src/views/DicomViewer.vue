@@ -368,6 +368,7 @@
             break;
           case 'SaveAsDerived':
 //            console.log('#SaveAsDerived')
+            this.loadSegmentation2();
             break;
           case 'ZoomIn':
 //            console.log('#ZoomIn')
@@ -483,6 +484,9 @@
           .then(() => {
             this.loadingSpinner.loading = false;
           });
+      },
+      loadSegmentation2 () {
+        Medic3D.loadSegmentation2('http://' + location.host + '/static/seg/ami_dicom-seg.zip')
       }
     }
   }
