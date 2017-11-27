@@ -377,7 +377,7 @@ export function clearSceneAll () {
 export function loadSegmentation3 (segUrl) {
   console.log('#Get Segmentation from ' + segUrl);
   return new Promise((resolve, reject) => {
-    Request({
+    Request({ 
       method: 'GET',
       url: segUrl,
       encoding: null // <- this one is important !
