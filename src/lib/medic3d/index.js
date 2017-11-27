@@ -45,7 +45,9 @@ const r1 = {
   name: 'r1',
   offset: null,
   renderTarget0: null,    // buffer
-  renderTarget1: null     // buffer
+  renderTarget1: null,    // buffer
+  meshLayer1: null,
+  showSegmentation: false
 };
 
 // 2d sagittal renderer
@@ -70,7 +72,9 @@ const r2 = {
   name: 'r2',
   offset: null,
   renderTarget0: null,    // buffer
-  renderTarget1: null     // buffer
+  renderTarget1: null,    // buffer
+  meshSegmentationLayer: null,
+  showSegmentation: false
 };
 
 // 2d coronal renderer
@@ -95,7 +99,9 @@ const r3 = {
   name: 'r3',
   offset: null,
   renderTarget0: null,    // buffer
-  renderTarget1: null     // buffer
+  renderTarget1: null,    // buffer
+  meshSegmentationLayer: null,
+  showSegmentation: false
 };
 
 let gDicomStack = null;
@@ -111,14 +117,6 @@ function getSegmentationStack () {
 // extra variables to show mesh plane intersections in 2D renderers
 let sceneClip = new THREE.Scene();
 let eventListener = null;
-
-var uniformsLayer1;
-var materialLayer1;
-var meshLayer1;
-var uniformsLayerMix;
-var materialLayerMix;
-var meshLayerMix;
-
 /**
  * Initialize Render and run animation loop
  */
@@ -152,19 +150,28 @@ export function init () {
 
   function renderDo (render) {
     render.renderer.clear();
-    render.renderer.render(render.scene, render.camera);
+    // render.renderer.render(render.scene, render.camera);
+    // render.renderer.render(render.scene, render.camera, render.renderTarget0, true);
     // mesh
-    render.renderer.clearDepth();
-    render.renderer.render(sceneClip, render.camera);
+    // render.renderer.clearDepth();
+    // render.renderer.render(sceneClip, render.camera);
     // localizer
-    render.renderer.clearDepth();
-    render.renderer.render(render.localizerScene, render.camera);
+    // render.renderer.clearDepth();
+    // render.renderer.render(render.localizerScene, render.camera);
 
-    render.renderer.clearDepth();
-    render.renderer.render(render.scene4Seg, render.camera);
-    //
-    render.renderer.clearDepth();
-    render.renderer.render(render.sceneMix, render.camera);
+    // render.renderer.clearDepth();
+    // render.renderer.render(render.scene4Seg, render.camera, render.renderTarget1, true);
+
+    // render.renderer.clearDepth();
+    // render.renderer.render(render.sceneMix, render.camera);
+
+    if (render.showSegmentation) {
+      render.renderer.render(render.scene, render.camera, render.renderTarget0, true);
+      render.renderer.render(render.scene4Seg, render.camera, render.renderTarget1, true);
+      render.renderer.render(render.sceneMix, render.camera);
+    } else {
+      render.renderer.render(render.scene, render.camera);
+    }
   }
 
   if (ready) {
@@ -209,7 +216,8 @@ function initRenderer3D (renderObj) {
 
   if (renderObj.renderer === null) {
     renderObj.renderer = new THREE.WebGLRenderer({
-      antialias: true
+      antialias: true,
+      alpha: true,
     });
     renderObj.renderer.setSize(renderObj.domElement.clientWidth, renderObj.domElement.clientHeight);
     renderObj.renderer.setClearColor(renderObj.color, 1);
@@ -263,8 +271,10 @@ function initRenderer3D (renderObj) {
 function initRenderer2D (rendererObj) {
   // renderer
   if (rendererObj.domElement === null) {
+    console.log('Found element by Id' + rendererObj.domElement);
     rendererObj.domElement = document.getElementById(rendererObj.domId);
   } else {
+    console.log('Not find element : ' + rendererObj.domElement);
     return;
   }
 
@@ -357,10 +367,15 @@ export function loadDicomsAsZip (uploadedFile, cb) {
   });
 }
 
-let uniformsLayer = Medic3D.Shaders.DataUniform.uniforms();
+export function clearSceneAll () {
+  clearThree(r0.scene);
+  clearThree(r1.scene);
+  clearThree(r2.scene);
+  clearThree(r3.scene);
+}
 
-export function loadSegmentation2 (segUrl) {
-  console.log('#load as seg : ' + segUrl);
+export function loadSegmentation3 (segUrl) {
+  console.log('#Get Segmentation from ' + segUrl);
   return new Promise((resolve, reject) => {
     Request({
       method: 'GET',
@@ -381,18 +396,25 @@ export function loadSegmentation2 (segUrl) {
           let loader = new LoadersVolume();
           loader.loadZip(buffer)
             .then(() => {
-              let series = loader.data[0].mergeSeries(loader.data)[0]
+              var mergedSeries = loader.data[0].mergeSeries(loader.data);
+              var stack = mergedSeries[0].stack[0];
+              var stack2 = mergedSeries[1].stack[0];
               loader.free();
-              loader = null
+              loader = null;
 
-              r1.stackHelper.bbox.visible = false;
-              r1.stackHelper.border.visible = false;
-              r1.stackHelper.index = 10;
-              gSegmentationStack = series.stack[0];
-              var stack2 = gSegmentationStack;
+              // stack : dicom, stack2 : seg.
+              if (stack.modality === 'SEG') {
+                stack = mergedSeries[0].stack[0];
+                stack2 = mergedSeries[1].stack[0];
+              }
+
+              gDicomStack = stack;
+              gSegmentationStack = stack2;
+
               stack2.prepare();
               // pixels packing for the fragment shaders now happens there
               stack2.pack();
+
               var textures2 = [];
               for (var m = 0; m < stack2._rawData.length; m++) {
                 var tex = new THREE.DataTexture(
@@ -412,57 +434,13 @@ export function loadSegmentation2 (segUrl) {
                 textures2.push(tex);
               }
 
-              uniformsLayer1 = Medic3D.Shaders.DataUniform.uniforms();
-              uniformsLayer1.uTextureSize.value = stack2.textureSize;
-              uniformsLayer1.uTextureContainer.value = textures2;
-              uniformsLayer1.uWorldToData.value = stack2.lps2IJK;
-              uniformsLayer1.uNumberOfChannels.value = stack2.numberOfChannels;
-              uniformsLayer1.uPixelType.value = stack2.pixelType;
-              uniformsLayer1.uBitsAllocated.value = stack2.bitsAllocated;
-              uniformsLayer1.uWindowCenterWidth.value = [stack2.windowCenter, stack2.windowWidth];
-              uniformsLayer1.uRescaleSlopeIntercept.value = [stack2.rescaleSlope, stack2.rescaleIntercept];
-              uniformsLayer1.uDataDimensions.value = [stack2.dimensionsIJK.x, stack2.dimensionsIJK.y, stack2.dimensionsIJK.z];
-              uniformsLayer1.uInterpolation.value = 0;
+              prepare(r1, stack, stack2, textures2);
+              prepare(r2, stack, stack2, textures2);
+              prepare(r3, stack, stack2, textures2);
 
-              // generate shaders on-demand!
-              var fs = new Medic3D.Shaders.DataFragment(uniformsLayer1);
-              var vs = new Medic3D.Shaders.DataVertex();
-              materialLayer1 = new THREE.ShaderMaterial({
-                side: THREE.DoubleSide,
-                uniforms: uniformsLayer1,
-                vertexShader: vs.compute(),
-                fragmentShader: fs.compute(),
-              });
-              //
-              meshLayer1 = new THREE.Mesh(r1.stackHelper.slice.geometry, materialLayer1);
-              // go the LPS space
-              meshLayer1.applyMatrix(gSegmentationStack._ijk2LPS);
-              r1.scene4Seg.add(meshLayer1);
+              updateLayer1();
+              updateLayerMix();
 
-              // Create the Mix layer
-              uniformsLayerMix = Medic3D.Shaders.LayerUniform.uniforms();
-              uniformsLayerMix.uTextureBackTest0.value = r1.renderTarget0.texture;
-              uniformsLayerMix.uTextureBackTest1.value = r1.renderTarget1.texture;
-
-              let fls = new Medic3D.Shaders.LayerFragment(uniformsLayerMix);
-              let vls = new Medic3D.Shaders.LayerVertex();
-              materialLayerMix = new THREE.ShaderMaterial({
-                side: THREE.DoubleSide,
-                uniforms: uniformsLayerMix,
-                vertexShader: vls.compute(),
-                fragmentShader: fls.compute(),
-                transparent: true,
-              });
-
-              // add mesh in this scene with right shaders...
-              meshLayerMix = new THREE.Mesh(r1.stackHelper.slice.geometry, materialLayer1);
-              // go the LPS space
-              meshLayerMix.applyMatrix(gSegmentationStack._ijk2LPS);
-              r1.sceneMix.add(meshLayerMix);
-              // r2.sceneMix.add(meshLayerMix);
-              // r3.sceneMix.add(meshLayerMix);
-
-              console.log('parsed dicom-seg');
               resolve(gSegmentationStack);
             });
         })
@@ -470,28 +448,84 @@ export function loadSegmentation2 (segUrl) {
   });
 }
 
-function setUniforms (stack, stackHelper) {
-  uniformsLayer.uTextureSize.value = stack.textureSize;
-  uniformsLayer.uTextureContainer.value = stackHelper.slice.textures;
-  uniformsLayer.uWorldToData.value = stack.lps2IJK;
-  uniformsLayer.uNumberOfChannels.value = stack.numberOfChannels;
-  uniformsLayer.uPixelType.value = stack.pixelType;
-  uniformsLayer.uBitsAllocated.value = stack.bitsAllocated;
-  uniformsLayer.uWindowCenterWidth.value = [stack.windowCenter, stack.windowWidth];
-  uniformsLayer.uRescaleSlopeIntercept.value = [stack.rescaleSlope, stack.rescaleIntercept];
-  uniformsLayer.uDataDimensions.value = [stack.dimensionsIJK.x, stack.dimensionsIJK.y, stack.dimensionsIJK.z];
-  uniformsLayer.uInterpolation.value = 0;
-}
+function prepare (renderObj, stack, stack2, textures) {
+  if (renderObj.stackHelper) {
+    renderObj.stackHelper = null;
+  }
+  renderObj.stackHelper = new Medic3D.Helpers.Stack(stack);
+  renderObj.stackHelper.bbox.visible = false;
+  renderObj.stackHelper.border.visible = false;
+  renderObj.stackHelper.index = 10;
 
-function initHelpersStack4Seg (stack, renderObj) {
-  var stackHelper = new Medic3D.Helpers.Stack(stack);
-  stackHelper.bbox.visible = false;
-  stackHelper.border.visible = false;
-  stackHelper.index = 10;
+  renderObj.scene.add(renderObj.stackHelper);
+  renderObj.uniformsLayer = null;
+  renderObj.uniformsLayer = Medic3D.Shaders.DataUniform.uniforms();
+  renderObj.uniformsLayer.uTextureSize.value = stack2.textureSize;
+  renderObj.uniformsLayer.uTextureContainer.value = textures;
+  renderObj.uniformsLayer.uWorldToData.value = stack2.lps2IJK;
+  renderObj.uniformsLayer.uNumberOfChannels.value = stack2.numberOfChannels;
+  renderObj.uniformsLayer.uPixelType.value = stack2.pixelType;
+  renderObj.uniformsLayer.uBitsAllocated.value = stack2.bitsAllocated;
+  renderObj.uniformsLayer.uWindowCenterWidth.value = [stack2.windowCenter, stack2.windowWidth];
+  renderObj.uniformsLayer.uRescaleSlopeIntercept.value = [stack2.rescaleSlope, stack2.rescaleIntercept];
+  renderObj.uniformsLayer.uDataDimensions.value = [stack2.dimensionsIJK.x, stack2.dimensionsIJK.y, stack2.dimensionsIJK.z];
+  renderObj.uniformsLayer.uInterpolation.value = 0;
 
-  // renderObj.scene.add(stackHelper);
-  renderObj.scene4Seg.add(stackHelper);   // sceneLayer0
-  renderObj.stackHelper4Seg = stackHelper;
+  var fs = new Medic3D.Shaders.DataFragment(renderObj.uniformsLayer);
+  var vs = new Medic3D.Shaders.DataVertex();
+  renderObj.materialLayer = null;
+  renderObj.materialLayer = new THREE.ShaderMaterial({
+    side: THREE.DoubleSide,
+    uniforms: renderObj.uniformsLayer,
+    vertexShader: vs.compute(),
+    fragmentShader: fs.compute(),
+  });
+  renderObj.meshLayer1 = new THREE.Mesh(renderObj.stackHelper.slice.geometry, renderObj.materialLayer);
+  renderObj.meshLayer1.applyMatrix(stack._ijk2LPS);
+  renderObj.scene4Seg.add(renderObj.meshLayer1);
+
+  // Create the Mix layer
+  renderObj.uniformsLayerMix = Medic3D.Shaders.LayerUniform.uniforms();
+  renderObj.uniformsLayerMix.uTextureBackTest0.value = renderObj.renderTarget0.texture;
+  renderObj.uniformsLayerMix.uTextureBackTest1.value = renderObj.renderTarget1.texture;
+
+  let fls = new Medic3D.Shaders.LayerFragment(renderObj.uniformsLayerMix);
+  let vls = new Medic3D.Shaders.LayerVertex();
+  renderObj.materialLayerMix = null;
+  renderObj.materialLayerMix = new THREE.ShaderMaterial({
+    side: THREE.DoubleSide,
+    uniforms: renderObj.uniformsLayerMix,
+    vertexShader: vls.compute(),
+    fragmentShader: fls.compute(),
+    transparent: true,
+  });
+
+  // add mesh in this scene with right shaders...
+  renderObj.meshLayerMix = new THREE.Mesh(renderObj.stackHelper.slice.geometry, renderObj.materialLayer);
+  renderObj.meshLayerMix.applyMatrix(stack._ijk2LPS);
+  renderObj.sceneMix.add(renderObj.meshLayerMix);
+
+  renderObj.lutLayer = null;
+  renderObj.lutLayer = new Medic3D.Helpers.Lut(
+    'my-lut-canvases-l1',
+    'default',
+    'linear',
+    stack2.segmentationLUT,
+    stack2.segmentationLUTO,
+    true
+  );
+
+  renderObj.lutLayer0 = new Medic3D.Helpers.Lut(
+    'my-lut-canvases-l0',
+    'default',
+    'linear',
+    [[0, 0, 0, 0], [1, 1, 1, 1]],
+    [[0, 1], [1, 1]]
+  );
+  renderObj.lutLayer0.luts = Medic3D.Helpers.Lut.presetLuts();
+  renderObj.uniformsLayer.uLut.value = 1;
+  renderObj.uniformsLayer.uTextureLUT.value = renderObj.lutLayer.texture;
+  renderObj.showSegmentation = true;
 }
 
 let UiEvent = false;
@@ -853,8 +887,8 @@ function windowResize2D (rendererObj) {
   // update info to draw borders properly
   rendererObj.stackHelper.slice.canvasWidth = rendererObj.domElement.clientWidth;
   rendererObj.stackHelper.slice.canvasHeight = rendererObj.domElement.clientHeight;
-  rendererObj.localizerHelper.canvasWidth = rendererObj.domElement.clientWidth;
-  rendererObj.localizerHelper.canvasHeight = rendererObj.domElement.clientHeight;
+  // rendererObj.localizerHelper.canvasWidth = rendererObj.domElement.clientWidth;
+  // rendererObj.localizerHelper.canvasHeight = rendererObj.domElement.clientHeight;
   computeOffset(rendererObj);
 }
 
@@ -1156,32 +1190,42 @@ function clearWidgets () {
  * Update Layer 1
  */
 function updateLayer1() {
-  // update layer1 geometry...
-  if (meshLayer1) {
-    // dispose geometry first
-    meshLayer1.geometry.dispose();
-    meshLayer1.geometry = r1.stackHelper.slice.geometry;
-    meshLayer1.geometry.verticesNeedUpdate = true;
-  }
+  updateLayer(r1);
+  updateLayer(r2);
+  updateLayer(r3);
 }
 
+function updateLayer (renderObj) {
+  if (renderObj.meshLayer1) {
+    // dispose geometry first
+    renderObj.meshLayer1.geometry.dispose();
+    renderObj.meshLayer1.geometry = renderObj.stackHelper.slice.geometry;
+    renderObj.meshLayer1.geometry.verticesNeedUpdate = true;
+  }
+}
 /**
  * Update layer mix
  */
 function updateLayerMix() {
+  updateLayerMixAA(r1);
+  updateLayerMixAA(r2);
+  updateLayerMixAA(r3);
+}
+
+function updateLayerMixAA (renderObj) {
   // update layer1 geometry...
-  if (meshLayerMix) {
-    r1.sceneMix.remove(meshLayerMix);
-    meshLayerMix.material.dispose();
-    meshLayerMix.material = null;
-    meshLayerMix.geometry.dispose();
-    meshLayerMix.geometry = null;
+  if (renderObj.meshLayerMix) {
+    renderObj.sceneMix.remove(renderObj.meshLayerMix);
+    renderObj.meshLayerMix.material.dispose();
+    renderObj.meshLayerMix.material = null;
+    renderObj.meshLayerMix.geometry.dispose();
+    renderObj.meshLayerMix.geometry = null;
 
     // add mesh in this scene with right shaders...
-    meshLayerMix = new THREE.Mesh(r1.stackHelper.slice.geometry, materialLayerMix);
+    renderObj.meshLayerMix = new THREE.Mesh(renderObj.stackHelper.slice.geometry, renderObj.materialLayerMix);
     // go the LPS space
-    meshLayerMix.applyMatrix(r1.stackHelper.stack._ijk2LPS);
+    renderObj.meshLayerMix.applyMatrix(renderObj.stackHelper.stack._ijk2LPS);
 
-    r1.sceneMix.add(meshLayerMix);
+    renderObj.sceneMix.add(renderObj.meshLayerMix);
   }
 }

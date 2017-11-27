@@ -130,6 +130,8 @@
                            :size="loadingSpinner.size"></clip-loader>
             </div>
           </div>
+          <div>CT<div id="my-lut-canvases-l0" class="loading-spinner-dimmed-view"></div></div>
+          <div>Segmentation<div id="my-lut-canvases-l1" class="loading-spinner-dimmed-view"></div></div>
         </div>
       </div>
     </section>
@@ -387,6 +389,7 @@
             break;
           case 'Reload':
 //            console.log('#Reload')
+            Medic3D.clearSceneAll();
             break;
           case 'LoadAnnotation':
 //            console.log('#LoadAnnotation')
@@ -486,7 +489,7 @@
           });
       },
       loadSegmentation2 () {
-        Medic3D.loadSegmentation2('http://' + location.host + '/static/seg/ami_dicom-seg.zip')
+        Medic3D.loadSegmentation3('http://' + location.host + '/static/seg/ami_all.zip')
       }
     }
   }
